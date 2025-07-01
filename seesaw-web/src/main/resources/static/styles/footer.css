@@ -1,0 +1,22 @@
+#footer {
+  width: 100%;
+  color: #666666;
+  background-color: #000000;
+  padding-top: 60px;
+}
+#footer .content-section {
+  min-height: 160px;
+}
+#footer .content-section .btn {
+  color: white;
+}
+#footer .content-section .left .btn {
+  color: white;
+  border: 1px solid #666666;
+}
+#footer .banner-section {
+  background-color: #111111;
+  height: 60px;
+}
+
+/*# sourceMappingURL=footer.css.map */

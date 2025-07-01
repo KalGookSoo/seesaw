@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<body>
+<section th:fragment="carousel" class="container-sm carousel-section">
+    <div id="carousel-indicators" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carousel-indicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1">
+                <img alt="캐러셀이미지" class="d-block w-100" th:src="@{/images/60cc6738-d6c8-45e0-af3f-91858bed8deb_carousel_1.jpeg}">
+            </button>
+            <button type="button" data-bs-target="#carousel-indicators" data-bs-slide-to="1" aria-label="Slide 2">
+                <img alt="캐러셀이미지" class="d-block w-100" th:src="@{/images/4240e34d-4f1f-448f-9c3f-d273c316da12_carousel_2.jpeg}">
+            </button>
+            <button type="button" data-bs-target="#carousel-indicators" data-bs-slide-to="2" aria-label="Slide 3">
+                <img alt="캐러셀이미지" class="d-block w-100" th:src="@{/images/630103ed-3730-4e95-b7d5-2c3cb61264b2_carousel_3.jpeg}">
+            </button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active" data-bs-interval="1500">
+                <img alt="캐러셀이미지" class="d-block w-100" th:src="@{/images/60cc6738-d6c8-45e0-af3f-91858bed8deb_carousel_1.jpeg}">
+            </div>
+            <div class="carousel-item" data-bs-interval="1500">
+                <img alt="캐러셀이미지" class="d-block w-100" th:src="@{/images/4240e34d-4f1f-448f-9c3f-d273c316da12_carousel_2.jpeg}">
+            </div>
+            <div class="carousel-item" data-bs-interval="1500">
+                <img alt="캐러셀이미지" class="d-block w-100" th:src="@{/images/630103ed-3730-4e95-b7d5-2c3cb61264b2_carousel_3.jpeg}">
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carousel-indicators" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carousel-indicators" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+</section>
+</body>
+</html>

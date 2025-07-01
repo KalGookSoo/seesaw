@@ -1,0 +1,27 @@
+#footer {
+  width: 100%;
+  color: #666666;
+  background-color: #000000;
+  padding-top: 60px;
+
+  .content-section {
+    min-height: 160px;
+
+    .btn {
+      color: white;
+    }
+
+    .left {
+
+      .btn {
+        color: white;
+        border: 1px solid #666666;
+      }
+    }
+  }
+
+  .banner-section {
+    background-color: #111111;
+    height: 60px;
+  }
+}

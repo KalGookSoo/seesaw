@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<body>
+<section th:fragment="staticContent" class="container-sm my-3">
+    <!--/*@thymesVar id="staticContent" type="java.lang.String"*/-->
+    <th:block th:utext="${staticContent}"></th:block>
+</section>
+</body>
+</html>

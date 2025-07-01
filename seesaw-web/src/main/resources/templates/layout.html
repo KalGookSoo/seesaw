@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      th:lang="${#locale.language}"
+>
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-G88RQCHX5R"
+            th:if="${#arrays.contains(ACTIVE_PROFILES, 'prod')}"></script>
+    <script th:if="${#arrays.contains(ACTIVE_PROFILES, 'prod')}">
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+        gtag('config', 'G-G88RQCHX5R');
+    </script>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <meta name="robots" content="index, follow">
+
+    <meta name="google-site-verification" content="SmP65FAXUDTeiNBaujsGFx3c2dbyNPze6Fu0FLDlCnY">
+
+    <meta name="theme-color" content="#cc4202">
+
+    <meta name="naver-site-verification" content="3d44ef25fe0fdc4aa0c39c38f36b5c0b1ac0d87b">
+
+    <title>홈 | 대전포스트잇 ♣대전독서모임</title>
+
+    <!--/* CSS */-->
+    <link rel="canonical" th:href="${REQUEST_URL}">
+    <link rel="stylesheet" th:href="@{/styles/bootstrap.css}">
+    <link rel="stylesheet" th:href="@{/styles/bootstrap-icons.min.css}">
+    <link rel="stylesheet" th:href="@{/styles/global.css}">
+    <link rel="stylesheet" th:href="@{/styles/header.css}">
+    <link rel="stylesheet" th:href="@{/styles/breadcrumb.css}">
+    <link rel="stylesheet" th:href="@{/styles/main.css}">
+    <link rel="stylesheet" th:href="@{/styles/footer.css}">
+    <link rel="stylesheet" th:href="@{/styles/aside.css}">
+
+    <style>
+        #main {
+            margin-bottom: 100px;
+        }
+        #aside-dialog {
+            left: auto;
+            height: 100vh;
+            max-height: 100vh;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+            border: none;
+        }
+
+    </style>
+
+    <!--/* JS */-->
+    <script th:src="@{/scripts/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/scripts/main.js}"></script>
+    <script th:src="@{/scripts/aside.js}"></script>
+    <script th:inline="javascript">
+        sessionStorage.setItem("contextPath", /*[[@{/}]]*/'');
+        const CSRF = /*[[${_csrf}]]*/{};
+    </script>
+
+    <script th:if="${message != null}" th:inline="javascript">
+        alert(/*[[${message}]]*/'');
+    </script>
+</head>
+<body id="body" class="d-flex flex-column min-vh-100">
+    <dialog id="aside-dialog" role="alertdialog">
+        <th:block th:replace="~{aside :: aside}"></th:block>
+    </dialog>
+    <header th:replace="~{header :: header}"></header>
+    <main id="main">
+        <th:block layout:fragment="content"></th:block>
+    </main>
+    <footer th:replace="~{footer :: footer}"></footer>
+</body>
+</html>

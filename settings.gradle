@@ -1,0 +1,27 @@
+rootProject.name = 'seesaw'
+
+// 공통 설정
+gradle.beforeProject { project ->
+    // 프로젝트 초기화 시 공통 속성 설정
+    project.ext {
+        // 공통 버전 정보
+        springBootVersion = '3.4.3'
+        springDependencyManagementVersion = '1.1.7'
+
+        javaVersion = 17
+
+        projectGroup = 'kr.me.seesaw'
+
+        defaultVersion = '0.0.1-SNAPSHOT'
+    }
+}
+
+// 프로젝트에 포함될 모듈 정의
+include(':seesaw-api')
+include(':seesaw-core')
+include(':seesaw-web')
+
+// 각 모듈 설정 구성
+project(':seesaw-api').projectDir = file('seesaw-api')
+project(':seesaw-core').projectDir = file('seesaw-core')
+project(':seesaw-web').projectDir = file('seesaw-web')

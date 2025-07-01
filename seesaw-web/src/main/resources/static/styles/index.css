@@ -1,0 +1,87 @@
+.profile-section {
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 100%;
+  padding: 2rem 1rem;
+}
+.profile-section .profile {
+  max-width: 900px;
+  width: 100%;
+  min-height: 50vh;
+  height: auto;
+  padding: 2rem 0;
+}
+.profile-section .profile h2 {
+  font-size: 1.2rem;
+  text-align: center;
+}
+.profile-section .profile .image img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+}
+
+.intro-section {
+  margin: 2rem 0;
+  padding: 0 1rem;
+  text-align: center;
+  width: 100%;
+}
+.intro-section h6 {
+  color: var(--main-color);
+  margin-bottom: 1rem;
+}
+
+.board-section {
+  margin-bottom: 2rem;
+}
+.board-section header {
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 20px;
+  padding: 0.5rem 0;
+}
+.board-section article {
+  margin-bottom: 1.5rem;
+}
+.board-section article .title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 500;
+}
+.board-section article .content {
+  min-height: 80px;
+  height: auto;
+}
+.board-section article .content .small {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
+.board-section article .content .thumbnail {
+  width: 100%;
+  max-width: 110px;
+}
+.board-section article .content .thumbnail img {
+  width: 100%;
+  height: auto;
+  max-height: 110px;
+  object-fit: cover;
+}
+@media (max-width: 767.98px) {
+  .board-section article .content {
+    min-height: 60px;
+  }
+  .board-section article .content .small {
+    -webkit-line-clamp: 3;
+  }
+  .board-section article .content .thumbnail {
+    max-width: 100%;
+  }
+}
+
+/*# sourceMappingURL=index.css.map */

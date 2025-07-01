@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Header</title>
+    <link rel="stylesheet" href="/static/styles/header.css" th:href="@{/styles/header.css}">
+    <script src="/static/scripts/header.js" th:src="@{/scripts/header.js}"></script>
+</head>
+
+<header id="header" class="d-flex align-items-center justify-content-center" th:fragment="header">
+    <div class="container-sm wrapper d-flex align-items-center justify-content-between">
+        <h1 class="logo mb-0 d-lg-none"><a class="none" th:href="@{/}">대전포스트잇 ♣대전독서모임</a></h1>
+        <nav class="gnb nav d-none d-lg-flex align-items-center justify-content-start">
+            <div class="nav-item"><a class="btn nav-link" th:classappend="${CURRENT_CATEGORY == null} ? 'main-color' : ''" th:href="@{/}">홈</a></div>
+            <div class="nav-item dropdown" th:each="category : ${NESTED_CATEGORIES}" th:if="${!#lists.isEmpty(category.children)}">
+                <!--/*@thymesVar id="category" type="kr.me.seesaw.domain.Category"*/-->
+                <a class="btn nav-link dropdown-toggle"
+                   th:href="@{/articles(categoryType=${category.children.get(0).type}, categoryId=${category.children.get(0).id})}"
+                   th:classappend="${CURRENT_CATEGORY != null && #strings.equals(category.id, CURRENT_CATEGORY.parent.id)} ? 'main-color' : ''"
+                   data-bs-toggle="dropdown" aria-expanded="false"
+                >
+                    [[${category.name}]]
+                    <span class="badge bg-primary ms-1" th:if="${!category.recentArticles.isEmpty()}" th:text="${category.recentArticles.size()}"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li th:each="subCategory : ${category.children}">
+                        <a class="dropdown-item" 
+                           th:href="@{/articles(categoryType=${subCategory.type}, categoryId=${subCategory.id})}"
+                           th:classappend="${CURRENT_CATEGORY != null && #strings.equals(subCategory.id, CURRENT_CATEGORY.id)} ? 'active' : ''">
+                            [[${subCategory.name}]]
+                            <span class="badge bg-primary ms-1" th:if="${!subCategory.recentArticles.isEmpty()}" th:text="${subCategory.recentArticles.size()}"></span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <div class="utility d-none d-lg-flex align-items-center">
+            <button class="btn site-map open-aside"
+                    th:title="전체보기"
+                    th:text="전체보기"
+                    type="button"
+            >
+            </button>
+            <a class="btn sign-in"
+               sec:authorize="isAnonymous()"
+               th:href="@{/oauth2/authorization/naver}"
+               th:text="#{label.sign.in}"
+               th:title="#{label.sign.in}"
+            ></a>
+            <form sec:authorize="isAuthenticated()" th:action="@{/sign-out}" th:method="post">
+                <button class="btn sign-out"
+                        th:text="#{label.sign.out}"
+                        th:title="#{label.sign.out}"
+                        type="submit"
+                ></button>
+            </form>
+        </div>
+        <div class="d-lg-none d-flex align-items-center gap-2">
+            <button type="button" class="btn site-map open-aside navbar-toggler" th:title="'전체보기'"><i class="bi bi-list h4"></i></button>
+            <a class="btn" sec:authorize="isAnonymous()" th:href="@{/oauth2/authorization/naver}" th:title="|#{label.sign.in}|">
+                <i class="bi bi-box-arrow-in-right h4"></i>
+            </a>
+            <form sec:authorize="isAuthenticated()" th:action="@{/sign-out}" th:method="post" class="d-inline">
+                <button type="submit" class="btn" th:title="|#{label.sign.out}|">
+                    <i class="bi bi-box-arrow-right h4"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</header>
+
+</html>

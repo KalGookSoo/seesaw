@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      layout:decorate="~{layout}"
+      th:lang="${#locale.language}"
+>
+
+<head>
+
+    <meta name="description" th:content="|${SITE_CONTEXT.name} ${CURRENT_CATEGORY.name} ${CURRENT_CATEGORY.description != null ? CURRENT_CATEGORY.description : ''}|">
+    <meta name="keywords" th:content="|${SITE_CONTEXT.name} ${CURRENT_CATEGORY.name}|">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="페이지 제목" th:content="|${SITE_CONTEXT.name} ${CURRENT_CATEGORY.name}|">
+    <meta property="og:description" content="페이지 설명" th:content="|${SITE_CONTEXT.name} ${CURRENT_CATEGORY.name} ${CURRENT_CATEGORY.description != null ? CURRENT_CATEGORY.description : ''}|">
+    <meta property="og:image" content="페이지 썸네일 이미지 주소" th:if="${SITE_CONTEXT.profileImage != null}"
+          th:content="@{|${REQUEST_HOST}/api/attachments/${SITE_CONTEXT.profileImage.id}|}">
+    <meta property="og:url" content="페이지 주소" th:content="${REQUEST_URL}">
+
+    <meta property="twitter:card" content="summary">
+    <meta property="twitter:title" content="페이지 제목" th:content="|${SITE_CONTEXT.name}  ${CURRENT_CATEGORY.name}|">
+    <meta property="twitter:description" content="페이지 설명" th:content="|${SITE_CONTEXT.name} ${CURRENT_CATEGORY.name} ${CURRENT_CATEGORY.description != null ? CURRENT_CATEGORY.description : ''}|">
+    <meta property="twitter:image" content="페이지 썸네일 이미지 주소" th:if="${SITE_CONTEXT.profileImage != null}"
+          th:content="@{|${REQUEST_HOST}/api/attachments/${SITE_CONTEXT.profileImage.id}|}">
+
+    <title>[[${CURRENT_CATEGORY.name}]] | [[${SITE_CONTEXT.name}]]</title>
+    <link rel="stylesheet" href="/static/styles/content.css" th:href="@{/styles/content.css}">
+    <script th:inline="javascript"></script>
+</head>
+<div layout:fragment="content">
+<section th:replace="~{components/breadcrumb :: breadcrumbs}"></section>
+<section class="container-sm title-section">
+    <div class="d-flex">
+        <h5 class="title pb-1" th:text="${CURRENT_CATEGORY.name}"></h5>
+    </div>
+</section>
+<th:block th:each="article : ${page.content}" th:if="${page.hasContent()}" th:utext="${article.content}"></th:block>
+</div>
+</html>

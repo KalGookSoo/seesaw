@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      layout:decorate="~{layout}"
+      th:lang="${#locale.language}"
+>
+
+<head>
+    <title>[[${ALL_CATEGORIES.get(search.categoryId).name}]] | [[${SITE_CONTEXT.name}]]</title>
+    <link rel="stylesheet" href="/static/styles/content.css" th:href="@{/styles/content.css}">
+
+    <!--/* Editor */-->
+    <link rel="stylesheet" th:href="@{/styles/toastui-editor.min.css}">
+
+    <!--/* Color picker */-->
+    <link rel="stylesheet" th:href="@{/styles/tui-color-picker.min.css}">
+    <link rel="stylesheet" th:href="@{/styles/toastui-editor-plugin-color-syntax.min.css}">
+
+    <!--/* Code syntax highlight */-->
+    <link rel="stylesheet" th:href="@{/styles/prism.min.css}">
+    <link rel="stylesheet" th:href="@{/styles/toastui-editor-plugin-code-syntax-highlight.min.css}">
+
+    <!--/* Chart */-->
+    <link rel="stylesheet" th:href="@{/styles/toastui-chart.min.css}">
+
+    <!--/* Table merged cell */-->
+    <link rel="stylesheet" th:href="@{/styles/toastui-editor-plugin-table-merged-cell.min.css}">
+
+    <!--/* Editor */-->
+    <script th:src="@{/scripts/toastui-editor-all.min.js}"></script>
+
+    <!--/* Color picker */-->
+    <script th:src="@{/scripts/tui-color-picker.min.js}"></script>
+    <script th:src="@{/scripts/toastui-editor-plugin-color-syntax.min.js}"></script>
+
+    <!--/* Code syntax highlight */-->
+    <script th:src="@{/scripts/toastui-editor-plugin-code-syntax-highlight-all.min.js}"></script>
+
+    <!--/* Chart */-->
+    <script th:src="@{/scripts/toastui-chart.min.js}"></script>
+    <script th:src="@{/scripts/toastui-editor-plugin-chart.min.js}"></script>
+
+    <!--/* Table merged cell */-->
+    <script th:src="@{/scripts/toastui-editor-plugin-table-merged-cell.min.js}"></script>
+
+    <!--/* UML */-->
+    <script th:src="@{/scripts/toastui-editor-plugin-uml.min.js}"></script>
+
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', e => {
+
+            // 에디터에 첨부하는 이미지가 담길 것. 최종 제출하는 에디터 본문에서 참조됨
+            const blobs = new Map();
+
+            const {Editor} = toastui;
+            const {chart, codeSyntaxHighlight, colorSyntax, tableMergedCell, uml} = Editor.plugin;
+            const chartOptions = {
+                minWidth: 100,
+                maxWidth: 600,
+                minHeight: 100,
+                maxHeight: 300
+            };
+            const editor = new Editor({
+                el: document.querySelector('#editor'),
+                height: '500px',
+                initialEditType: 'wysiwyg',
+                hideModeSwitch: true,
+                previewStyle: 'vertical',
+                initialValue: '',
+                usageStatistics: false,
+                hooks: {
+                    addImageBlobHook(blob, callback) {
+                        const url = URL.createObjectURL(blob);
+
+                        // 이미지를 추가할 때마다 blobs 엔트리를 추가하지만 최종 제출할 이미지는 editor의 본문에서 필터링될 것
+                        blobs.set(url, blob);
+                        callback(url, blob.name);
+                    }
+                },
+                plugins: [[chart, chartOptions], [codeSyntaxHighlight, {highlighter: Prism}], colorSyntax, tableMergedCell, uml]
+            });
+
+            e.target.addEventListener('submit', e => {
+                const selector = Object.keys(submitHandlers).find(selector => e.target.closest(selector));
+                submitHandlers[selector]?.(e);
+            });
+
+            const submitHandlers = {
+                '[name="createArticleForm"]': e => {
+                    e.preventDefault();
+
+                    e.submitter.classList.add('d-none');
+                    e.submitter.nextElementSibling.classList.remove('d-none');
+
+                    const form = new FormData(e.target);
+                    form.append('type', 'HTML');
+                    form.set('fixed', e.target.elements.fixed.checked);
+                    form.append('content', editor.getHTML());
+
+                    // 최종 제출할 본문에서 blob 데이터를 찾아 첨부 목록에 추가
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(editor.getHTML(), 'text/html');
+                    const urls = [...doc.querySelectorAll('img[src*="blob:"]')].map(img => img.src);
+
+                    const dataTransfer = new DataTransfer();
+                    urls.filter(url => blobs.has(url))
+                        .forEach(url => {
+                            const blob = blobs.get(url);
+                            const file = new File([blob], blob.name, {type: blob.type});
+                            dataTransfer.items.add(file);
+                        });
+                    [...dataTransfer.files].forEach(file => form.append('inlineImages', file));
+
+                    const httpEntity = {
+                        method: e.target.method,
+                        headers: {
+                            [CSRF.headerName]: CSRF.token
+                        },
+                        body: form
+                    };
+                    fetch(e.target.action, httpEntity)
+                        .then(async response => {
+                            const responseBody = await response.text();
+                            e.submitter.classList.remove('d-none');
+                            e.submitter.nextElementSibling.classList.add('d-none');
+                            if (response.ok) {
+                                alert(/*[[#{command.success.create}]]*/'');
+                                location.href = /*[[@{|/articles/view${search.getUriComponentsBuilder().queryParam('page', 0).build().toUriString()}|}]]*/'';
+                            } else if (response.status === 400) {
+                                const errors = JSON.parse(responseBody).errors;
+                                [...errors].forEach(error => {
+                                    const field = e.target.elements[error.field];
+                                    field.setCustomValidity(error.message);
+                                    field.reportValidity();
+                                });
+                            } else {
+                                alert(/*[[#{command.failure.create}]]*/'');
+                            }
+                        });
+                }
+
+            };
+        });
+    </script>
+
+    <style>
+        #editor img:not([class*="ProseMirror"]) {
+            border-radius: 8px;
+            padding: 0.25rem;
+            margin: 0.25rem;
+            background-color: #29e;
+
+            touch-action: none;
+
+            /* This makes things *much* easier */
+            box-sizing: border-box;
+        }
+    </style>
+
+    <script type="module">
+        import 'https://cdn.interactjs.io/v1.9.20/auto-start/index.js';
+        import 'https://cdn.interactjs.io/v1.9.20/actions/drag/index.js';
+        import 'https://cdn.interactjs.io/v1.9.20/actions/resize/index.js';
+        import 'https://cdn.interactjs.io/v1.9.20/modifiers/index.js';
+        import 'https://cdn.interactjs.io/v1.9.20/dev-tools/index.js';
+        import interact from 'https://cdn.interactjs.io/v1.9.20/interactjs/index.js';
+
+        document.addEventListener('DOMContentLoaded', e => {
+            // Prevent default dragstart behavior on images in the editor
+            document.querySelector('#editor').addEventListener('dragstart', (event) => {
+                if (event.target.tagName === 'IMG') {
+                    event.preventDefault();
+                }
+            }, true);
+
+            interact(`#editor img:not([class*="ProseMirror"])`)
+                .resizable({
+                    // resize from all edges and corners
+                    edges: {left: true, right: true, bottom: true, top: true},
+
+                    listeners: {
+                        start(event) {
+                            // Prevent default behavior at the start of resize
+                            event.preventDefault();
+                        },
+                        move(event) {
+                            // Prevent default behavior during resize
+                            event.preventDefault();
+
+                            let target = event.target;
+                            let x = (parseFloat(target.dataset.x) || 0);
+                            let y = (parseFloat(target.dataset.y) || 0);
+
+                            // update the element's width and height attributes
+                            target.width = event.rect.width;
+                            target.height = event.rect.height;
+
+                            // translate when resizing from top or left edges
+                            x += event.deltaRect.left;
+                            y += event.deltaRect.top;
+
+                            // target.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+
+                            target.dataset.x = x;
+                            target.dataset.y = y;
+                        }
+                    },
+                    modifiers: [
+                        // keep the edges inside the parent
+                        interact.modifiers.restrictEdges({
+                            outer: 'parent'
+                        }),
+
+                        // minimum size
+                        interact.modifiers.restrictSize({
+                            min: {width: 100, height: 50}
+                        })
+                    ],
+
+                    inertia: true
+                })
+                .draggable({
+                    listeners: { move: window.dragMoveListener },
+                    inertia: true,
+                    modifiers: [
+                        interact.modifiers.restrictRect({
+                            restriction: 'parent',
+                            endOnly: true
+                        })
+                    ]
+                });
+        });
+
+
+    </script>
+</head>
+<div layout:fragment="content">
+<section th:replace="~{components/breadcrumb :: breadcrumbs}"></section>
+<header class="container-sm title-section">
+    <div class="d-flex">
+        <h5 class="title pb-1" th:text="${ALL_CATEGORIES.get(search.categoryId).name}"></h5>
+    </div>
+</header>
+<form name="createArticleForm" enctype="multipart/form-data" th:action="@{/api/articles}" th:method="post">
+    <input name="categoryId" th:value="${search.categoryId}" type="hidden">
+    <input class="d-none" multiple name="multipartFiles" type="file">
+    <section class="container-sm py-4 mb-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white py-3">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-pencil-square me-2"></i>새 게시글 작성
+                </h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="mb-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-2 col-lg-1">
+                            <label class="form-label fw-medium">작성자</label>
+                        </div>
+                        <div class="col-md-10 col-lg-11 d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-person-circle me-2 text-secondary"></i>
+                                <span th:text="${#authentication.principal.username}" class="fw-medium"></span>
+                            </div>
+                            <div class="form-check form-switch"
+                                 th:classappend="${#authentication.principal.hasRole('ROLE_ADMIN') or #authentication.principal.hasRole('ROLE_MANAGER')} ? '' : 'd-none'"
+                            >
+                                <input class="form-check-input" type="checkbox" id="fixed" aria-label="고정여부">
+                                <label class="form-check-label small text-muted" for="fixed">공지글로 등록</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-2 col-lg-1">
+                            <label for="title" class="form-label fw-medium" th:text="#{entity.article.title}"></label>
+                        </div>
+                        <div class="col-md-10 col-lg-11">
+                            <div class="input-group">
+                                <span class="input-group-text bg-white">
+                                    <i class="bi bi-type"></i>
+                                </span>
+                                <input type="text" class="form-control" id="title" name="title" required maxlength="30"
+                                       placeholder="제목을 입력하세요" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <div class="row align-items-start">
+                        <div class="col-md-2 col-lg-1">
+                            <label class="form-label fw-medium">내용</label>
+                        </div>
+                        <div class="col-md-10 col-lg-11">
+                            <div id="editor" class="border rounded"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer class="container-sm content-footer my-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-3 d-flex justify-content-end">
+                <div class="d-flex gap-3">
+                    <a class="btn btn-outline-secondary d-flex align-items-center"
+                       th:href="@{|/articles${search.getUriComponentsBuilder().queryParam('page', 0).build().toUriString()}|}">
+                        <i class="bi bi-x-lg me-2"></i>
+                        <span th:text="#{label.cancel}"></span>
+                    </a>
+                    <button class="btn btn-primary d-flex align-items-center" type="submit">
+                        <i class="bi bi-check-lg me-2"></i>
+                        <span th:text="#{label.save}"></span>
+                    </button>
+                    <button class="btn btn-primary d-flex align-items-center d-none" type="button" disabled>
+                        <i class="bi me-2 spinner-border spinner-border-sm" role="status" aria-hidden="true"></i>
+                        <span th:text="#{label.save}"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </footer>
+</form>
+</div>
+</html>

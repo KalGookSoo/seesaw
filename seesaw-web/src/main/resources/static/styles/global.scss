@@ -1,0 +1,65 @@
+* {
+  padding: 0;
+  margin: 0;
+  color: inherit;
+}
+
+html {
+  font-size: 16px;
+  color: var(--font-color);
+
+  body {
+    color: inherit;
+    font-family: 'NanumSquareLight', sans-serif;
+    font-family: 'NanumSquare', sans-serif;
+    font-family: 'NanumSquareBold', sans-serif;
+    font-family: 'NanumSquareExtraBold', sans-serif;
+    font-family: 'NanumSquareAcb', sans-serif;
+    font-family: 'NanumSquareAceb', sans-serif;
+    font-family: 'NanumSquareAcl', sans-serif;
+    font-family: 'NanumSquareAcr', sans-serif;
+
+    .main-color {
+      color: var(--main-color);
+    }
+
+    .border-main-color-subtle {
+      border-color: rgba(204, 66, 2, 0.5);
+    }
+
+    a.none {
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+    }
+
+    a.none:hover,
+    a.none:focus,
+    a.none:active,
+    a.none:visited {
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+    }
+
+    button.none {
+      all: unset;
+      cursor: pointer;
+    }
+
+    .table {
+      th {
+        font-weight: normal;
+      }
+    }
+
+    .border-bottom {
+      border-bottom: 1px solid var(--bs-gray-400);
+    }
+  }
+}
+
+:root {
+  --main-color: #cc4202;
+  --font-color: #666666;
+}

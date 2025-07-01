@@ -1,0 +1,64 @@
+#main {
+  margin-top: 80px;
+}
+
+.title-section {
+  margin-top: 4rem;
+  border-bottom: 1px solid var(--main-color);
+
+  .title {
+    color: var(--main-color);
+  }
+
+}
+
+.article-title-section {
+  border-bottom: 1px solid var(--bs-gray-400);
+}
+
+.carousel-section {
+  margin-bottom: 160px;
+
+  .carousel-item {
+    height: 600px;
+  }
+
+  .carousel-indicators {
+    bottom: -40px;
+  }
+
+  .carousel-indicators [data-bs-target] {
+    width: 100px;
+  }
+}
+
+.reply-content {
+  pre {
+    font-family: inherit;
+  }
+}
+
+.board-card-section {
+  .card {
+
+    .card-img-top {
+      height: 300px;
+      width: auto;
+      object-fit: cover;
+      border: none;
+    }
+
+    .card-body {
+      height: 150px;
+
+      .card-text {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: normal;
+      }
+    }
+  }
+}

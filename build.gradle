@@ -1,0 +1,48 @@
+// 공통 플러그인 설정 블록
+// 모든 프로젝트에 적용될 플러그인을 정의합니다.
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.4.3' apply false
+    id 'io.spring.dependency-management' version '1.1.7' apply false
+}
+
+// 모든 프로젝트에 공통으로 적용될 설정 블록
+allprojects {
+    group = 'kr.me.seesaw'
+    version = project.hasProperty('appVersion') ? project.getProperty('appVersion') : '0.0.1-SNAPSHOT'
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+// 서브프로젝트에 공통으로 적용될 설정 블록
+subprojects {
+    // 공통 플러그인 적용
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+
+    // Java 버전 설정
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
+
+    // 공통 의존성 설정 블록
+    dependencies {
+        // 테스트 관련 공통 의존성
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        testImplementation 'com.h2database:h2'
+
+        // Lombok 관련 공통 의존성
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+    }
+
+    // 공통 테스트 설정
+    tasks.named('test') {
+        useJUnitPlatform()
+    }
+}

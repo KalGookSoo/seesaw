@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<body>
+<section class="container-sm pt-4 mt-4" th:fragment="breadcrumbs">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb modern-breadcrumb">
+      <!--/* Home with icon */-->
+      <li class="breadcrumb-item">
+        <div class="dropdown">
+          <a class="dropdown-toggle" th:href="@{/}" role="button" id="homeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-house-door-fill"></i>
+          </a>
+        </div>
+      </li>
+
+      <!--/* Parent category */-->
+      <li class="breadcrumb-item" th:if="${CURRENT_CATEGORY.parent != null}">
+        <div class="dropdown">
+          <a class="dropdown-toggle" href="#" role="button" id="parentDropdown" data-bs-toggle="dropdown" aria-expanded="false"
+             th:text="${CURRENT_CATEGORY.parent.name}">
+            부모 카테고리
+          </a>
+          <ul class="dropdown-menu shadow-sm" aria-labelledby="parentDropdown">
+            <li th:each="siblingCategory : ${ALL_CATEGORIES.values()}"
+                th:if="${siblingCategory.parentId == null || #strings.equals(siblingCategory.parentId, CURRENT_CATEGORY.parent.parentId)}">
+              <a class="dropdown-item"
+                 th:classappend="${#strings.equals(siblingCategory.id, CURRENT_CATEGORY.parent.id)} ? 'active' : ''"
+                 th:href="@{/articles(categoryType=${siblingCategory.children.get(0).type}, categoryId=${siblingCategory.children.get(0).id})}"
+                 th:text="${siblingCategory.name}">
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+
+      <!--/* Current category */-->
+      <li class="breadcrumb-item active" aria-current="page">
+        <div class="dropdown">
+          <a class="dropdown-toggle" href="#" role="button" id="currentDropdown" data-bs-toggle="dropdown" aria-expanded="false"
+             th:text="${CURRENT_CATEGORY.name}">
+            현재 카테고리
+          </a>
+          <ul class="dropdown-menu shadow-sm" aria-labelledby="currentDropdown">
+            <li th:each="siblingCategory : ${CURRENT_CATEGORY.parent.children}">
+              <a class="dropdown-item"
+                 th:classappend="${#strings.equals(siblingCategory.id, CURRENT_CATEGORY.id)} ? 'active' : ''"
+                 th:href="@{/articles(categoryType=${siblingCategory.type}, categoryId=${siblingCategory.id})}"
+                 th:text="${siblingCategory.name}">
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+    </ol>
+  </nav>
+</section>
+</body>
+</html>

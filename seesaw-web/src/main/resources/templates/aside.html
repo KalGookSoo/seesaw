@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Header</title>
+    <link rel="stylesheet" href="/static/styles/aside.css" th:href="@{/styles/aside.css}">
+    <script src="/static/scripts/aside.js" th:src="@{/scripts/aside.js}"></script>
+</head>
+
+    <aside id="aside" th:fragment="aside" class="h-100 bg-white">
+        <header class="bg-main-color text-white p-3 pb-4 position-relative">
+            <div class="position-absolute top-0 end-0 p-2">
+                <form method="dialog">
+                    <button type="submit" class="btn btn-close-white" aria-label="Close"><i class="bi bi-x-lg"></i></button>
+                </form>
+            </div>
+            <div class="text-center pt-4">
+                <div class="mx-auto mb-2" style="width: 100px; height: 100px;">
+                    <img class="w-100 h-100 rounded-circle" th:src="@{|/api/attachments/${SITE_CONTEXT.profileImage.id}|}" th:alt="${SITE_CONTEXT.profileImage.originalName}">
+                </div>
+                <h5 class="fw-bold mb-1">대전포스트잇 ♣대전독서모임</h5>
+                <div class="small text-white-50 mb-2" sec:authorize="isAuthenticated()" th:text="${#authentication.name}"></div>
+                <button type="button" class="btn btn-outline-light btn-sm rounded-pill px-3" sec:authorize="isAuthenticated()" th:text="${#authentication.principal.roleDescription}">톡톡관리</button>
+            </div>
+        </header>
+        <section class="bg-main-color text-white border-top border-bottom border-main-color-subtle" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
+            <div class="container-fluid p-0">
+                <div class="row g-0 border-bottom border-main-color-subtle">
+                    <div class="col-3 p-0 text-center border-end border-main-color-subtle">
+                        <div class="d-flex flex-column align-items-center py-1">
+                            <button type="button" class="btn btn-link text-white-50 p-2 btn-square" title="홈페이지관리"><i class="bi bi-gear fs-6"></i></button>
+                            <span class="text-white-50 small" style="font-size: 0.7rem;">홈페이지관리</span>
+                        </div>
+                    </div>
+                    <div class="col-3 p-0 text-center border-end border-main-color-subtle">
+                        <div class="d-flex flex-column align-items-center py-1">
+                            <button type="button" class="btn btn-link text-white-50 p-2 btn-square" title="방문자통계"><i class="bi bi-graph-up fs-6"></i></button>
+                            <span class="text-white-50 small" style="font-size: 0.7rem;">방문자통계</span>
+                        </div>
+                    </div>
+                    <div class="col-3 p-0 text-center border-end border-main-color-subtle">
+                        <div class="d-flex flex-column align-items-center py-1">
+                            <button type="button" class="btn btn-link text-white-50 p-2 btn-square" title="공동편집권"><i class="bi bi-people fs-6"></i></button>
+                            <span class="text-white-50 small" style="font-size: 0.7rem;">공동편집권</span>
+                        </div>
+                    </div>
+                    <div class="col-3 p-0 text-center">
+                        <div class="d-flex flex-column align-items-center py-1">
+                            <button type="button" class="btn btn-link text-white-50 p-2 btn-square" title="글알림받기"><i class="bi bi-bell fs-6"></i></button>
+                            <span class="text-white-50 small" style="font-size: 0.7rem;">글알림받기</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row g-0">
+                    <div class="col-3 p-0 text-center border-end border-main-color-subtle">
+                        <div class="d-flex flex-column align-items-center py-1">
+                            <button type="button" class="btn btn-link text-white-50 p-2 btn-square" title="로그아웃"><i class="bi bi-box-arrow-right fs-6"></i></button>
+                            <span class="text-white-50 small" style="font-size: 0.7rem;">로그아웃</span>
+                        </div>
+                    </div>
+                    <div class="col-3 p-0 text-center border-end border-main-color-subtle">
+                        <div class="d-flex flex-column align-items-center py-1">
+                            <button type="button" class="btn btn-link text-white-50 p-2 btn-square" title="공유하기"><i class="bi bi-share fs-6"></i></button>
+                            <span class="text-white-50 small" style="font-size: 0.7rem;">공유하기</span>
+                        </div>
+                    </div>
+                    <div class="col-3 p-0 text-center border-end border-main-color-subtle">
+                        <div class="d-flex flex-column align-items-center py-1">
+                            <button type="button" class="btn btn-link text-white-50 p-2 btn-square" title="월간리포트"><i class="bi bi-calendar-check fs-6"></i></button>
+                            <span class="text-white-50 small" style="font-size: 0.7rem;">월간리포트</span>
+                        </div>
+                    </div>
+                    <div class="col-3 p-0 text-center">
+                        <div class="d-flex flex-column align-items-center py-1">
+                            <button type="button" class="btn btn-link text-white-50 p-2 btn-square" title="페이지수정"><i class="bi bi-pencil fs-6"></i></button>
+                            <span class="text-white-50 small" style="font-size: 0.7rem;">페이지수정</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="accordion accordion-flush" id="siteMapAccordion">
+            <!--/* Home link */-->
+            <div class="accordion-item border-bottom">
+                <h2 class="accordion-header">
+                    <a class="accordion-button collapsed py-3 fw-medium text-decoration-none text-dark" th:href="@{/}">홈</a>
+                </h2>
+            </div>
+
+            <!--/* Nested categories */-->
+            <div th:replace="~{::nestedCategories(${NESTED_CATEGORIES})}"></div>
+
+            <th:block th:fragment="nestedCategories(categories)">
+                <div class="accordion-item border-bottom" th:each="category : ${categories}">
+                    <h2 class="accordion-header">
+                        <!--/* Non-root category with link */-->
+                        <a class="accordion-button collapsed py-3 fw-medium text-decoration-none text-dark"
+                           th:if="${!category.isRoot() && #lists.isEmpty(category.children)}"
+                           th:href="@{/articles(categoryType=${category.type}, categoryId=${category.id})}"
+                        >
+                            [[${category.name}]]
+                            <span class="badge bg-primary ms-1" th:if="${!category.recentArticles.isEmpty()}" th:text="${category.recentArticles.size()}"></span>
+                        </a>
+
+                        <!--/* Category with children (collapsible) */-->
+                        <button class="accordion-button collapsed py-3 fw-medium" type="button" 
+                                th:if="${!#lists.isEmpty(category.children)}"
+                                data-bs-toggle="collapse" 
+                                th:data-bs-target="${'#collapse-' + category.id}"
+                                th:aria-expanded="false" 
+                                th:aria-controls="${'collapse-' + category.id}">
+                            <span th:text="${category.name}"></span>
+                            <span class="badge bg-primary ms-1" th:if="${!category.recentArticles.isEmpty()}" th:text="${category.recentArticles.size()}"></span>
+                        </button>
+
+                        <!--/* Root category without children */-->
+                        <span class="accordion-button py-3 fw-medium text-muted" 
+                              th:if="${category.isRoot() && #lists.isEmpty(category.children)}"
+                              th:text="${category.name}">
+                        </span>
+                    </h2>
+
+                    <!--/* Collapsible content for categories with children */-->
+                    <div th:if="${!#lists.isEmpty(category.children)}"
+                         th:id="${'collapse-' + category.id}" 
+                         class="accordion-collapse collapse"
+                         th:data-bs-parent="${'#collapse-' + (category.parent != null ? category.parent.id : '')}">
+                        <div class="accordion-body p-0">
+                            <div class="ps-3" th:replace="~{::nestedCategories(${category.children})}"></div>
+                        </div>
+                    </div>
+                </div>
+            </th:block>
+        </section>
+        <footer class="text-muted small fst-italic p-4 mt-auto">© 2025 NXCOA / SEESAW. All Rights Reserved.</footer>
+    </aside>
+
+</html>
