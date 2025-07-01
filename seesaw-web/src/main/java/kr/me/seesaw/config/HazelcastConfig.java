@@ -27,20 +27,28 @@ public class HazelcastConfig {
     private final Map<String, List<String>> profilesMapper = new HashMap<>();
 
     private final List<String> localMembers = Arrays.asList(
+            "127.0.0.1:5700",
             "127.0.0.1:5701",
             "127.0.0.1:5702",
-            "127.0.0.1:5703",
-            "127.0.0.1:5704"
+            "127.0.0.1:5703"
     );
 
 /*
     private final List<String> developmentMembers = Arrays.asList(
-            "your_development_ip:5701"
+            "127.0.0.1:5700",
+            "127.0.0.1:5701",
+            "127.0.0.1:5702",
+            "127.0.0.1:5703"
     );
 */
 
+    // 클러스터링할 애플리케이션의 내부망 IP 엔트리를 넣어야함.
+    // 현재는 동일한 서버에서 클러스터링하려고 127.0.0.1로 할당함
     private final List<String> productionMembers = List.of(
-            "your_production_ip:5701"
+            "127.0.0.1:5700",
+            "127.0.0.1:5701",
+            "127.0.0.1:5702",
+            "127.0.0.1:5703"
     );
 
     private void map() {
@@ -75,7 +83,7 @@ public class HazelcastConfig {
         NetworkConfig networkConfig = config.getNetworkConfig();
 
         // 포트가 중복될 경우 자동 증가
-        networkConfig.setPort(5701).setPortCount(100).setPortAutoIncrement(true);
+        networkConfig.setPort(5700).setPortCount(100).setPortAutoIncrement(true);
 
         // TCP-IP 설정
         JoinConfig joinConfig = networkConfig.getJoin();
