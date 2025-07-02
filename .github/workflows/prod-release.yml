@@ -111,7 +111,7 @@ jobs:
         # steps 컨텍스트를 사용하여 이전 단계의 출력에 접근: https://docs.github.com/ko/actions/learn-github-actions/contexts#steps-context
         with:
           name: app-release-${{ steps.get_version.outputs.version }}
-          path: build/libs/*.jar
+          path: seesaw-web/build/libs/*.jar
           retention-days: 7
 
   deploy:
