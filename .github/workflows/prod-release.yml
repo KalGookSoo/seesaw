@@ -201,7 +201,7 @@ jobs:
           sleep 10
 
           # 애플리케이션 프로세스 확인
-          ssh $REMOTE_USER@$REMOTE_HOST "ps -ef | grep java | grep seesaw-web | grep -v grep" || {
+          ssh $REMOTE_USER@$REMOTE_HOST "pgrep -f seesaw-web > /dev/null" || {
             echo "오류: 애플리케이션 프로세스가 실행 중이지 않습니다."
             exit 1
           }
