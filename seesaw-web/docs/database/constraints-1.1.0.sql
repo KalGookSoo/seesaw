@@ -15,3 +15,5 @@ ALTER TABLE tb_article ADD CONSTRAINT fk_tb_article_parent FOREIGN KEY (parent_i
 ALTER TABLE tb_reply ADD CONSTRAINT fk_tb_reply_parent FOREIGN KEY (parent_id) REFERENCES tb_reply (id);
 ALTER TABLE tb_menu ADD CONSTRAINT fk_tb_menu_parent FOREIGN KEY (parent_id) REFERENCES tb_menu (id);
 ALTER TABLE tb_code ADD CONSTRAINT fk_tb_code_parent FOREIGN KEY (parent_id) REFERENCES tb_code (id);
+
+ALTER TABLE public.tb_role ADD CONSTRAINT uq_tb_role_name UNIQUE (name);

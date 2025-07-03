@@ -1,20 +1,20 @@
 CREATE TABLE tb_attachment
 (
-    id VARCHAR(36) NOT NULL
+    id                 VARCHAR(36) NOT NULL
         PRIMARY KEY,
-    created_by VARCHAR(255),
-    created_date TIMESTAMP(6),
-    created_ip VARCHAR(45),
-    last_modified_by VARCHAR(255),
+    created_by         VARCHAR(255),
+    created_date       TIMESTAMP(6),
+    created_ip         VARCHAR(45),
+    last_modified_by   VARCHAR(255),
     last_modified_date TIMESTAMP(6),
-    last_modified_ip VARCHAR(45),
-    version INTEGER NOT NULL,
-    mime_type VARCHAR(255),
-    name VARCHAR(255),
-    original_name VARCHAR(255),
-    path_name VARCHAR(255),
-    reference_id VARCHAR(36),
-    size BIGINT NOT NULL
+    last_modified_ip   VARCHAR(45),
+    version            INTEGER     NOT NULL,
+    mime_type          VARCHAR(255),
+    name               VARCHAR(255),
+    original_name      VARCHAR(255),
+    path_name          VARCHAR(255),
+    reference_id       VARCHAR(36),
+    size               BIGINT      NOT NULL
 );
 
 COMMENT ON TABLE tb_attachment IS '첨부파일';
@@ -52,21 +52,21 @@ ALTER TABLE tb_attachment
 
 CREATE TABLE tb_code
 (
-    id VARCHAR(36) NOT NULL
+    id                 VARCHAR(36) NOT NULL
         PRIMARY KEY,
-    created_by VARCHAR(255),
-    created_date TIMESTAMP(6),
-    created_ip VARCHAR(45),
-    last_modified_by VARCHAR(255),
+    created_by         VARCHAR(255),
+    created_date       TIMESTAMP(6),
+    created_ip         VARCHAR(45),
+    last_modified_by   VARCHAR(255),
     last_modified_date TIMESTAMP(6),
-    last_modified_ip VARCHAR(45),
-    version INTEGER NOT NULL,
-    parent_id VARCHAR(36)
+    last_modified_ip   VARCHAR(45),
+    version            INTEGER     NOT NULL,
+    parent_id          VARCHAR(36)
         CONSTRAINT fk_tb_code_parent
             REFERENCES tb_code,
-    description VARCHAR(255),
-    name VARCHAR(255),
-    sequence INTEGER
+    description        VARCHAR(255),
+    name               VARCHAR(255),
+    sequence           INTEGER
 );
 
 COMMENT ON TABLE tb_code IS '코드';
@@ -100,21 +100,21 @@ ALTER TABLE tb_code
 
 CREATE TABLE tb_menu
 (
-    id VARCHAR(36) NOT NULL
+    id                 VARCHAR(36) NOT NULL
         PRIMARY KEY,
-    created_by VARCHAR(255),
-    created_date TIMESTAMP(6),
-    created_ip VARCHAR(45),
-    last_modified_by VARCHAR(255),
+    created_by         VARCHAR(255),
+    created_date       TIMESTAMP(6),
+    created_ip         VARCHAR(45),
+    last_modified_by   VARCHAR(255),
     last_modified_date TIMESTAMP(6),
-    last_modified_ip VARCHAR(45),
-    version INTEGER NOT NULL,
-    parent_id VARCHAR(36)
+    last_modified_ip   VARCHAR(45),
+    version            INTEGER     NOT NULL,
+    parent_id          VARCHAR(36)
         CONSTRAINT fk_tb_menu_parent
             REFERENCES tb_menu,
-    name VARCHAR(255),
-    sequence INTEGER,
-    uri VARCHAR(255)
+    name               VARCHAR(255),
+    sequence           INTEGER,
+    uri                VARCHAR(255)
 );
 
 COMMENT ON TABLE tb_menu IS '메뉴';
@@ -148,11 +148,11 @@ ALTER TABLE tb_menu
 
 CREATE TABLE tb_remember_me_token
 (
-    series VARCHAR(255) NOT NULL
+    series    VARCHAR(255) NOT NULL
         PRIMARY KEY,
     last_used TIMESTAMP(6) NOT NULL,
-    token VARCHAR(64) NOT NULL,
-    username VARCHAR(64) NOT NULL
+    token     VARCHAR(64)  NOT NULL,
+    username  VARCHAR(64)  NOT NULL
 );
 
 ALTER TABLE tb_remember_me_token
@@ -160,17 +160,19 @@ ALTER TABLE tb_remember_me_token
 
 CREATE TABLE tb_role
 (
-    id VARCHAR(36) NOT NULL
+    id                 VARCHAR(36) NOT NULL
         PRIMARY KEY,
-    created_by VARCHAR(255),
-    created_date TIMESTAMP(6),
-    created_ip VARCHAR(45),
-    last_modified_by VARCHAR(255),
+    created_by         VARCHAR(255),
+    created_date       TIMESTAMP(6),
+    created_ip         VARCHAR(45),
+    last_modified_by   VARCHAR(255),
     last_modified_date TIMESTAMP(6),
-    last_modified_ip VARCHAR(45),
-    version INTEGER NOT NULL,
-    alias VARCHAR(255),
-    name VARCHAR(255)
+    last_modified_ip   VARCHAR(45),
+    version            INTEGER     NOT NULL,
+    alias              VARCHAR(255),
+    name               VARCHAR(255)
+        CONSTRAINT uq_tb_role_name
+            UNIQUE
 );
 
 COMMENT ON TABLE tb_role IS '역할';
@@ -200,19 +202,19 @@ ALTER TABLE tb_role
 
 CREATE TABLE tb_menu_role
 (
-    id VARCHAR(36) NOT NULL
+    id                 VARCHAR(36) NOT NULL
         PRIMARY KEY,
-    created_by VARCHAR(255),
-    created_date TIMESTAMP(6),
-    created_ip VARCHAR(45),
-    last_modified_by VARCHAR(255),
+    created_by         VARCHAR(255),
+    created_date       TIMESTAMP(6),
+    created_ip         VARCHAR(45),
+    last_modified_by   VARCHAR(255),
     last_modified_date TIMESTAMP(6),
-    last_modified_ip VARCHAR(45),
-    version INTEGER NOT NULL,
-    menu_id VARCHAR(36)
+    last_modified_ip   VARCHAR(45),
+    version            INTEGER     NOT NULL,
+    menu_id            VARCHAR(36)
         CONSTRAINT fk_tb_menu_role
             REFERENCES tb_menu,
-    role_id VARCHAR(36)
+    role_id            VARCHAR(36)
         CONSTRAINT fk_tb_role_menu
             REFERENCES tb_role
 );
@@ -240,30 +242,30 @@ ALTER TABLE tb_menu_role
 
 CREATE TABLE tb_site
 (
-    id VARCHAR(36) NOT NULL
+    id                    VARCHAR(36) NOT NULL
         PRIMARY KEY,
-    created_by VARCHAR(255),
-    created_date TIMESTAMP(6),
-    created_ip VARCHAR(45),
-    last_modified_by VARCHAR(255),
-    last_modified_date TIMESTAMP(6),
-    last_modified_ip VARCHAR(45),
-    version INTEGER NOT NULL,
-    parent_id VARCHAR(36)
+    created_by            VARCHAR(255),
+    created_date          TIMESTAMP(6),
+    created_ip            VARCHAR(45),
+    last_modified_by      VARCHAR(255),
+    last_modified_date    TIMESTAMP(6),
+    last_modified_ip      VARCHAR(45),
+    version               INTEGER     NOT NULL,
+    parent_id             VARCHAR(36)
         CONSTRAINT fk_tb_site_parent
             REFERENCES tb_site,
-    address VARCHAR(255),
-    zipcode VARCHAR(255),
-    contact_number VARCHAR(255),
-    content TEXT,
-    description VARCHAR(255),
-    distribution_code VARCHAR(255),
-    domain_name VARCHAR(255),
-    image_exposed BOOLEAN NOT NULL,
-    intro VARCHAR(255),
-    name VARCHAR(255),
-    search_engine_exposed BOOLEAN NOT NULL,
-    tags VARCHAR(255)
+    address               VARCHAR(255),
+    zipcode               VARCHAR(255),
+    contact_number        VARCHAR(255),
+    content               TEXT,
+    description           VARCHAR(255),
+    distribution_code     VARCHAR(255),
+    domain_name           VARCHAR(255),
+    image_exposed         BOOLEAN     NOT NULL,
+    intro                 VARCHAR(255),
+    name                  VARCHAR(255),
+    search_engine_exposed BOOLEAN     NOT NULL,
+    tags                  VARCHAR(255)
 );
 
 COMMENT ON TABLE tb_site IS '사이트';
@@ -313,30 +315,31 @@ ALTER TABLE tb_site
 
 CREATE TABLE tb_category
 (
-    id VARCHAR(36) NOT NULL
+    id                 VARCHAR(36) NOT NULL
         PRIMARY KEY,
-    created_by VARCHAR(255),
-    created_date TIMESTAMP(6),
-    created_ip VARCHAR(45),
-    last_modified_by VARCHAR(255),
+    created_by         VARCHAR(255),
+    created_date       TIMESTAMP(6),
+    created_ip         VARCHAR(45),
+    last_modified_by   VARCHAR(255),
     last_modified_date TIMESTAMP(6),
-    last_modified_ip VARCHAR(45),
-    version INTEGER NOT NULL,
-    parent_id VARCHAR(36)
+    last_modified_ip   VARCHAR(45),
+    version            INTEGER     NOT NULL,
+    parent_id          VARCHAR(36)
         CONSTRAINT fk_tb_category_parent
             REFERENCES tb_category,
-    description VARCHAR(255),
-    exposed BOOLEAN NOT NULL,
-    name VARCHAR(255),
-    sequence INTEGER,
-    site_exposed BOOLEAN NOT NULL,
-    site_exposed_order INTEGER NOT NULL,
-    site_id VARCHAR(36)
+    description        VARCHAR(255),
+    exposed            BOOLEAN     NOT NULL,
+    name               VARCHAR(255),
+    sequence           INTEGER,
+    site_exposed       BOOLEAN     NOT NULL,
+    site_exposed_order INTEGER     NOT NULL,
+    site_id            VARCHAR(36)
         CONSTRAINT fk_tb_category_site
             REFERENCES tb_site,
-    type VARCHAR(255)
+    type               VARCHAR(255)
         CONSTRAINT tb_category_type_check
-            CHECK ((type)::TEXT = ANY ((ARRAY ['NONE'::CHARACTER VARYING, 'STATIC_CONTENT'::CHARACTER VARYING, 'BOARD'::CHARACTER VARYING, 'QNA'::CHARACTER VARYING, 'SCHEDULE'::CHARACTER VARYING, 'STORE'::CHARACTER VARYING, 'BUSINESS'::CHARACTER VARYING])::TEXT[]))
+            CHECK ((type)::TEXT = ANY
+        (ARRAY [('NONE'::CHARACTER VARYING)::TEXT, ('STATIC_CONTENT'::CHARACTER VARYING)::TEXT, ('BOARD'::CHARACTER VARYING)::TEXT, ('QNA'::CHARACTER VARYING)::TEXT, ('SCHEDULE'::CHARACTER VARYING)::TEXT, ('STORE'::CHARACTER VARYING)::TEXT, ('BUSINESS'::CHARACTER VARYING)::TEXT]))
     );
 
 COMMENT ON TABLE tb_category IS '카테고리';
@@ -380,29 +383,30 @@ ALTER TABLE tb_category
 
 CREATE TABLE tb_article
 (
-    id VARCHAR(36) NOT NULL
+    id                 VARCHAR(36) NOT NULL
         PRIMARY KEY,
-    created_by VARCHAR(255),
-    created_date TIMESTAMP(6),
-    created_ip VARCHAR(45),
-    last_modified_by VARCHAR(255),
+    created_by         VARCHAR(255),
+    created_date       TIMESTAMP(6),
+    created_ip         VARCHAR(45),
+    last_modified_by   VARCHAR(255),
     last_modified_date TIMESTAMP(6),
-    last_modified_ip VARCHAR(45),
-    version INTEGER NOT NULL,
-    parent_id VARCHAR(36)
+    last_modified_ip   VARCHAR(45),
+    version            INTEGER     NOT NULL,
+    parent_id          VARCHAR(36)
         CONSTRAINT fk_tb_article_parent
             REFERENCES tb_article,
-    category_id VARCHAR(36)
+    category_id        VARCHAR(36)
         CONSTRAINT fk_tb_article_category
             REFERENCES tb_category,
-    content TEXT,
-    exposed BOOLEAN NOT NULL,
-    fixed BOOLEAN NOT NULL,
-    fixed_order INTEGER,
-    title VARCHAR(255),
-    type VARCHAR(255)
+    content            TEXT,
+    exposed            BOOLEAN     NOT NULL,
+    fixed              BOOLEAN     NOT NULL,
+    fixed_order        INTEGER,
+    title              VARCHAR(255),
+    type               VARCHAR(255)
         CONSTRAINT tb_article_type_check
-            CHECK ((type)::TEXT = ANY ((ARRAY ['MAP'::CHARACTER VARYING, 'HTML'::CHARACTER VARYING, 'CAROUSEL'::CHARACTER VARYING, 'BUTTON_GROUP'::CHARACTER VARYING, 'IMAGE'::CHARACTER VARYING, 'TABLE'::CHARACTER VARYING, 'VIDEO'::CHARACTER VARYING])::TEXT[]))
+            CHECK ((type)::TEXT = ANY
+        (ARRAY [('MAP'::CHARACTER VARYING)::TEXT, ('HTML'::CHARACTER VARYING)::TEXT, ('CAROUSEL'::CHARACTER VARYING)::TEXT, ('BUTTON_GROUP'::CHARACTER VARYING)::TEXT, ('IMAGE'::CHARACTER VARYING)::TEXT, ('TABLE'::CHARACTER VARYING)::TEXT, ('VIDEO'::CHARACTER VARYING)::TEXT]))
     );
 
 COMMENT ON TABLE tb_article IS '게시글';
@@ -444,21 +448,22 @@ ALTER TABLE tb_article
 
 CREATE TABLE tb_notification
 (
-    id VARCHAR(36) NOT NULL
+    id                 VARCHAR(36) NOT NULL
         PRIMARY KEY,
-    created_by VARCHAR(255),
-    created_date TIMESTAMP(6),
-    created_ip VARCHAR(45),
-    last_modified_by VARCHAR(255),
+    created_by         VARCHAR(255),
+    created_date       TIMESTAMP(6),
+    created_ip         VARCHAR(45),
+    last_modified_by   VARCHAR(255),
     last_modified_date TIMESTAMP(6),
-    last_modified_ip VARCHAR(45),
-    version INTEGER NOT NULL,
-    category_id VARCHAR(36)
+    last_modified_ip   VARCHAR(45),
+    version            INTEGER     NOT NULL,
+    category_id        VARCHAR(36)
         CONSTRAINT fk_tb_notification_category
             REFERENCES tb_category,
-    type VARCHAR(255)
+    type               VARCHAR(255)
         CONSTRAINT tb_notification_type_check
-            CHECK ((type)::TEXT = ANY ((ARRAY ['TOKTOK'::CHARACTER VARYING, 'SMS'::CHARACTER VARYING, 'EMAIL'::CHARACTER VARYING])::TEXT[]))
+            CHECK ((type)::TEXT = ANY
+        (ARRAY [('TOKTOK'::CHARACTER VARYING)::TEXT, ('SMS'::CHARACTER VARYING)::TEXT, ('EMAIL'::CHARACTER VARYING)::TEXT]))
     );
 
 COMMENT ON TABLE tb_notification IS '알림';
@@ -488,23 +493,23 @@ ALTER TABLE tb_notification
 
 CREATE TABLE tb_reply
 (
-    id VARCHAR(36) NOT NULL
+    id                 VARCHAR(36) NOT NULL
         PRIMARY KEY,
-    created_by VARCHAR(255),
-    created_date TIMESTAMP(6),
-    created_ip VARCHAR(45),
-    last_modified_by VARCHAR(255),
+    created_by         VARCHAR(255),
+    created_date       TIMESTAMP(6),
+    created_ip         VARCHAR(45),
+    last_modified_by   VARCHAR(255),
     last_modified_date TIMESTAMP(6),
-    last_modified_ip VARCHAR(45),
-    version INTEGER NOT NULL,
-    parent_id VARCHAR(36)
+    last_modified_ip   VARCHAR(45),
+    version            INTEGER     NOT NULL,
+    parent_id          VARCHAR(36)
         CONSTRAINT fk_tb_reply_parent
             REFERENCES tb_reply,
-    article_id VARCHAR(36)
+    article_id         VARCHAR(36)
         CONSTRAINT fk_tb_reply_article
             REFERENCES tb_article,
-    content TEXT,
-    exposed BOOLEAN NOT NULL
+    content            TEXT,
+    exposed            BOOLEAN     NOT NULL
 );
 
 COMMENT ON TABLE tb_reply IS '댓글';
@@ -538,24 +543,24 @@ ALTER TABLE tb_reply
 
 CREATE TABLE tb_user
 (
-    id VARCHAR(36) NOT NULL
+    id                       VARCHAR(36)  NOT NULL
         PRIMARY KEY,
-    created_by VARCHAR(255),
-    created_date TIMESTAMP(6),
-    created_ip VARCHAR(45),
-    last_modified_by VARCHAR(255),
-    last_modified_date TIMESTAMP(6),
-    last_modified_ip VARCHAR(45),
-    version INTEGER NOT NULL,
-    contact_number VARCHAR(255),
+    created_by               VARCHAR(255),
+    created_date             TIMESTAMP(6),
+    created_ip               VARCHAR(45),
+    last_modified_by         VARCHAR(255),
+    last_modified_date       TIMESTAMP(6),
+    last_modified_ip         VARCHAR(45),
+    version                  INTEGER      NOT NULL,
+    contact_number           VARCHAR(255),
     credentials_expired_date TIMESTAMP(6),
-    email_domain VARCHAR(255),
-    email_id VARCHAR(255),
-    expired_date TIMESTAMP(6),
-    locked_date TIMESTAMP(6),
-    name VARCHAR(255),
-    password VARCHAR(255),
-    username VARCHAR(255) NOT NULL
+    email_domain             VARCHAR(255),
+    email_id                 VARCHAR(255),
+    expired_date             TIMESTAMP(6),
+    locked_date              TIMESTAMP(6),
+    name                     VARCHAR(255),
+    password                 VARCHAR(255),
+    username                 VARCHAR(255) NOT NULL
         CONSTRAINT uk4wv83hfajry5tdoamn8wsqa6x
             UNIQUE
 );
@@ -599,22 +604,22 @@ ALTER TABLE tb_user
 
 CREATE TABLE tb_role_mapping
 (
-    id VARCHAR(36) NOT NULL
+    id                 VARCHAR(36) NOT NULL
         PRIMARY KEY,
-    created_by VARCHAR(255),
-    created_date TIMESTAMP(6),
-    created_ip VARCHAR(45),
-    last_modified_by VARCHAR(255),
+    created_by         VARCHAR(255),
+    created_date       TIMESTAMP(6),
+    created_ip         VARCHAR(45),
+    last_modified_by   VARCHAR(255),
     last_modified_date TIMESTAMP(6),
-    last_modified_ip VARCHAR(45),
-    version INTEGER NOT NULL,
-    role_id VARCHAR(36)
+    last_modified_ip   VARCHAR(45),
+    version            INTEGER     NOT NULL,
+    role_id            VARCHAR(36)
         CONSTRAINT fk_tb_mapping_role
             REFERENCES tb_role,
-    site_id VARCHAR(36)
+    site_id            VARCHAR(36)
         CONSTRAINT fk_tb_mapping_site
             REFERENCES tb_site,
-    user_id VARCHAR(36)
+    user_id            VARCHAR(36)
         CONSTRAINT fk_tb_mapping_user
             REFERENCES tb_user
 );
@@ -642,16 +647,16 @@ ALTER TABLE tb_role_mapping
 
 CREATE TABLE tb_view
 (
-    id VARCHAR(36) NOT NULL
+    id                 VARCHAR(36) NOT NULL
         PRIMARY KEY,
-    created_by VARCHAR(255),
-    created_date TIMESTAMP(6),
-    created_ip VARCHAR(45),
-    last_modified_by VARCHAR(255),
+    created_by         VARCHAR(255),
+    created_date       TIMESTAMP(6),
+    created_ip         VARCHAR(45),
+    last_modified_by   VARCHAR(255),
     last_modified_date TIMESTAMP(6),
-    last_modified_ip VARCHAR(45),
-    version INTEGER NOT NULL,
-    article_id VARCHAR(36)
+    last_modified_ip   VARCHAR(45),
+    version            INTEGER     NOT NULL,
+    article_id         VARCHAR(36)
         CONSTRAINT fk_tb_view_article
             REFERENCES tb_article
 );
@@ -681,17 +686,17 @@ ALTER TABLE tb_view
 
 CREATE TABLE tb_vote
 (
-    id VARCHAR(36) NOT NULL
+    id                 VARCHAR(36) NOT NULL
         PRIMARY KEY,
-    created_by VARCHAR(255),
-    created_date TIMESTAMP(6),
-    created_ip VARCHAR(45),
-    last_modified_by VARCHAR(255),
+    created_by         VARCHAR(255),
+    created_date       TIMESTAMP(6),
+    created_ip         VARCHAR(45),
+    last_modified_by   VARCHAR(255),
     last_modified_date TIMESTAMP(6),
-    last_modified_ip VARCHAR(45),
-    version INTEGER NOT NULL,
-    approved BOOLEAN NOT NULL,
-    reference_id VARCHAR(36)
+    last_modified_ip   VARCHAR(45),
+    version            INTEGER     NOT NULL,
+    approved           BOOLEAN     NOT NULL,
+    reference_id       VARCHAR(36)
 );
 
 COMMENT ON TABLE tb_vote IS '투표';
@@ -717,5 +722,48 @@ COMMENT ON COLUMN tb_vote.approved IS '찬성여부';
 COMMENT ON COLUMN tb_vote.reference_id IS '참조 식별자';
 
 ALTER TABLE tb_vote
+    OWNER TO seesaw_admin;
+
+CREATE TABLE tb_permission
+(
+    id                 VARCHAR(36) NOT NULL
+        PRIMARY KEY,
+    created_by         VARCHAR(255),
+    created_date       TIMESTAMP(6),
+    created_ip         VARCHAR(45),
+    last_modified_by   VARCHAR(255),
+    last_modified_date TIMESTAMP(6),
+    last_modified_ip   VARCHAR(45),
+    version            INTEGER     NOT NULL,
+    mask               INTEGER     NOT NULL,
+    role_id            VARCHAR(36),
+    target_id          VARCHAR(36)
+);
+
+COMMENT ON TABLE tb_permission IS '권한';
+
+COMMENT ON COLUMN tb_permission.id IS '식별자';
+
+COMMENT ON COLUMN tb_permission.created_by IS '생성자';
+
+COMMENT ON COLUMN tb_permission.created_date IS '생성일시';
+
+COMMENT ON COLUMN tb_permission.created_ip IS '생성 IP';
+
+COMMENT ON COLUMN tb_permission.last_modified_by IS '수정자';
+
+COMMENT ON COLUMN tb_permission.last_modified_date IS '수정일시';
+
+COMMENT ON COLUMN tb_permission.last_modified_ip IS '수정 IP';
+
+COMMENT ON COLUMN tb_permission.version IS '버전';
+
+COMMENT ON COLUMN tb_permission.mask IS '비트마스크';
+
+COMMENT ON COLUMN tb_permission.role_id IS '역할 식별자';
+
+COMMENT ON COLUMN tb_permission.target_id IS '대상 식별자';
+
+ALTER TABLE tb_permission
     OWNER TO seesaw_admin;
 
