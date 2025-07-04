@@ -1,13 +1,7 @@
 package kr.me.seesaw.service;
 
-import kr.me.seesaw.domain.Article;
-import kr.me.seesaw.domain.BaseEntity;
-import kr.me.seesaw.domain.Category;
-import kr.me.seesaw.domain.Site;
-import kr.me.seesaw.repository.ArticleSearchRepository;
-import kr.me.seesaw.repository.AttachmentRepository;
-import kr.me.seesaw.repository.CategoryRepository;
-import kr.me.seesaw.repository.SiteRepository;
+import kr.me.seesaw.domain.*;
+import kr.me.seesaw.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
@@ -31,6 +25,10 @@ public class DefaultSiteService implements SiteService {
     private final CategoryRepository categoryRepository;
 
     private final ArticleSearchRepository articleSearchRepository;
+
+    private final RoleMappingRepository roleMappingRepository;
+
+    private final UserRepository userRepository;
 
     @Cacheable(value = "siteCache", key = "#domainName")
     @Override
@@ -84,5 +82,20 @@ public class DefaultSiteService implements SiteService {
         });
 
         return site;
+    }
+
+    @Override
+    public List<Site> getOwnSites(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalStateException("인증된 사용자를 찾을 수 없습니다"));
+
+        // 계정 식별자로 roleMappingRepository.findAllByUserId로 계정에 매핑된 siteId 목록 추출
+        List<RoleMapping> roleMappings = roleMappingRepository.findAllByUserId(user.getId());
+        List<String> siteIds = roleMappings.stream()
+                .map(RoleMapping::getSiteId)
+                .distinct()
+                .toList();
+
+        return siteRepository.findAllByIdIn(siteIds);
     }
 }

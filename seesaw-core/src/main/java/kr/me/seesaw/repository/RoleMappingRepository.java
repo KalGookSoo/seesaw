@@ -13,4 +13,6 @@ public interface RoleMappingRepository extends Repository<RoleMapping, String> {
 
     List<RoleMapping> findAllByUserIdAndSiteId(String userId, String siteId);
 
+    List<RoleMapping> findAllByUserIdAndRoleId(String userId, String roleId);
+
 }
