@@ -21,6 +21,7 @@ export function VersionSwitcher({
   defaultVersion: string
 }) {
   const [selectedVersion, setSelectedVersion] = React.useState(defaultVersion)
+  const username: string = 'look3915'
 
   return (
     <SidebarMenu>
@@ -35,7 +36,7 @@ export function VersionSwitcher({
                 <GalleryVerticalEnd className="size-4" />
               </div>
               <div className="flex flex-col gap-0.5 leading-none">
-                <span className="font-medium">@계정명@</span>
+                <span className="font-medium">{username}</span>
                 <span className="">{selectedVersion}</span>
               </div>
               <ChevronsUpDown className="ml-auto" />

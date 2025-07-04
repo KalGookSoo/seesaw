@@ -47,7 +47,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import type { User } from '@/entities/User.ts'
+import type { User } from '../../../User.ts'
 
 
 const columns: ColumnDef<User>[] = [

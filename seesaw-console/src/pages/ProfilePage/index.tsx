@@ -1,8 +1,15 @@
 import React from 'react';
-import { useAuth } from '@/features/auth/model/hooks';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectUser, signOut } from '@/app/store/authenticationSlice';
 
 const ProfilePage: React.FC = () => {
-  const { user, logout } = useAuth();
+  const user = useSelector(selectUser);
+  const dispatch = useDispatch();
+
+  // 로그아웃 함수
+  const logout = () => {
+    dispatch(signOut());
+  };
 
   if (!user) {
     return <div>사용자 정보를 불러오는 중...</div>;
