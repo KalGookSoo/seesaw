@@ -16,6 +16,8 @@
     <meta property="og:description" content="페이지 설명" th:content="${page.content.get(0).plainContent}">
     <meta property="og:image" content="페이지 썸네일 이미지 주소" th:if="${!page.content.get(0).inlineImages.isEmpty()}"
           th:content="@{|${REQUEST_HOST}/api/attachments/${page.content.get(0).inlineImages.get(0).id}|}">
+    <meta property="og:image" content="페이지 썸네일 이미지 주소" th:if="${page.content.get(0).inlineImages.isEmpty() and SITE_CONTEXT.profileImage != null}"
+          th:content="@{|${REQUEST_HOST}/api/attachments/${SITE_CONTEXT.profileImage.id}|}">
     <meta property="og:url" content="페이지 주소" th:content="${REQUEST_URL}">
 
     <meta property="twitter:card" content="summary">
