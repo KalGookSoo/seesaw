@@ -87,6 +87,60 @@ public class Site extends AbstractHierarchical<Site> implements Hierarchical<Sit
     @JsonManagedReference
     private List<Attachment> attachments = new ArrayList<>();
 
+    public static Site create(
+            String name,
+            String domainName,
+            String description,
+            String distributionCode,
+            boolean earchEngineExposed,
+            boolean mageExposed,
+            String tags,
+            Address address,
+            String contactNumber,
+            String intro,
+            String content
+    ) {
+        Site site = new Site();
+        site.name = name;
+        site.domainName = domainName;
+        site.description = description;
+        site.distributionCode = distributionCode;
+        site.searchEngineExposed = earchEngineExposed;
+        site.imageExposed = mageExposed;
+        site.tags = tags;
+        site.address = address;
+        site.contactNumber = contactNumber;
+        site.intro = intro;
+        site.content = content;
+        return site;
+    }
+
+    public void update(
+            String name,
+            String domainName,
+            String description,
+            String distributionCode,
+            boolean searchEngineExposed,
+            boolean imageExposed,
+            String tags,
+            Address address,
+            String contactNumber,
+            String intro,
+            String content
+    ) {
+        this.name = name;
+        this.domainName = domainName;
+        this.description = description;
+        this.distributionCode = distributionCode;
+        this.searchEngineExposed = searchEngineExposed;
+        this.imageExposed = imageExposed;
+        this.tags = tags;
+        this.address = address;
+        this.contactNumber = contactNumber;
+        this.intro = intro;
+        this.content = content;
+    }
+
     public Address getAddress() {
         return address == null ? Address.empty() : address;
     }

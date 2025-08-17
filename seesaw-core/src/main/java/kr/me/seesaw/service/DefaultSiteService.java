@@ -1,5 +1,7 @@
 package kr.me.seesaw.service;
 
+import jakarta.persistence.EntityManager;
+import kr.me.seesaw.command.CreateSiteCommand;
 import kr.me.seesaw.domain.*;
 import kr.me.seesaw.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,8 @@ import java.util.stream.Collectors;
 @Service
 public class DefaultSiteService implements SiteService {
 
+    private final EntityManager entitymanager;
+
     private final SiteRepository siteRepository;
 
     private final AttachmentRepository attachmentRepository;
@@ -30,15 +34,26 @@ public class DefaultSiteService implements SiteService {
 
     private final UserRepository userRepository;
 
+    @Transactional(readOnly = true)
+    @Override
+    public Site getSiteById(String id) {
+        return siteRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("사이트를 찾을 수 없습니다. id: " + id));
+    }
+
+    @Transactional(readOnly = true)
     @Cacheable(value = "siteCache", key = "#domainName")
     @Override
     public Site getSite(String domainName) {
-        return siteRepository.findByDomainName(domainName).orElseThrow(NoSuchElementException::new);
+        return siteRepository.findByDomainName(domainName)
+                .orElseThrow(() -> new NoSuchElementException("사이트를 찾을 수 없습니다. domainName: " + domainName));
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Site getSiteContext(String domainName) {
-        Site site = siteRepository.findByDomainName(domainName).orElseThrow(NoSuchElementException::new);
+        Site site = siteRepository.findByDomainName(domainName)
+                .orElseThrow(() -> new NoSuchElementException("사이트를 찾을 수 없습니다. domainName: " + domainName));
         // 프로필 이미지, 배경 이미지 조인
         // TODO 서비스로 만들어 캐싱할 것
         attachmentRepository.findAllByReferenceIdIn(Collections.singletonList(site.getId()))
@@ -84,10 +99,11 @@ public class DefaultSiteService implements SiteService {
         return site;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<Site> getOwnSites(String username) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalStateException("인증된 사용자를 찾을 수 없습니다"));
+                .orElseThrow(() -> new NoSuchElementException("계정을 찾을 수 없습니다. username: " + username));
 
         // 계정 식별자로 roleMappingRepository.findAllByUserId로 계정에 매핑된 siteId 목록 추출
         List<RoleMapping> roleMappings = roleMappingRepository.findAllByUserId(user.getId());
@@ -98,4 +114,68 @@ public class DefaultSiteService implements SiteService {
 
         return siteRepository.findAllByIdIn(siteIds);
     }
+
+    @Override
+    public Site createSite(CreateSiteCommand command) {
+        //
+        Site site = Site.create(
+                command.getName(),
+                command.getDomainName(),
+                command.getDescription(),
+                command.getDistributionCode(),
+                command.isSearchEngineExposed(),
+                command.isImageExposed(),
+                command.getTags(),
+                command.getAddress(),
+                command.getContactNumber(),
+                command.getIntro(),
+                command.getContent()
+        );
+        return siteRepository.save(site);
+    }
+
+    @Override
+    public Site updateSite(String id, CreateSiteCommand command) {
+        Site site = entitymanager.getReference(Site.class, id);
+        if (site == null) {
+            throw new NoSuchElementException("사이트를 찾을 수 없습니다. id: " + id);
+        }
+        site.update(
+                command.getName(),
+                command.getDomainName(),
+                command.getDescription(),
+                command.getDistributionCode(),
+                command.isSearchEngineExposed(),
+                command.isImageExposed(),
+                command.getTags(),
+                command.getAddress(),
+                command.getContactNumber(),
+                command.getIntro(),
+                command.getContent()
+        );
+        entitymanager.persist(site);
+
+        // 첨부파일
+        if (command.hasProfileImage()) {
+            // 기존 파일 조회 및 삭제
+
+            // 파일 생성
+            List<String> referenceIds = Collections.singletonList(site.getId());
+            List<Attachment> attachments = attachmentRepository.findAllByReferenceIdIn(referenceIds);
+            if (!attachments.isEmpty()) {
+                attachmentRepository.deleteAll(attachments);
+            }
+
+            // 파일 영속화
+
+        }
+
+        return site;
+    }
+
+    @Override
+    public void deleteSite(String id) {
+
+    }
+
 }

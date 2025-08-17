@@ -10,6 +10,8 @@ public interface SiteRepository extends Repository<Site, String> {
 
     Site save(Site site);
 
+    Optional<Site> findById(String id);
+
     Optional<Site> findByDomainName(String domainName);
 
     List<Site> findAllByIdIn(List<String> ids);
