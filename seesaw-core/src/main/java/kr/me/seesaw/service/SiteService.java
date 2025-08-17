@@ -9,7 +9,7 @@ public interface SiteService {
 
     Site getSiteById(String id);
 
-    Site getSite(String domainName);
+    Site getSiteByDomainName(String domainName);
 
     Site getSiteContext(String domainName);
 

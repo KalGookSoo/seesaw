@@ -44,7 +44,7 @@ public class DefaultSiteService implements SiteService {
     @Transactional(readOnly = true)
     @Cacheable(value = "siteCache", key = "#domainName")
     @Override
-    public Site getSite(String domainName) {
+    public Site getSiteByDomainName(String domainName) {
         return siteRepository.findByDomainName(domainName)
                 .orElseThrow(() -> new NoSuchElementException("사이트를 찾을 수 없습니다. domainName: " + domainName));
     }
