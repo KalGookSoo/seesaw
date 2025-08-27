@@ -40,6 +40,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(message);
     }
 
+    @ExceptionHandler(value = NoSuchElementException.class, produces = MediaType.TEXT_HTML_VALUE)
+    public String handleNoSuchElementExceptionHtml(NoSuchElementException e) {
+        logger.error(e.getMessage());
+        return "error/404";
+    }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
         logger.error(e.getMessage());

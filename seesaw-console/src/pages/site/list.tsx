@@ -55,7 +55,6 @@ export default function SiteList() {
   const [distributionSecondDepthId, setDistributionSecondDepthId] = useState(null)
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    debugger
   }
 
   const handleChange = (currentDepth: number) => (value: string) => {

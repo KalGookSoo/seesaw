@@ -1,5 +1,6 @@
 package kr.me.seesaw.security;
 
+import kr.me.seesaw.core.authentication.PrincipalProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,11 +12,15 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.config.annotation.web.configurers.CorsConfigurer;
-import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
+import org.springframework.security.config.annotation.web.configurers.SessionManagementConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,18 +32,31 @@ public class SecurityConfig {
 
     private final String secretKey;
 
-    public SecurityConfig(@Value("${jwt.secret.key}") String secretKey) {
+    private final RequestMappingHandlerMapping requestMappingHandlerMapping;
+
+    public SecurityConfig(@Value("${jwt.secret.key}") String secretKey, RequestMappingHandlerMapping requestMappingHandlerMapping) {
         this.secretKey = secretKey;
+        this.requestMappingHandlerMapping = requestMappingHandlerMapping;
     }
 
     @Bean
-    public AuthenticationSuccessHandler authenticationSuccessHandler() {
-        return new JwtAuthenticationSuccessHandler(jwtTokenProvider());
-    }
-
-    @Bean
-    JwtTokenProvider jwtTokenProvider() {
+    public JwtTokenProvider jwtTokenProvider() {
         return new JwtTokenProvider(secretKey);
+    }
+
+    @Bean
+    public PrincipalProvider principalProvider() {
+        return new HeaderPrincipalProvider(jwtTokenProvider());
+    }
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter(principalProvider(), requestMappingHandlerMapping);
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -46,7 +64,11 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable);
         http.cors(this::handleCorsPolicies);
         http.authorizeHttpRequests(this::handleAuthorizeHttpRequests);
-        http.formLogin(this::handleFormLogin);
+        http.sessionManagement(this::handleSeesionManagement);
+
+        // JWT 인증 필터 추가
+        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
@@ -63,20 +85,15 @@ public class SecurityConfig {
     }
 
     private void handleAuthorizeHttpRequests(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry config) {
-        config.requestMatchers(new AntPathRequestMatcher("/actuator/**")).hasRole("ADMIN")
-                .requestMatchers(
-                        new AntPathRequestMatcher("/swagger-ui/**"),
-                        new AntPathRequestMatcher("/swagger-ui.html"),
-                        new AntPathRequestMatcher("/v3/api-docs/**")
-                ).permitAll()
+        config.requestMatchers(new AntPathRequestMatcher("/favicon.ico")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/actuator/health")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/actuator/**")).hasRole("ADMIN")
                 .anyRequest()
                 .permitAll();
     }
 
-    private void handleFormLogin(FormLoginConfigurer<HttpSecurity> httpSecurityFormLoginConfigurer) {
-        httpSecurityFormLoginConfigurer.loginProcessingUrl("/api/sign-in")
-                .successHandler(authenticationSuccessHandler())
-                .failureUrl("/api/sign-in?error");
+    private void handleSeesionManagement(SessionManagementConfigurer<HttpSecurity> httpSecuritySessionManagementConfigurer) {
+        httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
 }
