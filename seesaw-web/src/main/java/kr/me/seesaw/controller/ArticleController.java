@@ -74,6 +74,7 @@ public class ArticleController {
             @PageableDefault(size = 1, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable,
             Model model
     ) {
+        // TODO 공지사항 글은 이전글 다음글 참조를 없애는 게 좋지 않을까
         // 공지사항은 쿼리스트링에 게시글 식별자를 따로 받는다. 페이지와 상관없이 항상 고정되어 출력되기 때문에 이전글, 다음글 참조를 식별하기 위해 페이지 번호를 조회한다.
         if (search.getId() != null) {
             Sort sort = Sort.by(Sort.Order.desc("createdDate"));
@@ -82,6 +83,9 @@ public class ArticleController {
             pageable = PageRequest.of(pageNumber, pageable.getPageSize(), pageable.getSort());
         }
         Page<Article> page = articleService.findAll(pageable, search);
+        if (page.isEmpty()) {
+            return "error/404";
+        }
 
         model.addAttribute("page", page);
 
