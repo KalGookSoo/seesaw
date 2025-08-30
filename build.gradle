@@ -41,6 +41,9 @@ subprojects {
         // Lombok 관련 공통 의존성
         compileOnly 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'
+
+        // Spring Boot 구성 메타데이터 자동 생성 프로세서
+        annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     }
 
     // 공통 테스트 설정
