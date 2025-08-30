@@ -73,7 +73,7 @@ public class ArticleController {
             @ModelAttribute("search") ArticleSearch search,
             Model model
     ) {
-        Article article = articleService.find(id);
+        Article article = articleService.getArticleAggregation(id);
         model.addAttribute("article", article);
 
         Article previousArticle = articleService.getPreviousArticle(search, article.getCreatedDate());
