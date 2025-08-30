@@ -146,7 +146,7 @@
                  th:each="article : ${page.content}"
         >
             <a class="none card h-100"
-               th:href="@{|/articles/view${search.getUriComponentsBuilder().queryParam('page', page.pageable.offset + articleStat.index).build().toUriString()}|}"
+               th:href="@{|/articles/${article.id}${search.getUriComponentsBuilder().build().toUriString()}|}"
             >
                 <img class="card-img-top img-thumbnail"
                      th:alt="${article.inlineImages.get(0).originalName}"

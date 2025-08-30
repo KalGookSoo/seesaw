@@ -8,27 +8,27 @@
 >
 
 <head>
-    <meta name="description" th:content="${page.content.get(0).plainContent}">
+    <meta name="description" th:content="${article.plainContent}">
     <meta name="keywords" th:content="${CURRENT_CATEGORY.name}">
 
     <meta property="og:type" content="article">
-    <meta property="og:title" content="페이지 제목" th:content="${page.content.get(0).title}">
-    <meta property="og:description" content="페이지 설명" th:content="${page.content.get(0).plainContent}">
-    <meta property="og:image" content="페이지 썸네일 이미지 주소" th:if="${!page.content.get(0).inlineImages.isEmpty()}"
-          th:content="@{|${REQUEST_HOST}/api/attachments/${page.content.get(0).inlineImages.get(0).id}|}">
-    <meta property="og:image" content="페이지 썸네일 이미지 주소" th:if="${page.content.get(0).inlineImages.isEmpty() and SITE_CONTEXT.profileImage != null}"
+    <meta property="og:title" content="페이지 제목" th:content="${article.title}">
+    <meta property="og:description" content="페이지 설명" th:content="${article.plainContent}">
+    <meta property="og:image" content="페이지 썸네일 이미지 주소" th:if="${!article.inlineImages.isEmpty()}"
+          th:content="@{|${REQUEST_HOST}/api/attachments/${article.inlineImages.get(0).id}|}">
+    <meta property="og:image" content="페이지 썸네일 이미지 주소" th:if="${article.inlineImages.isEmpty() and SITE_CONTEXT.profileImage != null}"
           th:content="@{|${REQUEST_HOST}/api/attachments/${SITE_CONTEXT.profileImage.id}|}">
     <meta property="og:url" content="페이지 주소" th:content="${REQUEST_URL}">
 
     <meta property="twitter:card" content="summary">
-    <meta property="twitter:title" content="페이지 제목" th:content="${page.content.get(0).title}">
-    <meta property="twitter:description" content="페이지 설명" th:content="${page.content.get(0).plainContent}">
-    <meta property="twitter:image" content="페이지 썸네일 이미지 주소" th:if="${!page.content.get(0).inlineImages.isEmpty()}"
-          th:content="@{|${REQUEST_HOST}/api/attachments/${page.content.get(0).inlineImages.get(0).id}|}">
+    <meta property="twitter:title" content="페이지 제목" th:content="${article.title}">
+    <meta property="twitter:description" content="페이지 설명" th:content="${article.plainContent}">
+    <meta property="twitter:image" content="페이지 썸네일 이미지 주소" th:if="${!article.inlineImages.isEmpty()}"
+          th:content="@{|${REQUEST_HOST}/api/attachments/${article.inlineImages.get(0).id}|}">
 
 
 
-    <title>[[${page.content.get(0).title}]]</title>
+    <title>[[${article.title}]]</title>
     <link rel="stylesheet" href="/static/styles/content.css" th:href="@{/styles/content.css}">
 
     <!--/* Editor */-->
@@ -83,7 +83,7 @@
                 el: document.querySelector('.article-content-section'),
                 viewer: true,
                 height: '600px',
-                initialValue: /*[[${page.content.get(0).content}]]*/'',
+                initialValue: /*[[${article.content}]]*/'',
                 plugins: [[chart, chartOptions], [codeSyntaxHighlight, { highlighter: Prism }], colorSyntax, tableMergedCell, uml]
             });
 
@@ -257,16 +257,16 @@
     <div class="card shadow-sm border-0">
         <div class="card-header bg-white py-3">
             <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center">
-                <h5 class="card-title mb-2 mb-md-0" th:text="${page.content.get(0).title}"></h5>
+                <h5 class="card-title mb-2 mb-md-0" th:text="${article.title}"></h5>
                 <div class="d-flex justify-content-start align-items-center">
                     <div class="d-flex align-items-center">
                         <i class="bi bi-person-circle me-2 text-secondary"></i>
-                        <span class="text-muted" th:text="${page.content.get(0).maskedAuthor}"></span>
+                        <span class="text-muted" th:text="${article.maskedAuthor}"></span>
                     </div>
                     <span class="text-muted mx-2">|</span>
                     <div class="d-flex align-items-center">
                         <i class="bi bi-calendar3 text-secondary"></i>
-                        <span class="text-muted ms-1" th:text="${#temporals.format(page.content.get(0).createdDate, 'yyyy.MM.dd')}"></span>
+                        <span class="text-muted ms-1" th:text="${#temporals.format(article.createdDate, 'yyyy.MM.dd')}"></span>
                     </div>
                 </div>
             </div>
@@ -282,15 +282,15 @@
             <div class="d-flex align-items-center">
                 <i class="bi bi-chat-dots me-2 text-primary"></i>
                 <h6 class="mb-0" th:text="#{entity.reply}"></h6>
-                <span class="badge bg-primary rounded-pill ms-2" th:text="${page.content.get(0).replies.size()}"></span>
+                <span class="badge bg-primary rounded-pill ms-2" th:text="${article.replies.size()}"></span>
             </div>
         </div>
         <div class="card-body p-0">
             <!--/* Existing replies */-->
             <div class="reply-item p-3" 
                  th:classappend="${!replyStat.last ? 'border-bottom' : ''}"
-                 th:each="reply : ${page.content.get(0).replies}"
-                 th:if="${!page.content.get(0).replies.isEmpty()}"
+                 th:each="reply : ${article.replies}"
+                 th:if="${!article.replies.isEmpty()}"
             >
                 <div class="d-flex justify-content-between mb-2">
                     <div class="d-flex align-items-center">
@@ -344,7 +344,7 @@
             <!--/* Reply form for authenticated users */-->
             <div class="p-3" sec:authorize="isAuthenticated()">
                 <form enctype="multipart/form-data" name="insertReplyForm" th:action="@{/api/replies}" th:method="post">
-                    <input name="articleId" th:value="${page.content.get(0).id}" type="hidden">
+                    <input name="articleId" th:value="${article.id}" type="hidden">
                     <div class="input-group">
                         <textarea aria-label="댓글 입력" class="form-control" name="content" rows="3" placeholder="댓글을 입력하세요..."></textarea>
                         <button class="btn btn-primary d-flex align-items-center" type="submit">
@@ -374,10 +374,11 @@
             <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex gap-2">
                     <a class="btn btn-outline-secondary d-flex align-items-center"
-                       th:href="@{|/articles/view${search.getUriComponentsBuilder().queryParam('page', page.previousOrFirstPageable().pageNumber).build().toUriString()}|}"
+                       th:href="@{|/articles/${previousArticle.id}${search.getUriComponentsBuilder().build().toUriString()}|}"
+                       th:if="${previousArticle != null}"
                        title="이전글">
                         <i class="bi bi-chevron-left"></i>
-                        <span class="d-none d-sm-inline ms-1" th:text="#{label.prevous.article}">이전글</span>
+                        <span class="d-none d-sm-inline ms-1" th:text="#{label.previous.article}">이전글</span>
                     </a>
                     <a class="btn btn-outline-secondary d-flex align-items-center"
                        th:href="@{|/articles${search.getUriComponentsBuilder().queryParam('page', 0).build().toUriString()}|}"
@@ -386,7 +387,8 @@
                         <span class="d-none d-sm-inline ms-1" th:text="#{label.list}"></span>
                     </a>
                     <a class="btn btn-outline-secondary d-flex align-items-center"
-                       th:href="@{|/articles/view${search.getUriComponentsBuilder().queryParam('page', page.nextOrLastPageable().pageNumber).build().toUriString()}|}"
+                       th:href="@{|/articles/${nextArticle.id}${search.getUriComponentsBuilder().build().toUriString()}|}"
+                       th:if="${nextArticle != null}"
                        title="다음글">
                         <i class="bi bi-chevron-right"></i>
                         <span class="d-none d-sm-inline ms-1" th:text="#{label.next.article}">다음글</span>
@@ -394,8 +396,8 @@
                 </div>
                 <div class="d-flex gap-2" sec:authorize="isAuthenticated()">
                     <a class="btn btn-outline-primary d-flex align-items-center"
-                       th:href="@{|/articles/${page.content.get(0).id}/edit${search.getUriComponentsBuilder().queryParam('page', page.pageable.pageNumber).build().toUriString()}|}"
-                       th:if="${#strings.equals(#authentication.principal.username, page.content.get(0).createdBy)}"
+                       th:href="@{|/articles/${article.id}/edit${search.getUriComponentsBuilder().build().toUriString()}|}"
+                       th:if="${#strings.equals(#authentication.principal.username, article.createdBy)}"
                        title="수정">
                         <i class="bi bi-pencil-square"></i>
                         <span class="d-none d-sm-inline ms-1" th:text="#{label.update}"></span>
@@ -403,7 +405,7 @@
                     <button class="btn btn-outline-danger d-flex align-items-center"
                             name="delete"
                             type="button"
-                            th:data-id="${page.content.get(0).id}"
+                            th:data-id="${article.id}"
                             title="삭제">
                         <i class="bi bi-trash"></i>
                         <span class="d-none d-sm-inline ms-1" th:text="#{label.delete}"></span>

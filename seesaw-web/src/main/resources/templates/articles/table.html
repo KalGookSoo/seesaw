@@ -118,7 +118,7 @@
             <td class="py-3 text-center align-middle">📣</td>
             <td class="py-3 text-start">
                 <div>
-                    <a class="none" th:href="@{|/articles/view${search.getUriComponentsBuilder().queryParam('id', article.id).build().toUriString()}|}">
+                    <a class="none" th:href="@{|/articles/${article.id}${search.getUriComponentsBuilder().build().toUriString()}|}">
                         [[${article.title}]]
                         <span class="badge bg-primary ms-1" th:if="${article.isRecentlyGenerated()}">New</span>
                     </a>
@@ -143,7 +143,7 @@
             <td class="py-3 text-center align-middle" th:text="${page.totalElements - page.pageable.offset - articleStat.index}"></td>
             <td class="py-3 text-start">
                 <div>
-                    <a class="none" th:href="@{|/articles/view${search.getUriComponentsBuilder().queryParam('page', page.pageable.offset + articleStat.index).build().toUriString()}|}">
+                    <a class="none" th:href="@{|/articles/${article.id}${search.getUriComponentsBuilder().build().toUriString()}|}">
                         [[${article.title}]]
                         <span class="badge bg-primary ms-1" th:if="${article.isRecentlyGenerated()}">New</span>
                     </a>

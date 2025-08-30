@@ -69,7 +69,7 @@
         <div class="row row-cols-1 row-cols-lg-3 g-4">
             <article class="col" th:each="article : ${page.getValue().content}">
                 <a class="btn w-100 h-100 text-start shadow-sm rounded p-3"
-                   th:href="@{/articles/view(categoryType=${ALL_CATEGORIES.get(page.getKey()).type}, categoryId=${article.categoryId}, page=${articleStat.index})}"
+                   th:href="@{|/articles/${article.id}?categoryType=${ALL_CATEGORIES.get(page.getKey()).type}&categoryId=${article.categoryId}&page=${articleStat.index}|}"
                 >
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <h5 class="title" th:text="${article.title}"></h5>
