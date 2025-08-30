@@ -128,7 +128,7 @@
                             e.submitter.nextElementSibling.classList.add('d-none');
                             if (response.ok) {
                                 alert(/*[[#{command.success.update}]]*/'');
-                                location.href = /*[[@{|/articles/view${search.getUriComponentsBuilder().queryParam('page', page).build().toUriString()}|}]]*/'';
+                                location.href = /*[[@{|/articles/${article.id}${search.getUriComponentsBuilder().build().toUriString()}|}]]*/'';
                             } else if (response.status === 400) {
                                 const errors = JSON.parse(responseBody).errors;
                                 [...errors].forEach(error => {
@@ -308,7 +308,7 @@
             <div class="card-body p-3 d-flex justify-content-end">
                 <div class="d-flex gap-3">
                     <a class="btn btn-outline-secondary d-flex align-items-center"
-                       th:href="@{|/articles/view${search.getUriComponentsBuilder().queryParam('page', page).build().toUriString()}|}">
+                       th:href="@{|/articles/${article.id}${search.getUriComponentsBuilder().build().toUriString()}|}">
                         <i class="bi bi-x-lg me-2"></i>
                         <span th:text="#{label.cancel}"></span>
                     </a>

@@ -1,5 +1,6 @@
 package kr.me.seesaw.service;
 
+import jakarta.persistence.EntityManager;
 import kr.me.seesaw.command.CreateArticleCommand;
 import kr.me.seesaw.command.UpdateArticleCommand;
 import kr.me.seesaw.core.authentication.PrincipalProvider;
@@ -16,12 +17,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Transactional
@@ -41,6 +44,8 @@ public class DefaultArticleService implements ArticleService {
 
     private final AttachmentRepository attachmentRepository;
 
+    private final EntityManager entityManager;
+
     private final PrincipalProvider principalProvider;
 
     public DefaultArticleService(
@@ -50,6 +55,7 @@ public class DefaultArticleService implements ArticleService {
             ReplyRepository replyRepository,
             ViewRepository viewRepository,
             AttachmentRepository attachmentRepository,
+            EntityManager entityManager,
             PrincipalProvider principalProvider
     ) {
         this.filepath = filepath;
@@ -58,6 +64,7 @@ public class DefaultArticleService implements ArticleService {
         this.replyRepository = replyRepository;
         this.viewRepository = viewRepository;
         this.attachmentRepository = attachmentRepository;
+        this.entityManager = entityManager;
         this.principalProvider = principalProvider;
     }
 
@@ -119,7 +126,7 @@ public class DefaultArticleService implements ArticleService {
     @Transactional(readOnly = true)
     @Override
     public Article find(String id) {
-        return articleRepository.findById(id).orElseThrow(NoSuchElementException::new);
+        return articleRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당 게시글이 존재하지 않습니다."));
     }
 
     @Override
@@ -162,13 +169,14 @@ public class DefaultArticleService implements ArticleService {
 
     @Override
     public Article update(String id, UpdateArticleCommand command) throws IOException {
-        Article article = articleRepository.getReferenceById(id);
+        Article article = Optional.ofNullable(entityManager.getReference(Article.class, id))
+                .orElseThrow(() -> new NoSuchElementException("해당 게시글이 존재하지 않습니다."));
 
         Document existingContent = Jsoup.parse(article.getContent());
         Elements existingImages = existingContent.select("img[src*=\"/api/attachments/\"]");
-        
+
         List<String> deletedAttachmentIds = new ArrayList<>();
-        
+
         Document newContent = Jsoup.parse(command.getContent());
         Elements remainingImages = newContent.select("img[src*=\"/api/attachments/\"]");
 
@@ -219,7 +227,8 @@ public class DefaultArticleService implements ArticleService {
 
     @Override
     public void delete(String id) {
-        Article article = articleRepository.getReferenceById(id);
+        Article article = Optional.ofNullable(entityManager.getReference(Article.class, id))
+                .orElseThrow(() -> new NoSuchElementException("해당 게시글이 존재하지 않습니다."));
         List<Reply> replies = replyRepository.findAllByArticleIdIn(Collections.singletonList(article.getId()));
         replyRepository.deleteAllInBatch(replies);
         List<View> views = viewRepository.findAllByArticleIdIn(Collections.singletonList(article.getId()));
@@ -245,6 +254,20 @@ public class DefaultArticleService implements ArticleService {
     @Override
     public List<Article> getFixedArticles(String categoryId, boolean fixed, Sort sort) {
         return articleRepository.findAllByCategoryIdAndFixed(categoryId, fixed, sort);
+    }
+
+    @Nullable
+    @Override
+    public Article getPreviousArticle(ArticleSearch search, LocalDateTime createdDate) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
+        return articleSearchRepository.findFirstNext(search, createdDate, sort).orElse(null);
+    }
+
+    @Nullable
+    @Override
+    public Article getNextArticle(ArticleSearch search, LocalDateTime createdDate) {
+        Sort sort = Sort.by(Sort.Direction.ASC, "createdDate");
+        return articleSearchRepository.findFirstNext(search, createdDate, sort).orElse(null);
     }
 
     private void writeFile(String pathname, byte[] bytes) {

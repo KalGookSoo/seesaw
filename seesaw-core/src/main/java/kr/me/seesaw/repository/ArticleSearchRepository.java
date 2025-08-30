@@ -9,11 +9,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Repository
@@ -88,6 +91,41 @@ public class ArticleSearchRepository implements SearchRepository<Article, Articl
         if ("createdBy".equals(search.getKeyField()) && StringUtils.hasText(search.getKeyWord())) {
             query.setParameter("createdBy", "%" + search.getKeyWord() + "%");
         }
+    }
+
+    public Optional<Article> findFirstNext(ArticleSearch search, LocalDateTime createdDate, Sort sort) {
+        if (search == null) {
+            throw new IllegalArgumentException("search가 null입니다.");
+        }
+        if (createdDate == null) {
+            throw new IllegalArgumentException("createdDate가 null입니다.");
+        }
+        if (sort == null) {
+            throw new IllegalArgumentException("sort가 null입니다.");
+        }
+        if (sort.isUnsorted()) {
+            throw new IllegalArgumentException("unsorted인 sort가 전달되었습니다.");
+        }
+        Sort.Order order = sort.getOrderFor("createdDate");
+        if (order == null) {
+            throw new IllegalArgumentException("createdDate가 없는 sort가 전달되었습니다.");
+        }
+
+        String jpql = "select article from Article article where 1 = 1";
+        jpql += generateJpql(search);
+        if (order.getDirection().equals(Sort.Direction.DESC)) {
+            jpql += " and article.createdDate < :createdDate";
+        } else {
+            jpql += " and article.createdDate > :createdDate";
+        }
+
+        jpql += " order by article.createdDate " + order.getDirection().name();
+
+        TypedQuery<Article> query = em.createQuery(jpql, Article.class);
+        setParameters(query, search);
+        query.setParameter("createdDate", createdDate);
+        query.setMaxResults(1);
+        return query.getResultList().stream().findFirst();
     }
 
 }

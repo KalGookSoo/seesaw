@@ -5,7 +5,6 @@ import kr.me.seesaw.search.ArticleSearch;
 import kr.me.seesaw.service.ArticleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -68,26 +67,20 @@ public class ArticleController {
         return "articles/card";
     }
 
-    @GetMapping("/view")
+    @GetMapping("/{id}")
     public String getArticle(
+            @PathVariable("id") String id,
             @ModelAttribute("search") ArticleSearch search,
-            @PageableDefault(size = 1, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable,
             Model model
     ) {
-        // TODO 공지사항 글은 이전글 다음글 참조를 없애는 게 좋지 않을까
-        // 공지사항은 쿼리스트링에 게시글 식별자를 따로 받는다. 페이지와 상관없이 항상 고정되어 출력되기 때문에 이전글, 다음글 참조를 식별하기 위해 페이지 번호를 조회한다.
-        if (search.getId() != null) {
-            Sort sort = Sort.by(Sort.Order.desc("createdDate"));
-            Page<Article> page = articleService.findAllByCategoryId(search.getCategoryId(), Pageable.unpaged(sort));
-            int pageNumber = page.getContent().stream().map(Article::getId).toList().indexOf(search.getId());
-            pageable = PageRequest.of(pageNumber, pageable.getPageSize(), pageable.getSort());
-        }
-        Page<Article> page = articleService.findAll(pageable, search);
-        if (page.isEmpty()) {
-            return "error/404";
-        }
+        Article article = articleService.find(id);
+        model.addAttribute("article", article);
 
-        model.addAttribute("page", page);
+        Article previousArticle = articleService.getPreviousArticle(search, article.getCreatedDate());
+        model.addAttribute("previousArticle", previousArticle);
+
+        Article nextArticle = articleService.getNextArticle(search, article.getCreatedDate());
+        model.addAttribute("nextArticle", nextArticle);
 
         return "articles/view";
     }
