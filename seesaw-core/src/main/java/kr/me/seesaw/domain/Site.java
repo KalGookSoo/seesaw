@@ -19,8 +19,8 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = {"attachments", "categories"})
+@ToString(callSuper = true, exclude = {"attachments", "categories"})
 
 @Entity
 @Table(name = "tb_site")
@@ -33,6 +33,7 @@ public class Site extends AbstractHierarchical<Site> implements Hierarchical<Sit
     private String name;
 
     @Comment("도메인이름")
+    @Column(unique = true)
     private String domainName;
 
     @Comment("설명")
@@ -69,8 +70,6 @@ public class Site extends AbstractHierarchical<Site> implements Hierarchical<Sit
     private String content;
 
     @Transient
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
     @JsonManagedReference
     private List<Category> categories = new ArrayList<>();
 
@@ -82,8 +81,6 @@ public class Site extends AbstractHierarchical<Site> implements Hierarchical<Sit
     }
 
     @Transient
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
     @JsonManagedReference
     private List<Attachment> attachments = new ArrayList<>();
 
