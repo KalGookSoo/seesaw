@@ -21,6 +21,8 @@ public interface ArticleService {
 
     Article find(String id);
 
+    Article getArticleAggregation(String id);
+
     Article create(CreateArticleCommand command) throws IOException;
 
     Article update(String id, UpdateArticleCommand command) throws IOException;

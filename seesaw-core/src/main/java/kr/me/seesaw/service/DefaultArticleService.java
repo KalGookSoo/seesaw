@@ -126,7 +126,30 @@ public class DefaultArticleService implements ArticleService {
     @Transactional(readOnly = true)
     @Override
     public Article find(String id) {
-        return articleRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당 게시글이 존재하지 않습니다."));
+        Article article = articleRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("해당 게시글이 존재하지 않습니다."));
+        return article;
+    }
+
+    @Transactional(readOnly = true)
+    public Article getArticleAggregation(String id) {
+        Article article = articleRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("해당 게시글이 존재하지 않습니다."));
+
+        List<Reply> replies = replyRepository.findAllByArticleIdIn(Collections.singletonList(id));
+        replies.sort(Comparator.comparing(BaseEntity::getCreatedDate));
+        article.joinReplies(replies);
+
+        List<View> views = viewRepository.findAllByArticleIdIn(Collections.singletonList(id));
+        views.sort(Comparator.comparing(BaseEntity::getCreatedDate));
+        article.joinViews(views);
+
+        List<Attachment> attachments = attachmentRepository.findAllByReferenceIdIn(Collections.singletonList(id))
+                .stream()
+                .sorted(Comparator.comparing(BaseEntity::getCreatedDate))
+                .toList();
+        article.joinAttachments(attachments);
+        return article;
     }
 
     @Override
