@@ -89,7 +89,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .stream()
                 .map(ValidationError::new)
                 .toList();
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("errors", errors));
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(Map.of("errors", errors));
     }
 
     @ExceptionHandler(AccessDeniedException.class)

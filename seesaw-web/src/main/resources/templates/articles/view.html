@@ -115,7 +115,7 @@
                             if (response.ok) {
                                 alert(/*[[#{command.success.save}]]*/'');
                                 location.reload();
-                            } else if (response.status === 400) {
+                            } else if (response.status === 422) {
                                 const errors = JSON.parse(responseBody).errors;
                                 [...errors].forEach(error => {
                                     const field = e.target.elements[error.field];
@@ -144,7 +144,7 @@
                             if (response.ok) {
                                 alert(/*[[#{command.success.update}]]*/'');
                                 location.reload();
-                            } else if (response.status === 400) {
+                            } else if (response.status === 422) {
                                 const errors = JSON.parse(responseBody).errors;
                                 [...errors].forEach(error => {
                                     const field = e.target.elements[error.field];

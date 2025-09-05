@@ -128,7 +128,7 @@
                             if (response.ok) {
                                 alert(/*[[#{command.success.create}]]*/'');
                                 location.href = /*[[@{|/articles${search.getUriComponentsBuilder().queryParam('page', 0).build().toUriString()}|}]]*/'';
-                            } else if (response.status === 400) {
+                            } else if (response.status === 422) {
                                 const errors = JSON.parse(responseBody).errors;
                                 [...errors].forEach(error => {
                                     const field = e.target.elements[error.field];

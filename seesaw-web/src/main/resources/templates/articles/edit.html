@@ -129,7 +129,7 @@
                             if (response.ok) {
                                 alert(/*[[#{command.success.update}]]*/'');
                                 location.href = /*[[@{|/articles/${article.id}${search.getUriComponentsBuilder().build().toUriString()}|}]]*/'';
-                            } else if (response.status === 400) {
+                            } else if (response.status === 422) {
                                 const errors = JSON.parse(responseBody).errors;
                                 [...errors].forEach(error => {
                                     const field = e.target.elements[error.field];
