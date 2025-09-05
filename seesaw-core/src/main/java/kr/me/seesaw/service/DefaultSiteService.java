@@ -61,7 +61,7 @@ public class DefaultSiteService implements SiteService {
 
         // 카테고리 조인
         // TODO 서비스로 만들어 캐싱할 것
-        categoryRepository.findAll(Sort.by(Sort.Direction.ASC, "sequence"))
+        categoryRepository.findAllBySiteId(site.getId(), Sort.by(Sort.Direction.ASC, "sequence"))
                 .stream()
                 .filter(Category::isExposed)
                 .forEach(site::addCategory);

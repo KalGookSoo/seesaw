@@ -87,11 +87,26 @@ public class Category extends AbstractHierarchical<Category> implements Hierarch
 
     public static Category create(CreateCategoryCommand command) {
         Category category = new Category();
+        category.name = command.getName();
+        category.description = command.getDescription();
+        category.type = command.getType();
+        category.siteExposed = command.isSiteExposed();
+        category.siteExposedOrder = command.getSiteExposedOrder();
+        category.exposed = command.isExposed();
+        category.sequence = command.getSequence();
+        category.siteId = command.getSiteId();
         return category;
     }
 
     public void update(UpdateCategoryCommand command) {
-        throw new UnsupportedOperationException();
+        this.name = command.getName();
+        this.description = command.getDescription();
+        this.type = command.getType();
+        this.siteExposed = command.isSiteExposed();
+        this.siteExposedOrder = command.getSiteExposedOrder();
+        this.exposed = command.isExposed();
+        this.sequence = command.getSequence();
+        this.siteId = command.getSiteId();
     }
 
     public void joinArticles(List<Article> articles) {

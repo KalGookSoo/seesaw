@@ -1,30 +1,36 @@
 package kr.me.seesaw.model;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @ToString
 @EqualsAndHashCode
 @Getter
-@SuperBuilder
-@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED, force = true)
-public abstract class BaseModel {
-    private final String id;
+@Setter(AccessLevel.PROTECTED)
+@NoArgsConstructor
+public abstract class BaseModel implements Serializable {
+    @Schema(description = "식별자(UUID)", example = "8f14e45f-ea9d-4b1c-a3a4-12c4b2a9c001")
+    private String id;
 
-    private final String createdBy;
+    @Schema(description = "생성자 계정명", example = "admin")
+    private String createdBy;
 
-    private final String createdIp;
+    @Schema(description = "생성 IP", example = "192.168.0.10")
+    private String createdIp;
 
-    private final LocalDateTime createdDate;
+    @Schema(description = "생성 일시", example = "2025-01-01T09:00:00")
+    private LocalDateTime createdDate;
 
-    private final String lastModifiedBy;
+    @Schema(description = "최종 수정자 계정명", example = "editor")
+    private String lastModifiedBy;
 
-    private final String lastModifiedIp;
+    @Schema(description = "최종 수정 IP", example = "192.168.0.11")
+    private String lastModifiedIp;
 
-    private final LocalDateTime lastModifiedDate;
+    @Schema(description = "최종 수정 일시", example = "2025-01-02T10:30:00")
+    private LocalDateTime lastModifiedDate;
 }

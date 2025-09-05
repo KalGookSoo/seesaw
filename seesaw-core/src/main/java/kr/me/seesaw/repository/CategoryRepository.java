@@ -16,5 +16,5 @@ public interface CategoryRepository extends Repository<Category, String> {
 
     void deleteById(String id);
 
-    Collection<Category> findAll(Sort sort);
+    Collection<Category> findAllBySiteId(String siteId, Sort sort);
 }
