@@ -7,10 +7,7 @@ import kr.me.seesaw.command.CreateCategoryCommand;
 import kr.me.seesaw.command.UpdateCategoryCommand;
 import kr.me.seesaw.core.hierarchy.Hierarchical;
 import kr.me.seesaw.domain.vo.CategoryType;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -89,7 +86,8 @@ public class Category extends AbstractHierarchical<Category> implements Hierarch
     }
 
     public static Category create(CreateCategoryCommand command) {
-        throw new UnsupportedOperationException();
+        Category category = new Category();
+        return category;
     }
 
     public void update(UpdateCategoryCommand command) {

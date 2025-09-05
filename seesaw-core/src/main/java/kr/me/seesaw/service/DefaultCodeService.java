@@ -14,18 +14,18 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class DefaultCodeService implements CodeService {
-
     private final CodeRepository codeRepository;
 
+    @Transactional(readOnly = true)
     @Override
     public List<Code> get() {
         List<Code> codes = codeRepository.findAll(Sort.by(Sort.Direction.ASC, "sequence"));
         return HierarchicalFactory.build(codes);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<Code> findByName(String name) {
         return codeRepository.findByName(name);
     }
-
 }

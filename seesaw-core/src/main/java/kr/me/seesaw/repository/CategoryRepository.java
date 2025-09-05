@@ -1,7 +1,20 @@
 package kr.me.seesaw.repository;
 
 import kr.me.seesaw.domain.Category;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.Repository;
 
-public interface CategoryRepository extends JpaRepository<Category, String> {
+import java.util.Collection;
+import java.util.Optional;
+
+public interface CategoryRepository extends Repository<Category, String> {
+    Category save(Category category);
+
+    Category getReferenceById(String id);
+
+    Optional<Category> findById(String id);
+
+    void deleteById(String id);
+
+    Collection<Category> findAll(Sort sort);
 }

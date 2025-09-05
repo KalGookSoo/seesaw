@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class I18nConfig {
-
     private final String cacheSeconds;
 
     public I18nConfig(@Value("${spring.messages.cache-duration}") String cacheSeconds) {
