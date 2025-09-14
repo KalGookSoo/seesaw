@@ -40,3 +40,6 @@ out/
 
 node_modules
 .DS_Store
+
+*-prod.properties
+*-prod.yml
