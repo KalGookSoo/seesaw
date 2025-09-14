@@ -1,26 +1,26 @@
 package kr.me.seesaw.service;
 
-import jakarta.persistence.EntityManager;
 import kr.me.seesaw.command.CreateSiteCommand;
+import kr.me.seesaw.core.file.FileIOService;
 import kr.me.seesaw.domain.*;
 import kr.me.seesaw.repository.*;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Transactional
-@RequiredArgsConstructor
 @Service
 public class DefaultSiteService implements SiteService {
-
-    private final EntityManager entitymanager;
+    private final String filepath;
 
     private final SiteRepository siteRepository;
 
@@ -33,6 +33,23 @@ public class DefaultSiteService implements SiteService {
     private final RoleMappingRepository roleMappingRepository;
 
     private final UserRepository userRepository;
+
+    public DefaultSiteService(
+            @Value("${kr.me.seesaw.filepath}") String filepath,
+            SiteRepository siteRepository,
+            AttachmentRepository attachmentRepository,
+            CategoryRepository categoryRepository,
+            ArticleSearchRepository articleSearchRepository,
+            RoleMappingRepository roleMappingRepository, UserRepository userRepository
+    ) {
+        this.filepath = filepath;
+        this.siteRepository = siteRepository;
+        this.attachmentRepository = attachmentRepository;
+        this.categoryRepository = categoryRepository;
+        this.articleSearchRepository = articleSearchRepository;
+        this.roleMappingRepository = roleMappingRepository;
+        this.userRepository = userRepository;
+    }
 
     @Transactional(readOnly = true)
     @Override
@@ -116,7 +133,7 @@ public class DefaultSiteService implements SiteService {
     }
 
     @Override
-    public Site createSite(CreateSiteCommand command) {
+    public Site createSite(CreateSiteCommand command) throws IOException {
         //
         Site site = Site.create(
                 command.getName(),
@@ -131,15 +148,36 @@ public class DefaultSiteService implements SiteService {
                 command.getIntro(),
                 command.getContent()
         );
-        return siteRepository.save(site);
+        siteRepository.save(site);
+
+        // 프로필 이미지
+        if (command.hasProfileImage()) {
+            // 쓰기
+            Attachment attachment = Attachment.create(site.getId(), Attachment.Type.INLINE_IMAGE, command.getProfileImage());
+            writeFile(filepath + attachment.getPathName() + File.separator + attachment.getName(), command.getProfileImage().getBytes());
+
+            // 영속화
+            attachmentRepository.save(attachment);
+            site.addAttachment(attachment);
+        }
+
+        // 배경 이미지
+        if (command.hasBackgroundImage()) {
+            // 쓰기
+            Attachment attachment = Attachment.create(site.getId(), Attachment.Type.BACKGROUND_IMAGE, command.getProfileImage());
+            writeFile(filepath + attachment.getPathName() + File.separator + attachment.getName(), command.getBackgroundImage().getBytes());
+
+            // 영속화
+            attachmentRepository.save(attachment);
+            site.addAttachment(attachment);
+        }
+        return site;
     }
 
     @Override
-    public Site updateSite(String id, CreateSiteCommand command) {
-        Site site = entitymanager.getReference(Site.class, id);
-        if (site == null) {
-            throw new NoSuchElementException("사이트를 찾을 수 없습니다. id: " + id);
-        }
+    public Site updateSite(String id, CreateSiteCommand command) throws IOException {
+        Site site = Optional.ofNullable(siteRepository.getReferenceById(id))
+                .orElseThrow(() -> new NoSuchElementException("사이트를 찾을 수 없습니다. id: " + id));
         site.update(
                 command.getName(),
                 command.getDomainName(),
@@ -153,29 +191,51 @@ public class DefaultSiteService implements SiteService {
                 command.getIntro(),
                 command.getContent()
         );
-        entitymanager.persist(site);
+        siteRepository.save(site);
 
-        // 첨부파일
+        // 프로필 이미지
         if (command.hasProfileImage()) {
             // 기존 파일 조회 및 삭제
+            List<Attachment> attachments = attachmentRepository.findAllByReferenceIdIn(Collections.singletonList(site.getId()));
+            attachmentRepository.deleteAllInBatch(attachments);
+            attachments.stream().map(attachment -> filepath + attachment.getPathName() + File.separator + attachment.getName()).forEach(FileIOService::delete);
 
-            // 파일 생성
-            List<String> referenceIds = Collections.singletonList(site.getId());
-            List<Attachment> attachments = attachmentRepository.findAllByReferenceIdIn(referenceIds);
-            if (!attachments.isEmpty()) {
-                attachmentRepository.deleteAll(attachments);
-            }
+            // 쓰기
+            Attachment attachment = Attachment.create(site.getId(), Attachment.Type.INLINE_IMAGE, command.getProfileImage());
+            writeFile(filepath + attachment.getPathName() + File.separator + attachment.getName(), command.getProfileImage().getBytes());
 
-            // 파일 영속화
-
+            // 영속화
+            attachmentRepository.save(attachment);
+            site.addAttachment(attachment);
         }
 
+        // 배경 이미지
+        if (command.hasBackgroundImage()) {
+            // 쓰기
+            Attachment attachment = Attachment.create(site.getId(), Attachment.Type.BACKGROUND_IMAGE, command.getProfileImage());
+            writeFile(filepath + attachment.getPathName() + File.separator + attachment.getName(), command.getBackgroundImage().getBytes());
+
+            // 영속화
+            attachmentRepository.save(attachment);
+            site.addAttachment(attachment);
+        }
         return site;
     }
 
     @Override
     public void deleteSite(String id) {
-
+        // 사이트에 종속된 모든 영속성 데이터를 먼저 제거하고 삭제 가능하도록 할 것
+        Site site = siteRepository.getReferenceById(id);
+        List<Attachment> attachments = attachmentRepository.findAllByReferenceIdIn(Collections.singletonList(site.getId()));
+        attachmentRepository.deleteAllInBatch(attachments);
+        attachments.stream().map(attachment -> filepath + attachment.getPathName() + File.separator + attachment.getName()).forEach(FileIOService::delete);
     }
 
+    private void writeFile(String pathname, byte[] bytes) {
+        try {
+            FileIOService.write(pathname, bytes);
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
 }

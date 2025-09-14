@@ -3,6 +3,7 @@ package kr.me.seesaw.service;
 import kr.me.seesaw.command.CreateSiteCommand;
 import kr.me.seesaw.domain.Site;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface SiteService {
@@ -15,9 +16,9 @@ public interface SiteService {
 
     List<Site> getOwnSites(String username);
 
-    Site createSite(CreateSiteCommand command);
+    Site createSite(CreateSiteCommand command) throws IOException;
 
-    Site updateSite(String id, CreateSiteCommand command);
+    Site updateSite(String id, CreateSiteCommand command) throws IOException;
 
     void deleteSite(String id);
 

@@ -13,7 +13,6 @@ import java.io.Serializable;
 @Schema(description = "사이트 생성 커맨드")
 @Data
 public class CreateSiteCommand implements Serializable {
-
     @Parameter(description = "이름")
     @Schema(description = "이름", example = "이름")
     @NotBlank
@@ -79,8 +78,15 @@ public class CreateSiteCommand implements Serializable {
     @Schema(description = "프로필 이미지")
     private MultipartFile profileImage;
 
+    @Parameter(description = "배경 이미지")
+    @Schema(description = "배경 이미지")
+    private MultipartFile backgroundImage;
+
     public boolean hasProfileImage() {
         return null != profileImage && !profileImage.isEmpty();
     }
 
+    public boolean hasBackgroundImage() {
+        return null != backgroundImage && !backgroundImage.isEmpty();
+    }
 }
