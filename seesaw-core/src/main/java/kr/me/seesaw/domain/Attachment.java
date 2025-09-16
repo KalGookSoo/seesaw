@@ -78,6 +78,7 @@ public class Attachment extends BaseEntity {
         BACKGROUND_IMAGE("/backgroundImages"),
         INLINE_IMAGE("/images"),
         ATTACHMENT("/attachments");
+
         private final String path;
     }
 

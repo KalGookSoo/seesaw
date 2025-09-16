@@ -68,4 +68,5 @@ public class CreateArticleCommand {
                 .filter(Predicate.not(MultipartFile::isEmpty))
                 .toList();
     }
+
 }

@@ -15,6 +15,7 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor
 public class CategoryModel extends AbstractHierarchicalModel<CategoryModel> implements Hierarchical<CategoryModel, String> {
+
     @Schema(description = "카테고리 이름", example = "공지사항")
     private String name;
 
@@ -64,4 +65,5 @@ public class CategoryModel extends AbstractHierarchicalModel<CategoryModel> impl
         sequence = category.getSequence();
         siteId = category.getSiteId();
     }
+
 }

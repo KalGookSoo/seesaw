@@ -20,7 +20,7 @@ public class IpAddressAuditingEntityListener {
 
     /**
      * 엔티티 생성 시 IP 주소를 설정합니다.
-     * 
+     *
      * @param target 대상 엔티티 객체
      */
     @PrePersist
@@ -30,7 +30,7 @@ public class IpAddressAuditingEntityListener {
 
     /**
      * 엔티티 수정 시 IP 주소를 설정합니다.
-     * 
+     *
      * @param target 대상 엔티티 객체
      */
     @PreUpdate
@@ -40,10 +40,10 @@ public class IpAddressAuditingEntityListener {
 
     /**
      * 대상 엔티티의 IP 필드에 값을 설정합니다.
-     * 
-     * @param target 대상 엔티티 객체
+     *
+     * @param target          대상 엔티티 객체
      * @param annotationClass 어노테이션 클래스
-     * @param value 설정할 IP 값
+     * @param value           설정할 IP 값
      */
     private void setIpField(Object target, Class<? extends Annotation> annotationClass, String value) {
         Class<?> clazz = target.getClass();

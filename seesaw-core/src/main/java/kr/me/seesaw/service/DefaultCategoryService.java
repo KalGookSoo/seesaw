@@ -19,6 +19,7 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 @Service
 public class DefaultCategoryService implements CategoryService {
+
     private final CategoryRepository categoryRepository;
 
     @Override
@@ -58,4 +59,5 @@ public class DefaultCategoryService implements CategoryService {
                 .toList();
         return HierarchicalFactory.build(models);
     }
+
 }

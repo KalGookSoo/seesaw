@@ -14,6 +14,7 @@ public interface UserPrincipalRepository extends Repository<User, String> {
 
     /**
      * 계정명으로 계정 인증 주체를 반환합니다.
+     *
      * @param username 계정명
      * @return 계정 인증 주체
      */

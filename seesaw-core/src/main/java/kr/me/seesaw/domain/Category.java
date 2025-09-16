@@ -7,7 +7,10 @@ import kr.me.seesaw.command.CreateCategoryCommand;
 import kr.me.seesaw.command.UpdateCategoryCommand;
 import kr.me.seesaw.core.hierarchy.Hierarchical;
 import kr.me.seesaw.domain.vo.CategoryType;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -41,7 +44,7 @@ public class Category extends AbstractHierarchical<Category> implements Hierarch
 
     @Comment("사이트 노출여부")
     private boolean siteExposed;
-    
+
     @Comment("사이트 노출순서")
     private int siteExposedOrder;
 
@@ -125,4 +128,5 @@ public class Category extends AbstractHierarchical<Category> implements Hierarch
     public void addRecentArticle(Article article) {
         recentArticles.add(article);
     }
+
 }

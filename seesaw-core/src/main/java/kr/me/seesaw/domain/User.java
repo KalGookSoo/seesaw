@@ -89,6 +89,7 @@ public class User extends BaseEntity {
 
     /**
      * 패스워드를 변경합니다.
+     *
      * @param password 패스워드
      */
     public void changePassword(String password) {
@@ -108,6 +109,7 @@ public class User extends BaseEntity {
 
     /**
      * 계정이 만료되지 않았는지 여부를 반환합니다.
+     *
      * @return 계정이 만료되지 않았는지 여부
      */
     public boolean isAccountNonExpired() {
@@ -116,6 +118,7 @@ public class User extends BaseEntity {
 
     /**
      * 계정이 잠겨있지 않은지 여부를 반환합니다.
+     *
      * @return 계정이 잠겨있지 않은지 여부
      */
     public boolean isAccountNonLocked() {
@@ -124,6 +127,7 @@ public class User extends BaseEntity {
 
     /**
      * 계정의 패스워드가 만료되지 않았는지 여부를 반환합니다.
+     *
      * @return 계정의 패스워드가 만료되지 않았는지 여부
      */
     public boolean isCredentialsNonExpired() {

@@ -1,7 +1,10 @@
 package kr.me.seesaw.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.DynamicInsert;
@@ -37,4 +40,5 @@ public class View extends BaseEntity {
         view.articleId = articleId;
         return view;
     }
+
 }

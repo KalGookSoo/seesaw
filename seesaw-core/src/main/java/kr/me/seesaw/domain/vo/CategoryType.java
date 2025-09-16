@@ -16,5 +16,6 @@ public enum CategoryType {
     SCHEDULE("스케줄(캘린더)"),
     STORE("메뉴/가격"),
     BUSINESS("매장/영업");
+
     private final String description;
 }

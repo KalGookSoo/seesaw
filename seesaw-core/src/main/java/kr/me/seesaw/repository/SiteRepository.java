@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SiteRepository extends Repository<Site, String> {
+
     Site getReferenceById(String id);
 
     Site save(Site site);
@@ -16,4 +17,5 @@ public interface SiteRepository extends Repository<Site, String> {
     Optional<Site> findByDomainName(String domainName);
 
     List<Site> findAllByIdIn(List<String> ids);
+
 }

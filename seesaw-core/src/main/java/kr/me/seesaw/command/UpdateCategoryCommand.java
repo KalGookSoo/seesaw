@@ -17,6 +17,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Builder
 public class UpdateCategoryCommand implements Serializable {
+
     @NotNull
     @NotBlank
     @Schema(description = "카테고리 이름", example = "공지사항")
@@ -48,4 +49,5 @@ public class UpdateCategoryCommand implements Serializable {
     @NotBlank
     @Schema(description = "사이트 식별자(UUID)", example = "8f14e45f-ea9d-4b1c-a3a4-12c4b2a9c001")
     private String siteId;
+
 }

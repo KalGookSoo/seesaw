@@ -17,6 +17,7 @@ public interface Permission extends Serializable {
 
     /**
      * Returns the bits that represents the permission.
+     *
      * @return the bits that represent the permission
      */
     int getMask();
@@ -37,6 +38,7 @@ public interface Permission extends Serializable {
      * This method is only used for user interface and logging purposes. It is not used in
      * any permission calculations. Therefore, duplication of characters within the output
      * is permitted.
+     *
      * @return a 32-character bit pattern
      */
     String getPattern();

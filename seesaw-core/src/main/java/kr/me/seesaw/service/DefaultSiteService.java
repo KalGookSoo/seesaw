@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 @Transactional
 @Service
 public class DefaultSiteService implements SiteService {
+
     private final String filepath;
 
     private final SiteRepository siteRepository;
@@ -193,11 +194,13 @@ public class DefaultSiteService implements SiteService {
         );
         siteRepository.save(site);
 
+        // 기존 파일 조회
+        List<Attachment> attachments = attachmentRepository.findAllByReferenceIdIn(Collections.singletonList(site.getId()));
+
         // 프로필 이미지
         if (command.hasProfileImage()) {
-            // 기존 파일 조회 및 삭제
-            List<Attachment> attachments = attachmentRepository.findAllByReferenceIdIn(Collections.singletonList(site.getId()));
-            attachmentRepository.deleteAllInBatch(attachments);
+            List<Attachment> profileImages = attachments.stream().filter(attachment -> Attachment.Type.PROFILE.getPath().equals(attachment.getPathName())).toList();
+            attachmentRepository.deleteAllInBatch(profileImages);
             attachments.stream().map(attachment -> filepath + attachment.getPathName() + File.separator + attachment.getName()).forEach(FileIOService::delete);
 
             // 쓰기
@@ -211,6 +214,10 @@ public class DefaultSiteService implements SiteService {
 
         // 배경 이미지
         if (command.hasBackgroundImage()) {
+            List<Attachment> backgroundImages = attachments.stream().filter(attachment -> Attachment.Type.BACKGROUND_IMAGE.getPath().equals(attachment.getPathName())).toList();
+            attachmentRepository.deleteAllInBatch(backgroundImages);
+            attachments.stream().map(attachment -> filepath + attachment.getPathName() + File.separator + attachment.getName()).forEach(FileIOService::delete);
+
             // 쓰기
             Attachment attachment = Attachment.create(site.getId(), Attachment.Type.BACKGROUND_IMAGE, command.getProfileImage());
             writeFile(filepath + attachment.getPathName() + File.separator + attachment.getName(), command.getBackgroundImage().getBytes());
@@ -238,4 +245,5 @@ public class DefaultSiteService implements SiteService {
             throw new IllegalArgumentException(e);
         }
     }
+
 }

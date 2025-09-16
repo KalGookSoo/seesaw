@@ -7,6 +7,7 @@ import kr.me.seesaw.model.CategoryModel;
 import java.util.List;
 
 public interface CategoryService {
+
     CategoryModel createCategory(CreateCategoryCommand command);
 
     CategoryModel getCategoryById(String id);
@@ -16,4 +17,5 @@ public interface CategoryService {
     void deleteCategoryById(String id);
 
     List<CategoryModel> getCategoriesBySiteId(String siteId);
+
 }

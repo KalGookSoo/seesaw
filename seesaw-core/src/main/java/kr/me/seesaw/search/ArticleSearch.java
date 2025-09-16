@@ -36,6 +36,8 @@ public class ArticleSearch implements UriComponentsProvider {
     public enum ViewType {
         TABLE("목록"),
         CARD("카드");
+
         private final String description;
     }
+
 }

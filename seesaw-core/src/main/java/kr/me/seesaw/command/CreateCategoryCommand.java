@@ -20,6 +20,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Builder
 public class CreateCategoryCommand implements Serializable {
+
     @NotNull
     @NotBlank
     @Schema(description = "카테고리 이름", example = "공지사항", requiredMode = Schema.RequiredMode.REQUIRED)
@@ -51,4 +52,5 @@ public class CreateCategoryCommand implements Serializable {
     @NotBlank
     @Schema(description = "사이트 식별자(UUID)", example = "8f14e45f-ea9d-4b1c-a3a4-12c4b2a9c001", requiredMode = Schema.RequiredMode.REQUIRED)
     private String siteId;
+
 }

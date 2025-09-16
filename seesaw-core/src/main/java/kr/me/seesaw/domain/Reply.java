@@ -86,4 +86,5 @@ public class Reply extends AbstractHierarchical<Reply> implements Hierarchical<R
         this.content = command.getContent();
         this.exposed = command.isExposed();
     }
+
 }

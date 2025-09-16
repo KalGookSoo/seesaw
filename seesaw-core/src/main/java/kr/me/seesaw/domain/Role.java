@@ -34,4 +34,5 @@ public class Role extends BaseEntity {
         role.alias = alias;
         return role;
     }
+
 }

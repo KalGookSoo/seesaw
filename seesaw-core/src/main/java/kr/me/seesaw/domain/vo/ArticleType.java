@@ -16,5 +16,6 @@ public enum ArticleType {
     IMAGE("이미지"),
     TABLE("표"),
     VIDEO("동영상");
+
     private final String description;
 }

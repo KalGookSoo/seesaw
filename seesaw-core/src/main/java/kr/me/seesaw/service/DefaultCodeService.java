@@ -14,6 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class DefaultCodeService implements CodeService {
+
     private final CodeRepository codeRepository;
 
     @Transactional(readOnly = true)
@@ -28,4 +29,5 @@ public class DefaultCodeService implements CodeService {
     public List<Code> findByName(String name) {
         return codeRepository.findByName(name);
     }
+
 }

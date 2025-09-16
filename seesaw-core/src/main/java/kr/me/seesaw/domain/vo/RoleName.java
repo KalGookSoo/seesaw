@@ -10,5 +10,6 @@ public enum RoleName {
     ROLE_MANAGER("관리자"),
     ROLE_ADMIN("최고관리자"),
     ROLE_ANONYMOUS("익명사용자");
+
     private final String description;
 }

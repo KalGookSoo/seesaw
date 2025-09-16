@@ -13,6 +13,7 @@ import java.io.Serializable;
 @Schema(description = "사이트 생성 커맨드")
 @Data
 public class CreateSiteCommand implements Serializable {
+
     @Parameter(description = "이름")
     @Schema(description = "이름", example = "이름")
     @NotBlank
@@ -89,4 +90,5 @@ public class CreateSiteCommand implements Serializable {
     public boolean hasBackgroundImage() {
         return null != backgroundImage && !backgroundImage.isEmpty();
     }
+
 }

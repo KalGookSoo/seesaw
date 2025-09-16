@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 public interface CategoryRepository extends Repository<Category, String> {
+
     Category save(Category category);
 
     Category getReferenceById(String id);
@@ -17,4 +18,5 @@ public interface CategoryRepository extends Repository<Category, String> {
     void deleteById(String id);
 
     Collection<Category> findAllBySiteId(String siteId, Sort sort);
+
 }

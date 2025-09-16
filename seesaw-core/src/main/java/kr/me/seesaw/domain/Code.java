@@ -49,4 +49,5 @@ public class Code extends AbstractHierarchical<Code> implements Hierarchical<Cod
         code.parentId = parentId;
         return code;
     }
+
 }
