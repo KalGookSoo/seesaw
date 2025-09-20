@@ -80,6 +80,7 @@ public class Site extends AbstractHierarchical<Site> implements Hierarchical<Sit
         child.setParent(this);
     }
 
+    @Deprecated
     @Transient
     @JsonManagedReference
     private List<Attachment> attachments = new ArrayList<>();
@@ -89,7 +90,7 @@ public class Site extends AbstractHierarchical<Site> implements Hierarchical<Sit
             String domainName,
             String description,
             String distributionCode,
-            boolean earchEngineExposed,
+            boolean searchEngineExposed,
             boolean mageExposed,
             String tags,
             Address address,
@@ -102,7 +103,7 @@ public class Site extends AbstractHierarchical<Site> implements Hierarchical<Sit
         site.domainName = domainName;
         site.description = description;
         site.distributionCode = distributionCode;
-        site.searchEngineExposed = earchEngineExposed;
+        site.searchEngineExposed = searchEngineExposed;
         site.imageExposed = mageExposed;
         site.tags = tags;
         site.address = address;
@@ -142,6 +143,7 @@ public class Site extends AbstractHierarchical<Site> implements Hierarchical<Sit
         return address == null ? Address.empty() : address;
     }
 
+    @Deprecated
     public Attachment getProfileImage() {
         return attachments.stream()
                 .filter(attachment -> Attachment.Type.PROFILE.getPath().equals(attachment.getPathName()))
@@ -149,6 +151,7 @@ public class Site extends AbstractHierarchical<Site> implements Hierarchical<Sit
                 .orElse(null);
     }
 
+    @Deprecated
     public Attachment getBackgroundImage() {
         return attachments.stream()
                 .filter(attachment -> Attachment.Type.BACKGROUND_IMAGE.getPath().equals(attachment.getPathName()))
@@ -156,6 +159,7 @@ public class Site extends AbstractHierarchical<Site> implements Hierarchical<Sit
                 .orElse(null);
     }
 
+    @Deprecated
     public void addAttachment(Attachment attachment) {
         attachments.add(attachment);
     }

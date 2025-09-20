@@ -214,7 +214,7 @@ public class DefaultArticleService implements ArticleService {
         }
 
         // 수정하면서 삭제한 이미지를 삭제
-        List<Attachment> attachments = attachmentRepository.findAllById(deletedAttachmentIds);
+        List<Attachment> attachments = attachmentRepository.findAllByIdIn(deletedAttachmentIds);
         attachmentRepository.deleteAllInBatch(attachments);
         attachments.stream().map(attachment -> filepath + attachment.getPathName() + File.separator + attachment.getName()).forEach(FileIOService::delete);
 
@@ -306,7 +306,6 @@ public class DefaultArticleService implements ArticleService {
         Object principal = principalProvider.getAuthentication().getPrincipal();
         // 동일인물 중복 조회수 불허
         List<View> views = viewRepository.findAllByArticleIdIn(Collections.singletonList(articleId));
-
     }
 
 }

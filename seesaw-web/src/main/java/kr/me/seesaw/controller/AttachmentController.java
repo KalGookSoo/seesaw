@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import kr.me.seesaw.core.file.FileIOService;
 import kr.me.seesaw.domain.Article;
 import kr.me.seesaw.domain.Attachment;
+import kr.me.seesaw.model.AttachmentModel;
 import kr.me.seesaw.service.ArticleService;
 import kr.me.seesaw.service.AttachmentService;
 import lombok.RequiredArgsConstructor;
@@ -39,9 +40,9 @@ public class AttachmentController {
             @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
             HttpServletResponse response
     ) throws IOException {
-        Attachment attachment = attachmentService.find(id);
+        AttachmentModel attachment = attachmentService.getAttachmentById(id);
         String fileName = URLEncoder.encode(attachment.getOriginalName(), StandardCharsets.UTF_8);
-        ByteArrayInputStream inputStream = FileIOService.read(attachmentService.getAbsolutePath(id));
+        ByteArrayInputStream inputStream = FileIOService.read(attachmentService.getAbsolutePath(attachment.getPathName(), attachment.getName()));
 
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
@@ -71,7 +72,7 @@ public class AttachmentController {
             for (Attachment attachment : attachments) {
                 ZipEntry entry = new ZipEntry(attachment.getOriginalName());
                 outputStream.putNextEntry(entry);
-                ByteArrayInputStream inputStream = FileIOService.read(attachmentService.getAbsolutePath(attachment));
+                ByteArrayInputStream inputStream = FileIOService.read(attachmentService.getAbsolutePath(attachment.getPathName(), attachment.getName()));
                 StreamUtils.copy(inputStream, outputStream);
                 outputStream.closeEntry();
             }

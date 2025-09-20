@@ -1,13 +1,14 @@
 package kr.me.seesaw.service;
 
-import kr.me.seesaw.domain.Attachment;
+import kr.me.seesaw.command.CreateAttachmentCommand;
+import kr.me.seesaw.model.AttachmentModel;
 
 public interface AttachmentService {
 
-    Attachment find(String id);
+    AttachmentModel createAttachment(CreateAttachmentCommand command);
 
-    String getAbsolutePath(String id);
+    AttachmentModel getAttachmentById(String id);
 
-    String getAbsolutePath(Attachment attachment);
+    String getAbsolutePath(String pathname, String name);
 
 }

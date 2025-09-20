@@ -3,6 +3,7 @@ package kr.me.seesaw.service;
 import kr.me.seesaw.command.CreateSiteCommand;
 import kr.me.seesaw.core.file.FileIOService;
 import kr.me.seesaw.domain.*;
+import kr.me.seesaw.model.SiteModel;
 import kr.me.seesaw.repository.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
@@ -134,8 +135,7 @@ public class DefaultSiteService implements SiteService {
     }
 
     @Override
-    public Site createSite(CreateSiteCommand command) throws IOException {
-        //
+    public SiteModel createSite(CreateSiteCommand command) throws IOException {
         Site site = Site.create(
                 command.getName(),
                 command.getDomainName(),
@@ -151,6 +151,9 @@ public class DefaultSiteService implements SiteService {
         );
         siteRepository.save(site);
 
+        // todo 사이트와 첨부파일은 논리적 연관관계를 맺고있기 때문에 Site Entity의 Association을 제거해야 함.
+        SiteModel siteModel = new SiteModel(site);
+
         // 프로필 이미지
         if (command.hasProfileImage()) {
             // 쓰기
@@ -159,7 +162,7 @@ public class DefaultSiteService implements SiteService {
 
             // 영속화
             attachmentRepository.save(attachment);
-            site.addAttachment(attachment);
+            siteModel.addAttachment(attachment);
         }
 
         // 배경 이미지
@@ -170,15 +173,14 @@ public class DefaultSiteService implements SiteService {
 
             // 영속화
             attachmentRepository.save(attachment);
-            site.addAttachment(attachment);
+            siteModel.addAttachment(attachment);
         }
-        return site;
+        return siteModel;
     }
 
     @Override
     public Site updateSite(String id, CreateSiteCommand command) throws IOException {
-        Site site = Optional.ofNullable(siteRepository.getReferenceById(id))
-                .orElseThrow(() -> new NoSuchElementException("사이트를 찾을 수 없습니다. id: " + id));
+        Site site = siteRepository.getReferenceById(id);
         site.update(
                 command.getName(),
                 command.getDomainName(),

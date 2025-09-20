@@ -1,6 +1,7 @@
 package kr.me.seesaw.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import kr.me.seesaw.domain.BaseEntity;
 import lombok.*;
 
 import java.io.Serializable;
@@ -33,5 +34,15 @@ public abstract class BaseModel implements Serializable {
 
     @Schema(description = "최종 수정 일시", example = "2025-01-02T10:30:00")
     private LocalDateTime lastModifiedDate;
+
+    protected void setBaseModel(BaseEntity baseEntity) {
+        this.id = baseEntity.getId();
+        this.createdBy = baseEntity.getCreatedBy();
+        this.createdIp = baseEntity.getCreatedIp();
+        this.createdDate = baseEntity.getCreatedDate();
+        this.lastModifiedBy = baseEntity.getLastModifiedBy();
+        this.lastModifiedIp = baseEntity.getLastModifiedIp();
+        this.lastModifiedDate = baseEntity.getLastModifiedDate();
+    }
 
 }

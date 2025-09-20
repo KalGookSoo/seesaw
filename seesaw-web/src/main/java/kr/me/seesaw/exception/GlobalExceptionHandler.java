@@ -1,5 +1,6 @@
 package kr.me.seesaw.exception;
 
+import jakarta.persistence.EntityNotFoundException;
 import kr.me.seesaw.core.validation.ValidationError;
 import kr.me.seesaw.message.CmsMessageSource;
 import lombok.RequiredArgsConstructor;
@@ -34,10 +35,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     private final CmsMessageSource messageSource;
 
     @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<String> handleNoSuchElementException(NoSuchElementException e) {
+    public ResponseEntity<Map<String, String>> handleNoSuchElementException(NoSuchElementException e) {
         logger.error(e.getMessage());
         String message = messageSource.getMessage("error.not.found.resource");
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(message);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .body(Map.of("message", message));
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleEntityNotFoundException(EntityNotFoundException ex) {
+        return handleNoSuchElementException(new NoSuchElementException(ex));
     }
 
     @ExceptionHandler(value = NoSuchElementException.class, produces = MediaType.TEXT_HTML_VALUE)
@@ -47,10 +54,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
+    public ResponseEntity<Map<String, String>> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
         logger.error(e.getMessage());
         String message = messageSource.getMessage("error.constraint.violation");
-        return ResponseEntity.badRequest().body(message);
+        return ResponseEntity.badRequest()
+                .body(Map.of("message", message));
     }
 
     @Override
@@ -62,7 +70,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     ) {
         logger.error(ex.getMessage());
         String message = messageSource.getMessage("error.payload.too.large");
-        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(message);
+        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)
+                .body(Map.of("message", message));
     }
 
     @Override
@@ -74,7 +83,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     ) {
         logger.error(ex.getMessage());
         String message = messageSource.getMessage("error.unsupported.media.type");
-        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(message);
+        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
+                .body(Map.of("message", message));
     }
 
     @Override
@@ -89,14 +99,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .stream()
                 .map(ValidationError::new)
                 .toList();
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(Map.of("errors", errors));
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+                .body(Map.of("errors", errors));
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException e) {
+    public ResponseEntity<Map<String, String>> handleAccessDeniedException(AccessDeniedException e) {
         logger.error(e.getMessage());
         String message = messageSource.getMessage("error.access.denied");
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(message);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(Map.of("message", message));
     }
 
     @ExceptionHandler(value = AccessDeniedException.class, produces = MediaType.TEXT_HTML_VALUE)
@@ -106,7 +118,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(InvalidCsrfTokenException.class)
-    public ResponseEntity<String> handleInvalidCsrfTokenException(InvalidCsrfTokenException e) {
+    public ResponseEntity<Map<String, String>> handleInvalidCsrfTokenException(InvalidCsrfTokenException e) {
         logger.error(e.getMessage());
         return handleAccessDeniedException(e);
     }

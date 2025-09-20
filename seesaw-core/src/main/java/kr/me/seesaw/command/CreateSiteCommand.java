@@ -5,83 +5,89 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import kr.me.seesaw.domain.vo.Address;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
 
 @Schema(description = "사이트 생성 커맨드")
-@Data
-public class CreateSiteCommand implements Serializable {
+@ToString
+@AllArgsConstructor
+@EqualsAndHashCode
+@Getter
+public final class CreateSiteCommand implements Serializable {
 
     @Parameter(description = "이름")
     @Schema(description = "이름", example = "이름")
     @NotBlank
     @NotNull
-    private String name;
+    private final String name;
 
     @Parameter(description = "도메인이름")
     @Schema(description = "도메인이름", example = "www.example.com")
     @NotBlank
     @NotNull
-    private String domainName;
+    private final String domainName;
 
     @Parameter(description = "설명")
     @Schema(description = "설명", example = "설명")
     @NotBlank
     @NotNull
-    private String description;
+    private final String description;
 
     @Parameter(description = "분류코드")
     @Schema(description = "분류코드", example = "분류코드")
     @NotBlank
     @NotNull
-    private String distributionCode;
+    private final String distributionCode;
 
     @Parameter(description = "검색 엔진 노출 여부")
     @Schema(description = "검색 엔진 노출 여부", example = "true")
-    private boolean searchEngineExposed;
+    private final boolean searchEngineExposed;
 
     @Parameter(description = "이미지 노출 여부")
     @Schema(description = "이미지 노출 여부", example = "true")
-    private boolean imageExposed;
+    private final boolean imageExposed;
 
     @Parameter(description = "태그")
     @Schema(description = "태그", example = "태그1,태그2")
     @NotBlank
     @NotNull
-    private String tags;
+    private final String tags;
 
     @Parameter(description = "주소")
     @Schema(description = "주소")
     @NotNull
-    private Address address = Address.empty();
+    private final Address address;
 
     @Parameter(description = "연락처")
     @Schema(description = "연락처", example = "010-1234-5678")
     @NotBlank
     @NotNull
-    private String contactNumber;
+    private final String contactNumber;
 
     @Parameter(description = "소개글")
     @Schema(description = "소개글", example = "독서모임 홈페이지")
     @NotBlank
     @NotNull
-    private String intro;
+    private final String intro;
 
     @Parameter(description = "본문")
     @Schema(description = "본문", example = "독서 모임을 시작으로 대전시에서 주최하는 다양한 문화 및 지원 행사에 참여하고 싶으신 분들 환영합니다!")
     @NotBlank
     @NotNull
-    private String content;
+    private final String content;
 
     @Parameter(description = "프로필 이미지")
     @Schema(description = "프로필 이미지")
-    private MultipartFile profileImage;
+    private final MultipartFile profileImage;
 
     @Parameter(description = "배경 이미지")
     @Schema(description = "배경 이미지")
-    private MultipartFile backgroundImage;
+    private final MultipartFile backgroundImage;
 
     public boolean hasProfileImage() {
         return null != profileImage && !profileImage.isEmpty();

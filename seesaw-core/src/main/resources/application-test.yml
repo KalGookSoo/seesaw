@@ -8,7 +8,7 @@ spring:
     open-in-view: false
     show-sql: true
     hibernate:
-      ddl-auto: create-drop  # 테스트마다 스키마를 생성/삭제하여 격리성 확보
+      ddl-auto: update
     properties:
       hibernate:
 #        format_sql: true        # SQL 포맷팅

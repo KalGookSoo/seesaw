@@ -1,7 +1,7 @@
 package kr.me.seesaw.controller;
 
 import kr.me.seesaw.core.file.FileIOService;
-import kr.me.seesaw.domain.Attachment;
+import kr.me.seesaw.model.AttachmentModel;
 import kr.me.seesaw.service.AttachmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
@@ -26,8 +26,8 @@ public class AttachmentApiController {
             @PathVariable("id") String id,
             @RequestHeader(HttpHeaders.USER_AGENT) String userAgent
     ) throws IOException {
-        Attachment attachment = attachmentService.find(id);
-        ByteArrayInputStream stream = FileIOService.read(attachmentService.getAbsolutePath(id));
+        AttachmentModel attachment = attachmentService.getAttachmentById(id);
+        ByteArrayInputStream stream = FileIOService.read(attachmentService.getAbsolutePath(attachment.getPathName(), attachment.getName()));
         InputStreamResource resource = new InputStreamResource(stream);
         String fileName = attachment.getOriginalName();
         HttpHeaders headers = new HttpHeaders();
@@ -45,4 +45,5 @@ public class AttachmentApiController {
         }
         return disposition + fileName;
     }
+
 }

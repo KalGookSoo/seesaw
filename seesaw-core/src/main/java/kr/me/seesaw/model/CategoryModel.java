@@ -14,7 +14,7 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @Getter
 @NoArgsConstructor
-public class CategoryModel extends AbstractHierarchicalModel<CategoryModel> implements Hierarchical<CategoryModel, String> {
+public final class CategoryModel extends AbstractHierarchicalModel<CategoryModel> implements Hierarchical<CategoryModel, String> {
 
     @Schema(description = "카테고리 이름", example = "공지사항")
     private String name;
@@ -48,13 +48,7 @@ public class CategoryModel extends AbstractHierarchicalModel<CategoryModel> impl
     }
 
     public CategoryModel(Category category) {
-        setId(category.getId());
-        setCreatedBy(category.getCreatedBy());
-        setCreatedIp(category.getCreatedIp());
-        setCreatedDate(category.getCreatedDate());
-        setLastModifiedBy(category.getLastModifiedBy());
-        setLastModifiedIp(category.getLastModifiedIp());
-        setLastModifiedDate(category.getLastModifiedDate());
+        setBaseModel(category);
         setParentId(category.getParentId());
         name = category.getName();
         description = category.getDescription();
