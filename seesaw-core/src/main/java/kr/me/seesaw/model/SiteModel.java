@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.swagger.v3.oas.annotations.media.Schema;
 import kr.me.seesaw.core.hierarchy.Hierarchical;
 import kr.me.seesaw.domain.Attachment;
+import kr.me.seesaw.domain.Category;
 import kr.me.seesaw.domain.Site;
 import kr.me.seesaw.domain.vo.Address;
 import lombok.AllArgsConstructor;
@@ -99,6 +100,10 @@ public final class SiteModel extends AbstractHierarchicalModel<SiteModel> implem
 
     public void addAttachment(Attachment attachment) {
         attachments.add(new AttachmentModel(attachment));
+    }
+
+    public void addCategory(Category category) {
+        categories.add(new CategoryModel(category));
     }
 
 }

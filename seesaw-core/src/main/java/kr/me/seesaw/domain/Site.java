@@ -1,8 +1,6 @@
 package kr.me.seesaw.domain;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import kr.me.seesaw.core.hierarchy.Hierarchical;
 import kr.me.seesaw.domain.vo.Address;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -19,15 +17,15 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-@EqualsAndHashCode(callSuper = true, exclude = {"attachments", "categories"})
-@ToString(callSuper = true, exclude = {"attachments", "categories"})
+@EqualsAndHashCode(callSuper = true, exclude = {"categories"})
+@ToString(callSuper = true, exclude = {"categories"})
 
 @Entity
 @Table(name = "tb_site")
 @Comment("사이트")
 @DynamicInsert
 @DynamicUpdate
-public class Site extends AbstractHierarchical<Site> implements Hierarchical<Site, String> {
+public class Site extends AbstractHierarchical<Site> {
 
     @Comment("이름")
     private String name;
@@ -69,21 +67,11 @@ public class Site extends AbstractHierarchical<Site> implements Hierarchical<Sit
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    @Transient
-    @JsonManagedReference
+    @OneToMany(mappedBy = "site", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<RoleMapping> roleMappings = new ArrayList<>();
+
+    @OneToMany(mappedBy = "site", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Category> categories = new ArrayList<>();
-
-    @Override
-    public void addChild(Site child) {
-        children.add(child);
-        child.setParentId(getId());
-        child.setParent(this);
-    }
-
-    @Deprecated
-    @Transient
-    @JsonManagedReference
-    private List<Attachment> attachments = new ArrayList<>();
 
     public static Site create(
             String name,
@@ -143,29 +131,9 @@ public class Site extends AbstractHierarchical<Site> implements Hierarchical<Sit
         return address == null ? Address.empty() : address;
     }
 
-    @Deprecated
-    public Attachment getProfileImage() {
-        return attachments.stream()
-                .filter(attachment -> Attachment.Type.PROFILE.getPath().equals(attachment.getPathName()))
-                .findFirst()
-                .orElse(null);
-    }
-
-    @Deprecated
-    public Attachment getBackgroundImage() {
-        return attachments.stream()
-                .filter(attachment -> Attachment.Type.BACKGROUND_IMAGE.getPath().equals(attachment.getPathName()))
-                .findFirst()
-                .orElse(null);
-    }
-
-    @Deprecated
-    public void addAttachment(Attachment attachment) {
-        attachments.add(attachment);
-    }
-
     public void addCategory(Category category) {
         categories.add(category);
+        category.setSite(this);
     }
 
 }

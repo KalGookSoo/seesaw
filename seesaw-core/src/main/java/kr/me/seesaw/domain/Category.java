@@ -1,7 +1,5 @@
 package kr.me.seesaw.domain;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import kr.me.seesaw.command.CreateCategoryCommand;
 import kr.me.seesaw.command.UpdateCategoryCommand;
@@ -22,8 +20,8 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
+@EqualsAndHashCode(exclude = {"site", "articles", "notifications"}, callSuper = true)
+@ToString(exclude = {"site", "articles", "notifications"})
 
 @Entity
 @Table(name = "tb_category")
@@ -55,30 +53,14 @@ public class Category extends AbstractHierarchical<Category> implements Hierarch
     private Integer sequence;
 
     @Comment("사이트 식별자")
-    @Column(length = 36)
-    private String siteId;
-
-    @Transient
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JsonBackReference
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "site_id", referencedColumnName = "id")
     private Site site;
 
-    @Transient
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JsonManagedReference
+    @OneToMany(mappedBy = "category", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Article> articles = new ArrayList<>();
 
-    @Transient
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    private List<Article> recentArticles = new ArrayList<>();
-
-    @Transient
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JsonManagedReference
+    @OneToMany(mappedBy = "category", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Notification> notifications = new ArrayList<>();
 
     @Override
@@ -97,7 +79,11 @@ public class Category extends AbstractHierarchical<Category> implements Hierarch
         category.siteExposedOrder = command.getSiteExposedOrder();
         category.exposed = command.isExposed();
         category.sequence = command.getSequence();
-        category.siteId = command.getSiteId();
+
+        Site site = new Site();
+        site.setId(command.getSiteId());
+        category.site = site;
+
         return category;
     }
 
@@ -109,24 +95,8 @@ public class Category extends AbstractHierarchical<Category> implements Hierarch
         this.siteExposedOrder = command.getSiteExposedOrder();
         this.exposed = command.isExposed();
         this.sequence = command.getSequence();
-        this.siteId = command.getSiteId();
-    }
 
-    public void joinArticles(List<Article> articles) {
-        articles.stream().filter(this::isArticleForCategory).forEach(this::addArticle);
-    }
-
-    private boolean isArticleForCategory(Article article) {
-        return getId().equals(article.getCategoryId());
-    }
-
-    public void addArticle(Article article) {
-        articles.add(article);
-        article.setCategoryId(getId());
-    }
-
-    public void addRecentArticle(Article article) {
-        recentArticles.add(article);
+        this.getSite().setId(command.getSiteId());
     }
 
 }

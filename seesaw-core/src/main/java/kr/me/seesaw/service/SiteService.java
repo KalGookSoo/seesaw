@@ -11,15 +11,15 @@ public interface SiteService {
 
     Site getSiteById(String id);
 
-    Site getSiteByDomainName(String domainName);
+    SiteModel getSiteByDomainName(String domainName);
 
-    Site getSiteContext(String domainName);
+    SiteModel getSiteContext(String domainName);
 
-    List<Site> getOwnSites(String username);
+    List<SiteModel> getOwnSites(String username);
 
     SiteModel createSite(CreateSiteCommand command) throws IOException;
 
-    Site updateSite(String id, CreateSiteCommand command) throws IOException;
+    SiteModel updateSite(String id, CreateSiteCommand command) throws IOException;
 
     void deleteSite(String id);
 

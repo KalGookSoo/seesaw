@@ -3,11 +3,15 @@ package kr.me.seesaw.service;
 import kr.me.seesaw.command.CreateSiteCommand;
 import kr.me.seesaw.core.file.FileIOService;
 import kr.me.seesaw.domain.*;
+import kr.me.seesaw.model.ArticleModel;
+import kr.me.seesaw.model.BaseModel;
+import kr.me.seesaw.model.CategoryModel;
 import kr.me.seesaw.model.SiteModel;
-import kr.me.seesaw.repository.*;
+import kr.me.seesaw.repository.ArticleSearchRepository;
+import kr.me.seesaw.repository.AttachmentRepository;
+import kr.me.seesaw.repository.SiteRepository;
+import kr.me.seesaw.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,11 +32,7 @@ public class DefaultSiteService implements SiteService {
 
     private final AttachmentRepository attachmentRepository;
 
-    private final CategoryRepository categoryRepository;
-
     private final ArticleSearchRepository articleSearchRepository;
-
-    private final RoleMappingRepository roleMappingRepository;
 
     private final UserRepository userRepository;
 
@@ -40,16 +40,13 @@ public class DefaultSiteService implements SiteService {
             @Value("${kr.me.seesaw.filepath}") String filepath,
             SiteRepository siteRepository,
             AttachmentRepository attachmentRepository,
-            CategoryRepository categoryRepository,
             ArticleSearchRepository articleSearchRepository,
-            RoleMappingRepository roleMappingRepository, UserRepository userRepository
+            UserRepository userRepository
     ) {
         this.filepath = filepath;
         this.siteRepository = siteRepository;
         this.attachmentRepository = attachmentRepository;
-        this.categoryRepository = categoryRepository;
         this.articleSearchRepository = articleSearchRepository;
-        this.roleMappingRepository = roleMappingRepository;
         this.userRepository = userRepository;
     }
 
@@ -61,51 +58,57 @@ public class DefaultSiteService implements SiteService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "siteCache", key = "#domainName")
     @Override
-    public Site getSiteByDomainName(String domainName) {
+    public SiteModel getSiteByDomainName(String domainName) {
         return siteRepository.findByDomainName(domainName)
+                .map(SiteModel::new)
                 .orElseThrow(() -> new NoSuchElementException("사이트를 찾을 수 없습니다. domainName: " + domainName));
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Site getSiteContext(String domainName) {
+    public SiteModel getSiteContext(String domainName) {
         Site site = siteRepository.findByDomainName(domainName)
                 .orElseThrow(() -> new NoSuchElementException("사이트를 찾을 수 없습니다. domainName: " + domainName));
+        SiteModel siteModel = new SiteModel(site);
+
         // 프로필 이미지, 배경 이미지 조인
-        // TODO 서비스로 만들어 캐싱할 것
         attachmentRepository.findAllByReferenceIdIn(Collections.singletonList(site.getId()))
-                .forEach(site::addAttachment);
+                .forEach(siteModel::addAttachment);
 
         // 카테고리 조인
-        // TODO 서비스로 만들어 캐싱할 것
-        categoryRepository.findAllBySiteId(site.getId(), Sort.by(Sort.Direction.ASC, "sequence"))
-                .stream()
-                .filter(Category::isExposed)
-                .forEach(site::addCategory);
-
-        // 최근 7일 게시글 조인
-        List<String> categoryIds = site.getCategories().stream().map(Category::getId).toList();
-        LocalDateTime cutoffDate = LocalDateTime.now().minusDays(7);
-
-        // TODO 서비스로 만들어 캐싱할 것
-        List<Article> articles = articleSearchRepository.findAllByCategoryId(categoryIds, cutoffDate)
-                .stream()
-                .sorted(Comparator.comparing(BaseEntity::getCreatedDate))
-                .toList();
-        site.getCategories().forEach(category -> category.joinArticles(articles));
-
-        Map<String, Category> allCategories = site.getCategories().stream()
-                .collect(Collectors.toMap(Category::getId, Function.identity()));
-
-        // 최근 게시글을 병합하여 상위 카테고리 게시글에 바인딩
         site.getCategories()
                 .stream()
-                .filter(Category::isRoot)
-                .forEach(category -> articles.stream()
-                        .filter(article -> category.getId().equals(allCategories.get(article.getCategoryId()).getParentId()))
-                        .forEach(category::addRecentArticle));
+                .filter(Category::isExposed)
+                .sorted(Comparator.comparing(Category::getSequence))
+                .forEach(siteModel::addCategory);
+
+        // 최근 7일 게시글 조인
+        List<String> categoryIds = siteModel.getCategories()
+                .stream()
+                .map(CategoryModel::getId)
+                .toList();
+        LocalDateTime cutoffDate = LocalDateTime.now().minusDays(7);
+
+        List<ArticleModel> articles = articleSearchRepository.findAllByCategoryId(categoryIds, cutoffDate)
+                .stream()
+                .map(ArticleModel::new)
+                .sorted(Comparator.comparing(BaseModel::getCreatedDate))
+                .toList();
+        siteModel.getCategories()
+                .forEach(categoryModel -> categoryModel.joinArticles(articles));
+
+        Map<String, CategoryModel> allCategories = siteModel.getCategories()
+                .stream()
+                .collect(Collectors.toMap(CategoryModel::getId, Function.identity()));
+
+        // 최근 게시글을 병합하여 상위 카테고리 게시글에 바인딩
+        siteModel.getCategories()
+                .stream()
+                .filter(CategoryModel::isRoot)
+                .forEach(categoryModel -> articles.stream()
+                        .filter(article -> categoryModel.getId().equals(allCategories.get(article.getCategoryId()).getParentId()))
+                        .forEach(categoryModel::addRecentArticle));
 
         // 최근 게시글을 해당 카테고리에도 바인딩
         articles.forEach(article -> {
@@ -120,18 +123,21 @@ public class DefaultSiteService implements SiteService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<Site> getOwnSites(String username) {
+    public List<SiteModel> getOwnSites(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new NoSuchElementException("계정을 찾을 수 없습니다. username: " + username));
 
         // 계정 식별자로 roleMappingRepository.findAllByUserId로 계정에 매핑된 siteId 목록 추출
-        List<RoleMapping> roleMappings = roleMappingRepository.findAllByUserId(user.getId());
-        List<String> siteIds = roleMappings.stream()
-                .map(RoleMapping::getSiteId)
-                .distinct()
+        List<String> siteIds = user.getRoleMappings()
+                .stream()
+                .map(RoleMapping::getSite)
+                .map(Site::getId)
                 .toList();
 
-        return siteRepository.findAllByIdIn(siteIds);
+        return siteRepository.findAllByIdIn(siteIds)
+                .stream()
+                .map(SiteModel::new)
+                .toList();
     }
 
     @Override
@@ -179,7 +185,7 @@ public class DefaultSiteService implements SiteService {
     }
 
     @Override
-    public Site updateSite(String id, CreateSiteCommand command) throws IOException {
+    public SiteModel updateSite(String id, CreateSiteCommand command) throws IOException {
         Site site = siteRepository.getReferenceById(id);
         site.update(
                 command.getName(),
@@ -195,12 +201,14 @@ public class DefaultSiteService implements SiteService {
                 command.getContent()
         );
         siteRepository.save(site);
+        SiteModel siteModel = new SiteModel(site);
 
         // 기존 파일 조회
         List<Attachment> attachments = attachmentRepository.findAllByReferenceIdIn(Collections.singletonList(site.getId()));
 
         // 프로필 이미지
         if (command.hasProfileImage()) {
+            // 기존 첨부파일 제거
             List<Attachment> profileImages = attachments.stream().filter(attachment -> Attachment.Type.PROFILE.getPath().equals(attachment.getPathName())).toList();
             attachmentRepository.deleteAllInBatch(profileImages);
             attachments.stream().map(attachment -> filepath + attachment.getPathName() + File.separator + attachment.getName()).forEach(FileIOService::delete);
@@ -211,11 +219,12 @@ public class DefaultSiteService implements SiteService {
 
             // 영속화
             attachmentRepository.save(attachment);
-            site.addAttachment(attachment);
+            siteModel.addAttachment(attachment);
         }
 
         // 배경 이미지
         if (command.hasBackgroundImage()) {
+            // 기존 첨부파일 제거
             List<Attachment> backgroundImages = attachments.stream().filter(attachment -> Attachment.Type.BACKGROUND_IMAGE.getPath().equals(attachment.getPathName())).toList();
             attachmentRepository.deleteAllInBatch(backgroundImages);
             attachments.stream().map(attachment -> filepath + attachment.getPathName() + File.separator + attachment.getName()).forEach(FileIOService::delete);
@@ -226,9 +235,9 @@ public class DefaultSiteService implements SiteService {
 
             // 영속화
             attachmentRepository.save(attachment);
-            site.addAttachment(attachment);
+            siteModel.addAttachment(attachment);
         }
-        return site;
+        return siteModel;
     }
 
     @Override

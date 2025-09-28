@@ -37,7 +37,7 @@ public class Notification extends BaseEntity {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonBackReference
-//    @ManyToOne
+//    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
 

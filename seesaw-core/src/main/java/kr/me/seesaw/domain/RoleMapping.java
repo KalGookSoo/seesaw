@@ -1,8 +1,6 @@
 package kr.me.seesaw.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.DynamicInsert;
@@ -24,22 +22,25 @@ import static lombok.AccessLevel.PROTECTED;
 public class RoleMapping extends BaseEntity {
 
     @Comment("역할 식별자")
-    @Column(length = 36)
-    private String roleId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "role_id", referencedColumnName = "id")
+    private Role role;
 
     @Comment("계정 식별자")
-    @Column(length = 36)
-    private String userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
 
     @Comment("사이트 식별자")
-    @Column(length = 36)
-    private String siteId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "site_id", referencedColumnName = "id")
+    private Site site;
 
-    public static RoleMapping create(String roleId, String userId, String siteId) {
+    public static RoleMapping create(Role role, User user, Site site) {
         RoleMapping roleMapping = new RoleMapping();
-        roleMapping.roleId = roleId;
-        roleMapping.userId = userId;
-        roleMapping.siteId = siteId;
+        roleMapping.role = role;
+        roleMapping.user = user;
+        roleMapping.site = site;
         return roleMapping;
     }
 

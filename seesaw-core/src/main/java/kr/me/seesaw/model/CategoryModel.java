@@ -1,18 +1,20 @@
 package kr.me.seesaw.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.swagger.v3.oas.annotations.media.Schema;
 import kr.me.seesaw.core.hierarchy.Hierarchical;
 import kr.me.seesaw.domain.Category;
 import kr.me.seesaw.domain.vo.CategoryType;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Schema(name = "CategoryModel", description = "카테고리 모델")
-@ToString
-@EqualsAndHashCode(callSuper = true)
+@ToString(exclude = {"articles", "recentArticles"})
+@EqualsAndHashCode(exclude = {"articles", "recentArticles"}, callSuper = true)
 @Getter
+@Setter(AccessLevel.PROTECTED)
 @NoArgsConstructor
 public final class CategoryModel extends AbstractHierarchicalModel<CategoryModel> implements Hierarchical<CategoryModel, String> {
 
@@ -40,6 +42,12 @@ public final class CategoryModel extends AbstractHierarchicalModel<CategoryModel
     @Schema(description = "사이트 식별자(UUID)", example = "8f14e45f-ea9d-4b1c-a3a4-12c4b2a9c001")
     private String siteId;
 
+    @JsonManagedReference
+    private final List<ArticleModel> articles = new ArrayList<>();
+
+    @JsonManagedReference
+    private List<ArticleModel> recentArticles = new ArrayList<>();
+
     @Override
     public void addChild(CategoryModel child) {
         getChildren().add(child);
@@ -57,7 +65,24 @@ public final class CategoryModel extends AbstractHierarchicalModel<CategoryModel
         siteExposedOrder = category.getSiteExposedOrder();
         exposed = category.isExposed();
         sequence = category.getSequence();
-        siteId = category.getSiteId();
+        siteId = category.getSite().getId();
+    }
+
+    public void joinArticles(List<ArticleModel> articles) {
+        articles.stream().filter(this::isArticleForCategory).forEach(this::addArticle);
+    }
+
+    private boolean isArticleForCategory(ArticleModel article) {
+        return getId().equals(article.getCategoryId());
+    }
+
+    public void addArticle(ArticleModel article) {
+        articles.add(article);
+        article.setCategoryId(getId());
+    }
+
+    public void addRecentArticle(ArticleModel article) {
+        recentArticles.add(article);
     }
 
 }

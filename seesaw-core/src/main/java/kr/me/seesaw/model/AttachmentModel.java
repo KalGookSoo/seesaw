@@ -42,4 +42,11 @@ public final class AttachmentModel extends BaseModel {
         this.size = attachment.getSize();
     }
 
+    public boolean isInlineImage() {
+        return Attachment.Type.INLINE_IMAGE.getPath().equals(pathName);
+    }
+
+    public boolean isAttachment() {
+        return Attachment.Type.ATTACHMENT.getPath().equals(pathName);
+    }
 }

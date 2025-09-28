@@ -1,11 +1,16 @@
 package kr.me.seesaw.domain;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static lombok.AccessLevel.PROTECTED;
 
@@ -28,6 +33,10 @@ public class Role extends BaseEntity {
     @Comment("별칭")
     private String alias;
 
+    @OneToMany(mappedBy = "role", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<RoleMapping> roleMappings = new ArrayList<>();
+
+    @Deprecated
     public static Role create(String name, String alias) {
         Role role = new Role();
         role.name = name;

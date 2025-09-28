@@ -53,6 +53,9 @@ public class User extends BaseEntity {
     @Comment("연락처")
     private String contactNumber;
 
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<RoleMapping> roleMappings = new ArrayList<>();
+
     @Transient
     @EqualsAndHashCode.Exclude
     @ToString.Exclude

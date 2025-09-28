@@ -57,9 +57,7 @@ class DefaultSiteServiceTest {
                 filepath,
                 siteRepository,
                 attachmentRepository,
-                categoryRepository,
                 articleSearchRepository,
-                roleMappingRepository,
                 userRepository
         );
     }
