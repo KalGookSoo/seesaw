@@ -1,8 +1,8 @@
 package kr.me.seesaw;
 
 import jakarta.servlet.http.HttpServletRequest;
-import kr.me.seesaw.domain.Article;
-import kr.me.seesaw.domain.Category;
+import kr.me.seesaw.model.ArticleModel;
+import kr.me.seesaw.model.CategoryModel;
 import kr.me.seesaw.interceptor.ContextEnvironment;
 import kr.me.seesaw.service.ArticleService;
 import lombok.RequiredArgsConstructor;
@@ -45,17 +45,17 @@ public class IndexController {
 
         // 하위 카테고리 중 사이트 노출 카테고리 목록을 추출
         @SuppressWarnings("unchecked")
-        Map<String, Category> allCategories = ((Map<String, Category>) request.getAttribute(ContextEnvironment.ALL_CATEGORIES));
+        Map<String, CategoryModel> allCategories = ((Map<String, CategoryModel>) request.getAttribute(ContextEnvironment.ALL_CATEGORIES));
         List<String> siteExposedCategoryIds = allCategories.values()
                 .stream()
-                .filter(Predicate.not(Category::isRoot))
-                .filter(Category::isSiteExposed)
-                .sorted(Comparator.comparing(Category::getSiteExposedOrder))
-                .map(Category::getId)
+                .filter(Predicate.not(CategoryModel::isRoot))
+                .filter(CategoryModel::isSiteExposed)
+                .sorted(Comparator.comparing(CategoryModel::getSiteExposedOrder))
+                .map(CategoryModel::getId)
                 .toList();
 
         // 사이트 노출 게시글은 최근 3 개의 게시글로 규정
-        Map<String, Page<Article>> siteExposedPages = siteExposedCategoryIds.stream()
+        Map<String, Page<ArticleModel>> siteExposedPages = siteExposedCategoryIds.stream()
                 .collect(Collectors.toMap(Function.identity(),
                         id -> articleService.findAllByCategoryId(id, pageable),
                         (oldValue, newValue) -> oldValue,

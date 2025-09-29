@@ -1,6 +1,5 @@
 package kr.me.seesaw.model;
 
-import kr.me.seesaw.domain.Role;
 import kr.me.seesaw.domain.User;
 import kr.me.seesaw.domain.vo.RoleName;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,11 +13,11 @@ import java.util.stream.Collectors;
 
 public class UserPrincipal implements UserDetails, OAuth2User {
 
-    private final User user;
+    private final UserModel user;
 
     private final Map<String, Object> attributes;
 
-    public UserPrincipal(User user, Map<String, Object> attributes) {
+    public UserPrincipal(UserModel user, Map<String, Object> attributes) {
         this.user = user;
         this.attributes = attributes;
     }
@@ -31,7 +30,7 @@ public class UserPrincipal implements UserDetails, OAuth2User {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return user.getRoles()
                 .stream()
-                .map(Role::getName)
+                .map(RoleModel::getName)
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toSet());
     }

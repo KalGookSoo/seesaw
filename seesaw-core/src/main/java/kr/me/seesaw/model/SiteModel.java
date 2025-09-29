@@ -16,8 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Schema(name = "SiteModel", description = "사이트 모델")
-@ToString
-@EqualsAndHashCode(callSuper = true)
+@ToString(exclude = {"categories", "attachments"})
+@EqualsAndHashCode(exclude = {"categories", "attachments"}, callSuper = true)
 @Getter
 @AllArgsConstructor
 public final class SiteModel extends AbstractHierarchicalModel<SiteModel> implements Hierarchical<SiteModel, String> {
@@ -70,7 +70,7 @@ public final class SiteModel extends AbstractHierarchicalModel<SiteModel> implem
 
     public SiteModel(Site site) {
         setBaseModel(site);
-        setParentId(site.getParentId());
+        setParentId(site.getParent() == null ? null : site.getParent().getId());
         name = site.getName();
         domainName = site.getDomainName();
         description = site.getDescription();
@@ -98,12 +98,12 @@ public final class SiteModel extends AbstractHierarchicalModel<SiteModel> implem
                 .orElse(null);
     }
 
-    public void addAttachment(Attachment attachment) {
-        attachments.add(new AttachmentModel(attachment));
+    public void addAttachment(AttachmentModel attachment) {
+        attachments.add(attachment);
     }
 
-    public void addCategory(Category category) {
-        categories.add(new CategoryModel(category));
+    public void addCategory(CategoryModel category) {
+        categories.add(category);
     }
 
 }

@@ -6,6 +6,10 @@ import kr.me.seesaw.command.UpdateArticleCommand;
 import kr.me.seesaw.core.authentication.PrincipalProvider;
 import kr.me.seesaw.core.file.FileIOService;
 import kr.me.seesaw.domain.*;
+import kr.me.seesaw.model.ArticleModel;
+import kr.me.seesaw.model.AttachmentModel;
+import kr.me.seesaw.model.ReplyModel;
+import kr.me.seesaw.model.ViewModel;
 import kr.me.seesaw.repository.*;
 import kr.me.seesaw.search.ArticleSearch;
 import org.jsoup.Jsoup;
@@ -70,27 +74,76 @@ public class DefaultArticleService implements ArticleService {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<Article> findAll(Pageable pageable, ArticleSearch search) {
-        Page<Article> page = articleSearchRepository.search(pageable, search);
+    public Page<ArticleModel> findAll(Pageable pageable, ArticleSearch search) {
+        Page<Article> entityPage = articleSearchRepository.search(pageable, search);
+        Page<ArticleModel> page = entityPage.map(ArticleModel::new);
 
         // 페이지 요청이 아닐 경우 조인하지 않는다.
         if (pageable.isUnpaged()) {
             return page;
         }
 
-        List<String> articleIds = page.getContent().stream().map(Article::getId).toList();
+        List<String> articleIds = page.getContent()
+                .stream()
+                .map(ArticleModel::getId)
+                .toList();
 
-        List<Reply> replies = replyRepository.findAllByArticleIdIn(articleIds);
-        replies.sort(Comparator.comparing(BaseEntity::getCreatedDate));
-        page.getContent().forEach(article -> article.joinReplies(replies));
-
-        List<View> views = viewRepository.findAllByArticleIdIn(articleIds);
-        views.sort(Comparator.comparing(BaseEntity::getCreatedDate));
-        page.getContent().forEach(article -> article.joinViews(views));
-
-        List<Attachment> attachments = attachmentRepository.findAllByReferenceIdIn(articleIds)
+        List<ReplyModel> replies = replyRepository.findAllByArticleIdIn(articleIds)
                 .stream()
                 .sorted(Comparator.comparing(BaseEntity::getCreatedDate))
+                .map(ReplyModel::new)
+                .toList();
+        page.getContent()
+                .forEach(article -> article.joinReplies(replies));
+
+        List<ViewModel> views = viewRepository.findAllByArticleIdIn(articleIds)
+                .stream()
+                .sorted(Comparator.comparing(BaseEntity::getCreatedDate))
+                .map(ViewModel::new)
+                .toList();
+        page.getContent()
+                .forEach(article -> article.joinViews(views));
+
+        List<AttachmentModel> attachments = attachmentRepository.findAllByReferenceIdIn(articleIds)
+                .stream()
+                .sorted(Comparator.comparing(BaseEntity::getCreatedDate))
+                .map(AttachmentModel::new)
+                .toList();
+        page.getContent()
+                .forEach(article -> article.joinAttachments(attachments));
+        return page;
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Page<ArticleModel> findAllByCategoryId(String categoryId, Pageable pageable) {
+        Page<Article> entityPage = articleRepository.findAllByCategoryId(categoryId, pageable);
+        Page<ArticleModel> page = entityPage.map(ArticleModel::new);
+
+        // 페이지 요청이 아닐 경우 조인하지 않는다.
+        if (pageable.isUnpaged()) {
+            return page;
+        }
+        List<String> articleIds = page.getContent().stream().map(ArticleModel::getId).toList();
+
+        List<ReplyModel> replies = replyRepository.findAllByArticleIdIn(articleIds)
+                .stream()
+                .sorted(Comparator.comparing(BaseEntity::getCreatedDate))
+                .map(ReplyModel::new)
+                .toList();
+        page.getContent().forEach(article -> article.joinReplies(replies));
+
+        List<ViewModel> views = viewRepository.findAllByArticleIdIn(articleIds)
+                .stream()
+                .sorted(Comparator.comparing(BaseEntity::getCreatedDate))
+                .map(ViewModel::new)
+                .toList();
+        page.getContent().forEach(article -> article.joinViews(views));
+
+        List<AttachmentModel> attachments = attachmentRepository.findAllByReferenceIdIn(articleIds)
+                .stream()
+                .sorted(Comparator.comparing(BaseEntity::getCreatedDate))
+                .map(AttachmentModel::new)
                 .toList();
         page.getContent().forEach(article -> article.joinAttachments(attachments));
         return page;
@@ -98,62 +151,43 @@ public class DefaultArticleService implements ArticleService {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<Article> findAllByCategoryId(String categoryId, Pageable pageable) {
-        Page<Article> page = articleRepository.findAllByCategoryId(categoryId, pageable);
-
-        // 페이지 요청이 아닐 경우 조인하지 않는다.
-        if (pageable.isUnpaged()) {
-            return page;
-        }
-        List<String> articleIds = page.getContent().stream().map(Article::getId).toList();
-
-        List<Reply> replies = replyRepository.findAllByArticleIdIn(articleIds);
-        replies.sort(Comparator.comparing(BaseEntity::getCreatedDate));
-        page.getContent().forEach(article -> article.joinReplies(replies));
-
-        List<View> views = viewRepository.findAllByArticleIdIn(articleIds);
-        views.sort(Comparator.comparing(BaseEntity::getCreatedDate));
-        page.getContent().forEach(article -> article.joinViews(views));
-
-        List<Attachment> attachments = attachmentRepository.findAllByReferenceIdIn(articleIds)
-                .stream()
-                .sorted(Comparator.comparing(BaseEntity::getCreatedDate))
-                .toList();
-        page.getContent().forEach(article -> article.joinAttachments(attachments));
-        return page;
+    public ArticleModel find(String id) {
+        Article article = articleRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("해당 게시글이 존재하지 않습니다."));
+        return new ArticleModel(article);
     }
 
     @Transactional(readOnly = true)
-    @Override
-    public Article find(String id) {
+    public ArticleModel getArticleAggregation(String id) {
         Article article = articleRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("해당 게시글이 존재하지 않습니다."));
-        return article;
-    }
+        ArticleModel model = new ArticleModel(article);
 
-    @Transactional(readOnly = true)
-    public Article getArticleAggregation(String id) {
-        Article article = articleRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("해당 게시글이 존재하지 않습니다."));
-
-        List<Reply> replies = replyRepository.findAllByArticleIdIn(Collections.singletonList(id));
-        replies.sort(Comparator.comparing(BaseEntity::getCreatedDate));
-        article.joinReplies(replies);
-
-        List<View> views = viewRepository.findAllByArticleIdIn(Collections.singletonList(id));
-        views.sort(Comparator.comparing(BaseEntity::getCreatedDate));
-        article.joinViews(views);
-
-        List<Attachment> attachments = attachmentRepository.findAllByReferenceIdIn(Collections.singletonList(id))
+        List<ReplyModel> replies = replyRepository.findAllByArticleIdIn(Collections.singletonList(id))
                 .stream()
                 .sorted(Comparator.comparing(BaseEntity::getCreatedDate))
+                .map(ReplyModel::new)
                 .toList();
-        article.joinAttachments(attachments);
-        return article;
+        model.joinReplies(replies);
+
+        List<ViewModel> views = viewRepository.findAllByArticleIdIn(Collections.singletonList(id))
+                .stream()
+                .sorted(Comparator.comparing(BaseEntity::getCreatedDate))
+                .map(ViewModel::new)
+                .toList();
+        model.joinViews(views);
+
+        List<AttachmentModel> attachments = attachmentRepository.findAllByReferenceIdIn(Collections.singletonList(id))
+                .stream()
+                .sorted(Comparator.comparing(BaseEntity::getCreatedDate))
+                .map(AttachmentModel::new)
+                .toList();
+        model.joinAttachments(attachments);
+        return model;
     }
 
     @Override
-    public Article create(CreateArticleCommand command) throws IOException {
+    public ArticleModel create(CreateArticleCommand command) throws IOException {
 
         // 생성될 게시글의 식별자를 참조하기위해 먼저 게시글을 저장한다.
         Article article = Article.create(command);
@@ -187,11 +221,11 @@ public class DefaultArticleService implements ArticleService {
         Safelist safelist = Safelist.relaxed().preserveRelativeLinks(true);
         article.setContent(Jsoup.clean(document.body().html(), "http://localhost", safelist));
         articleRepository.save(article);
-        return article;
+        return new ArticleModel(article);
     }
 
     @Override
-    public Article update(String id, UpdateArticleCommand command) throws IOException {
+    public ArticleModel update(String id, UpdateArticleCommand command) throws IOException {
         Article article = Optional.ofNullable(entityManager.getReference(Article.class, id))
                 .orElseThrow(() -> new NoSuchElementException("해당 게시글이 존재하지 않습니다."));
 
@@ -245,7 +279,7 @@ public class DefaultArticleService implements ArticleService {
             writeFile(filepath + attachment.getPathName() + File.separator + attachment.getName(), multipartFile.getBytes());
             attachmentRepository.save(attachment);
         }
-        return article;
+        return new ArticleModel(article);
     }
 
     @Override
@@ -270,27 +304,30 @@ public class DefaultArticleService implements ArticleService {
 
     @Override
     public boolean isOwner(String id, String username) {
-        Article article = find(id);
+        ArticleModel article = find(id);
         return article.getCreatedBy().equals(username);
     }
 
     @Override
-    public List<Article> getFixedArticles(String categoryId, boolean fixed, Sort sort) {
-        return articleRepository.findAllByCategoryIdAndFixed(categoryId, fixed, sort);
+    public List<ArticleModel> getFixedArticles(String categoryId, boolean fixed, Sort sort) {
+        return articleRepository.findAllByCategoryIdAndFixed(categoryId, fixed, sort)
+                .stream()
+                .map(ArticleModel::new)
+                .toList();
     }
 
     @Nullable
     @Override
-    public Article getPreviousArticle(ArticleSearch search, LocalDateTime createdDate) {
+    public ArticleModel getPreviousArticle(ArticleSearch search, LocalDateTime createdDate) {
         Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
-        return articleSearchRepository.findFirstNext(search, createdDate, sort).orElse(null);
+        return articleSearchRepository.findFirstNext(search, createdDate, sort).map(ArticleModel::new).orElse(null);
     }
 
     @Nullable
     @Override
-    public Article getNextArticle(ArticleSearch search, LocalDateTime createdDate) {
+    public ArticleModel getNextArticle(ArticleSearch search, LocalDateTime createdDate) {
         Sort sort = Sort.by(Sort.Direction.ASC, "createdDate");
-        return articleSearchRepository.findFirstNext(search, createdDate, sort).orElse(null);
+        return articleSearchRepository.findFirstNext(search, createdDate, sort).map(ArticleModel::new).orElse(null);
     }
 
     private void writeFile(String pathname, byte[] bytes) {

@@ -7,15 +7,14 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import kr.me.seesaw.core.hierarchy.Hierarchical;
 import kr.me.seesaw.domain.Article;
-import kr.me.seesaw.domain.Attachment;
 import kr.me.seesaw.domain.vo.ArticleType;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 import org.jsoup.Jsoup;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Schema(name = "ArticleModel", description = "게시글 모델")
 @ToString(exclude = {"attachments", "replies", "views", "votes"})
@@ -71,7 +70,7 @@ public final class ArticleModel extends AbstractHierarchicalModel<SiteModel> imp
 
     public ArticleModel(Article article) {
         setBaseModel(article);
-        setParentId(article.getParentId());
+        setParentId(article.getParent() != null ? article.getParent().getId() : null);
         this.exposed = article.isExposed();
         this.fixed = article.isFixed();
         this.fixedOrder = article.getFixedOrder();
@@ -79,21 +78,6 @@ public final class ArticleModel extends AbstractHierarchicalModel<SiteModel> imp
         this.content = article.getContent();
         this.type = article.getType();
         this.categoryId = article.getCategory() != null ? article.getCategory().getId() : null;
-        if (article.getAttachments() != null) {
-            this.attachments = article.getAttachments().stream().map(AttachmentModel::new).collect(Collectors.toList());
-        }
-        if (article.getReplies() != null) {
-            this.replies = article.getReplies().stream().map(ReplyModel::new).collect(Collectors.toList());
-            // set back-reference
-            this.replies.forEach(r -> r.setArticle(this));
-        }
-        if (article.getViews() != null) {
-            this.views = article.getViews().stream().map(ViewModel::new).collect(Collectors.toList());
-            this.views.forEach(v -> v.setArticle(this));
-        }
-        if (article.getVotes() != null) {
-            this.votes = article.getVotes().stream().map(VoteModel::new).collect(Collectors.toList());
-        }
     }
 
     public String getMaskedAuthor() {
@@ -150,6 +134,11 @@ public final class ArticleModel extends AbstractHierarchicalModel<SiteModel> imp
 
     public List<AttachmentModel> getAttachments() {
         return attachments.stream().filter(AttachmentModel::isAttachment).toList();
+    }
+
+    public boolean isRecentlyGenerated() {
+        LocalDateTime now = LocalDateTime.now();
+        return !getCreatedDate().isBefore(now.minusDays(7));
     }
 
 }

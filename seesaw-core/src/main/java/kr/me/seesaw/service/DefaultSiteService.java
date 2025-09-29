@@ -3,10 +3,7 @@ package kr.me.seesaw.service;
 import kr.me.seesaw.command.CreateSiteCommand;
 import kr.me.seesaw.core.file.FileIOService;
 import kr.me.seesaw.domain.*;
-import kr.me.seesaw.model.ArticleModel;
-import kr.me.seesaw.model.BaseModel;
-import kr.me.seesaw.model.CategoryModel;
-import kr.me.seesaw.model.SiteModel;
+import kr.me.seesaw.model.*;
 import kr.me.seesaw.repository.ArticleSearchRepository;
 import kr.me.seesaw.repository.AttachmentRepository;
 import kr.me.seesaw.repository.SiteRepository;
@@ -52,8 +49,9 @@ public class DefaultSiteService implements SiteService {
 
     @Transactional(readOnly = true)
     @Override
-    public Site getSiteById(String id) {
+    public SiteModel getSiteById(String id) {
         return siteRepository.findById(id)
+                .map(SiteModel::new)
                 .orElseThrow(() -> new NoSuchElementException("사이트를 찾을 수 없습니다. id: " + id));
     }
 
@@ -74,6 +72,8 @@ public class DefaultSiteService implements SiteService {
 
         // 프로필 이미지, 배경 이미지 조인
         attachmentRepository.findAllByReferenceIdIn(Collections.singletonList(site.getId()))
+                .stream()
+                .map(AttachmentModel::new)
                 .forEach(siteModel::addAttachment);
 
         // 카테고리 조인
@@ -81,6 +81,7 @@ public class DefaultSiteService implements SiteService {
                 .stream()
                 .filter(Category::isExposed)
                 .sorted(Comparator.comparing(Category::getSequence))
+                .map(CategoryModel::new)
                 .forEach(siteModel::addCategory);
 
         // 최근 7일 게시글 조인
@@ -112,13 +113,13 @@ public class DefaultSiteService implements SiteService {
 
         // 최근 게시글을 해당 카테고리에도 바인딩
         articles.forEach(article -> {
-            Category category = allCategories.get(article.getCategoryId());
+            CategoryModel category = allCategories.get(article.getCategoryId());
             if (category != null) {
                 category.addRecentArticle(article);
             }
         });
 
-        return site;
+        return siteModel;
     }
 
     @Transactional(readOnly = true)
@@ -168,7 +169,7 @@ public class DefaultSiteService implements SiteService {
 
             // 영속화
             attachmentRepository.save(attachment);
-            siteModel.addAttachment(attachment);
+            siteModel.addAttachment(new AttachmentModel(attachment));
         }
 
         // 배경 이미지
@@ -179,7 +180,7 @@ public class DefaultSiteService implements SiteService {
 
             // 영속화
             attachmentRepository.save(attachment);
-            siteModel.addAttachment(attachment);
+            siteModel.addAttachment(new AttachmentModel(attachment));
         }
         return siteModel;
     }
@@ -219,7 +220,7 @@ public class DefaultSiteService implements SiteService {
 
             // 영속화
             attachmentRepository.save(attachment);
-            siteModel.addAttachment(attachment);
+            siteModel.addAttachment(new AttachmentModel(attachment));
         }
 
         // 배경 이미지
@@ -235,7 +236,7 @@ public class DefaultSiteService implements SiteService {
 
             // 영속화
             attachmentRepository.save(attachment);
-            siteModel.addAttachment(attachment);
+            siteModel.addAttachment(new AttachmentModel(attachment));
         }
         return siteModel;
     }

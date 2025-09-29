@@ -2,8 +2,7 @@ package kr.me.seesaw.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
 import kr.me.seesaw.core.file.FileIOService;
-import kr.me.seesaw.domain.Article;
-import kr.me.seesaw.domain.Attachment;
+import kr.me.seesaw.model.ArticleModel;
 import kr.me.seesaw.model.AttachmentModel;
 import kr.me.seesaw.service.ArticleService;
 import kr.me.seesaw.service.AttachmentService;
@@ -57,8 +56,8 @@ public class AttachmentController {
             @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
             HttpServletResponse response
     ) throws IOException {
-        Article article = articleService.find(articleId);
-        List<Attachment> attachments = article.getAttachments();
+        ArticleModel article = articleService.find(articleId);
+        List<AttachmentModel> attachments = article.getAttachments();
         if (attachments.isEmpty()) {
             throw new NoSuchElementException();
         }
@@ -69,7 +68,7 @@ public class AttachmentController {
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, getContentDisposition(userAgent, fileName) + ".zip");
 
         try (ZipOutputStream outputStream = new ZipOutputStream(response.getOutputStream())) {
-            for (Attachment attachment : attachments) {
+            for (AttachmentModel attachment : attachments) {
                 ZipEntry entry = new ZipEntry(attachment.getOriginalName());
                 outputStream.putNextEntry(entry);
                 ByteArrayInputStream inputStream = FileIOService.read(attachmentService.getAbsolutePath(attachment.getPathName(), attachment.getName()));
@@ -88,4 +87,5 @@ public class AttachmentController {
         }
         return disposition + fileName;
     }
+
 }

@@ -1,12 +1,16 @@
 package kr.me.seesaw.service;
 
-import kr.me.seesaw.domain.*;
+import kr.me.seesaw.domain.Role;
+import kr.me.seesaw.domain.RoleMapping;
+import kr.me.seesaw.domain.Site;
+import kr.me.seesaw.domain.User;
 import kr.me.seesaw.domain.vo.Email;
 import kr.me.seesaw.domain.vo.RoleName;
+import kr.me.seesaw.model.RoleModel;
+import kr.me.seesaw.model.UserModel;
 import kr.me.seesaw.model.UserPrincipal;
 import kr.me.seesaw.oauth2.provider.NaverUserDetail;
 import kr.me.seesaw.oauth2.provider.OAuth2UserDetail;
-import kr.me.seesaw.repository.RoleMappingRepository;
 import kr.me.seesaw.repository.RoleRepository;
 import kr.me.seesaw.repository.SiteRepository;
 import kr.me.seesaw.repository.UserRepository;
@@ -21,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+@Transactional
 @Service
 public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
 
@@ -30,25 +35,20 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
 
     private final SiteRepository siteRepository;
 
-    private final RoleMappingRepository roleMappingRepository;
-
     private final String domainName;
 
     public PrincipalOauth2UserService(
             UserRepository userRepository,
             RoleRepository roleRepository,
             SiteRepository siteRepository,
-            RoleMappingRepository roleMappingRepository,
             @Value("${site.domain.name}") String domainName
     ) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.siteRepository = siteRepository;
-        this.roleMappingRepository = roleMappingRepository;
         this.domainName = domainName;
     }
 
-    @Transactional
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
@@ -58,41 +58,48 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         OAuth2UserDetail oAuth2UserDetail = new NaverUserDetail(oAuth2User.getAttributes());
         String email = oAuth2UserDetail.getEmail();
         String username = email.split("@")[0];
-        Site site = siteRepository.findByDomainName(domainName).orElseThrow(NoSuchElementException::new);// TODO 사이트를 찾을 수 없는 경우 커스텀 예외 만들어서 커스텀 페이지 만들 것
+        Site site = siteRepository.findByDomainName(domainName)
+                .orElseThrow(() -> new NoSuchElementException("사이트를 찾을 수 없습니다."));
 
         return userRepository.findByUsername(username)
                 .map(user -> {
                     // 인증한 계정이 현재 사이트에 종속된 역할 목록 조회
-                    List<RoleMapping> roleMappings = roleMappingRepository.findAllByUserIdAndSiteId(user.getId(), site.getId());
-                    List<Role> roles = roleRepository.findAllByIdIn(roleMappings.stream().map(RoleMapping::getRoleId).toList());
+                    List<Role> roles = user.getRoleMappings()
+                            .stream()
+                            .map(RoleMapping::getRole)
+                            .toList();
 
                     // 일반사용자 역할이 없다면 생성하여 부여
                     boolean hasRoleUser = roles.stream().anyMatch(role -> role.getName().equals(RoleName.ROLE_USER.name()));
                     if (!hasRoleUser) {
-                        Role roleUser = roleRepository.findByName(RoleName.ROLE_USER.name()).orElseThrow(NoSuchElementException::new);
-                        RoleMapping roleMapping = RoleMapping.create(roleUser.getId(), user.getId(), site.getId());
-                        roleMappingRepository.save(roleMapping);
-                        user.addRole(roleUser);
+                        Role roleUser = roleRepository.findByName(RoleName.ROLE_USER.name())
+                                .orElseThrow(() -> new NoSuchElementException("일반사용자 역할이 없습니다."));
+
+                        RoleMapping roleMapping = RoleMapping.create(roleUser, user, site);
+                        user.addRole(roleMapping);
+                        userRepository.save(user);
                     }
 
-                    // 역할 목록을 계정에 할당
-                    roles.forEach(user::addRole);
-                    return new UserPrincipal(user, oAuth2User.getAttributes());
+                    // 모델 변환 및 권한 주입
+                    UserModel userModel = new UserModel(user);
+                    roles.stream().map(RoleModel::new).forEach(userModel::addRole);
+                    return new UserPrincipal(userModel, oAuth2User.getAttributes());
                 })
                 .orElseGet(() -> {
                     // 계정 생성
                     User user = User.create(username, new Email(email.split("@")[0], email.split("@")[1]));
-                    userRepository.save(user);
 
                     // 현재 인증한 계정, 현재 접속한 사이트에 일반사용자 역할을 부여
-                    Role roleUser = roleRepository.findByName(RoleName.ROLE_USER.name()).orElseThrow(NoSuchElementException::new);
-                    RoleMapping roleMapping = RoleMapping.create(roleUser.getId(), user.getId(), site.getId());
-                    roleMappingRepository.save(roleMapping);
+                    Role role = roleRepository.findByName(RoleName.ROLE_USER.name()).orElseThrow(NoSuchElementException::new);
+                    RoleMapping roleMapping = RoleMapping.create(role, user, site);
+                    user.addRole(roleMapping);
+                    userRepository.save(user);
 
-                    // 일반사용자
-                    user.addRole(roleUser);
-                    return new UserPrincipal(user, oAuth2User.getAttributes());
+                    // 모델 변환 및 권한 주입
+                    UserModel userModel = new UserModel(user);
+                    userModel.addRole(new RoleModel(role));
+                    return new UserPrincipal(userModel, oAuth2User.getAttributes());
                 });
-
     }
+
 }

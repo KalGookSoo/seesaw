@@ -3,8 +3,8 @@ package kr.me.seesaw.interceptor;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kr.me.seesaw.core.hierarchy.HierarchicalFactory;
-import kr.me.seesaw.domain.Category;
-import kr.me.seesaw.domain.Site;
+import kr.me.seesaw.model.CategoryModel;
+import kr.me.seesaw.model.SiteModel;
 import kr.me.seesaw.service.SiteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
@@ -59,16 +59,16 @@ public class NavigationInterceptor implements HandlerInterceptor {
 
             request.setAttribute(ContextEnvironment.ACTIVE_PROFILES, environment.getActiveProfiles());
 
-            Site site = siteService.getSiteContext(environment.getProperty("site.domain.name"));
+            SiteModel site = siteService.getSiteContext(environment.getProperty("site.domain.name"));
             request.setAttribute(ContextEnvironment.SITE_CONTEXT, site);
 
             // 요소 탐색 편의를 위한 속성 할당
-            Map<String, Category> allCategories = site.getCategories().stream()
-                    .collect(Collectors.toMap(Category::getId, Function.identity(), (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+            Map<String, CategoryModel> allCategories = site.getCategories().stream()
+                    .collect(Collectors.toMap(CategoryModel::getId, Function.identity(), (oldValue, newValue) -> oldValue, LinkedHashMap::new));
             request.setAttribute(ContextEnvironment.ALL_CATEGORIES, allCategories);
 
             // 계층형 목록 출력을 위한 속성 할당
-            List<Category> nestedCategories = HierarchicalFactory.build(site.getCategories());
+            List<CategoryModel> nestedCategories = HierarchicalFactory.build(site.getCategories());
             request.setAttribute(ContextEnvironment.NESTED_CATEGORIES, nestedCategories);
 
             // 요청 파라미터에 카테고리 식별자가 있을 경우 현재 카테고리 정보를 속성에 할당

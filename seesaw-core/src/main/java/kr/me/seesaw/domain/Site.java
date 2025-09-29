@@ -17,11 +17,13 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-@EqualsAndHashCode(callSuper = true, exclude = {"categories"})
-@ToString(callSuper = true, exclude = {"categories"})
+@EqualsAndHashCode(exclude = {"roleMappings", "categories"}, callSuper = true)
+@ToString(exclude = {"roleMappings", "categories"})
 
 @Entity
-@Table(name = "tb_site")
+@Table(name = "tb_site", indexes = {
+        @Index(columnList = "parent_id")
+})
 @Comment("사이트")
 @DynamicInsert
 @DynamicUpdate
@@ -129,11 +131,6 @@ public class Site extends AbstractHierarchical<Site> {
 
     public Address getAddress() {
         return address == null ? Address.empty() : address;
-    }
-
-    public void addCategory(Category category) {
-        categories.add(category);
-        category.setSite(this);
     }
 
 }

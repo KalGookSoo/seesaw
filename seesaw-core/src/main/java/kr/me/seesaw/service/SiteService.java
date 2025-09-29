@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface SiteService {
 
-    Site getSiteById(String id);
+    SiteModel getSiteById(String id);
 
     SiteModel getSiteByDomainName(String domainName);
 

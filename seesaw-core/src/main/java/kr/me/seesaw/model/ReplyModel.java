@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.swagger.v3.oas.annotations.media.Schema;
 import kr.me.seesaw.core.hierarchy.Hierarchical;
-import kr.me.seesaw.domain.Attachment;
 import kr.me.seesaw.domain.Reply;
 import lombok.*;
 import org.hibernate.annotations.Comment;
@@ -49,10 +48,10 @@ public final class ReplyModel extends AbstractHierarchicalModel<ReplyModel> impl
 
     public ReplyModel(Reply reply) {
         setBaseModel(reply);
-        setParentId(reply.getParentId());
+        setParentId(reply.getParent() != null ? reply.getParent().getId() : null);
         this.exposed = reply.isExposed();
         this.content = reply.getContent();
-        this.articleId = reply.getArticleId();
+        this.articleId = (reply.getArticle() != null ? reply.getArticle().getId() : null);
     }
 
     public String getMaskedAuthor() {
@@ -80,4 +79,5 @@ public final class ReplyModel extends AbstractHierarchicalModel<ReplyModel> impl
     public List<AttachmentModel> getAttachments() {
         return attachments.stream().filter(AttachmentModel::isAttachment).toList();
     }
+
 }

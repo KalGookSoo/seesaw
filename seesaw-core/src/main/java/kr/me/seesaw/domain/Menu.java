@@ -1,10 +1,7 @@
 package kr.me.seesaw.domain;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
-import kr.me.seesaw.core.hierarchy.Hierarchical;
+import jakarta.persistence.*;
+import jakarta.persistence.Index;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,15 +17,17 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
+@EqualsAndHashCode(exclude = {"menuRoles"}, callSuper = true)
+@ToString(exclude = {"menuRoles"})
 
 @Entity
-@Table(name = "tb_menu")
+@Table(name = "tb_menu", indexes = {
+        @Index(columnList = "parent_id")
+})
 @DynamicInsert
 @DynamicUpdate
 @Comment("메뉴")
-public class Menu extends AbstractHierarchical<Menu> implements Hierarchical<Menu, String> {
+public class Menu extends AbstractHierarchical<Menu> {
 
     @Comment("이름")
     private String name;
@@ -39,17 +38,19 @@ public class Menu extends AbstractHierarchical<Menu> implements Hierarchical<Men
     @Comment("순번")
     private Integer sequence;
 
-    @Transient
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JsonManagedReference
-    private List<Role> roles = new ArrayList<>();
+    @OneToMany(mappedBy = "menu", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<MenuRole> menuRoles = new ArrayList<>();
 
-    @Override
-    public void addChild(Menu child) {
-        children.add(child);
-        child.setParentId(getId());
-        child.setParent(this);
+    public Menu(String name, String uri, Integer sequence) {
+        this.name = name;
+        this.uri = uri;
+        this.sequence = sequence;
+    }
+
+    public void update(String name, String uri, Integer sequence) {
+        this.name = name;
+        this.uri = uri;
+        this.sequence = sequence;
     }
 
 }

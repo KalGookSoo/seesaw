@@ -2,7 +2,7 @@ package kr.me.seesaw.service;
 
 import kr.me.seesaw.command.CreateArticleCommand;
 import kr.me.seesaw.command.UpdateArticleCommand;
-import kr.me.seesaw.domain.Article;
+import kr.me.seesaw.model.ArticleModel;
 import kr.me.seesaw.search.ArticleSearch;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,17 +15,17 @@ import java.util.List;
 
 public interface ArticleService {
 
-    Page<Article> findAll(Pageable pageable, ArticleSearch search);
+    Page<ArticleModel> findAll(Pageable pageable, ArticleSearch search);
 
-    Page<Article> findAllByCategoryId(String categoryId, Pageable pageable);
+    Page<ArticleModel> findAllByCategoryId(String categoryId, Pageable pageable);
 
-    Article find(String id);
+    ArticleModel find(String id);
 
-    Article getArticleAggregation(String id);
+    ArticleModel getArticleAggregation(String id);
 
-    Article create(CreateArticleCommand command) throws IOException;
+    ArticleModel create(CreateArticleCommand command) throws IOException;
 
-    Article update(String id, UpdateArticleCommand command) throws IOException;
+    ArticleModel update(String id, UpdateArticleCommand command) throws IOException;
 
     void delete(String id);
 
@@ -33,12 +33,12 @@ public interface ArticleService {
 
     boolean isOwner(String id, String username);
 
-    List<Article> getFixedArticles(String categoryId, boolean fixed, Sort sort);
+    List<ArticleModel> getFixedArticles(String categoryId, boolean fixed, Sort sort);
 
     @Nullable
-    Article getPreviousArticle(ArticleSearch search, LocalDateTime createdDate);
+    ArticleModel getPreviousArticle(ArticleSearch search, LocalDateTime createdDate);
 
     @Nullable
-    Article getNextArticle(ArticleSearch search, LocalDateTime createdDate);
+    ArticleModel getNextArticle(ArticleSearch search, LocalDateTime createdDate);
 
 }

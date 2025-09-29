@@ -11,20 +11,18 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @Setter(AccessLevel.PROTECTED)
 @NoArgsConstructor(access = PROTECTED)
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
+@EqualsAndHashCode(exclude = {"role", "user", "site"}, callSuper = true)
+@ToString(exclude = {"role", "user", "site"})
 
 @Entity
-@Table(name = "tb_role_mapping")
+@Table(name = "tb_role_mapping", indexes = {
+        @Index(columnList = "user_id, site_id"),
+        @Index(columnList = "role_id")
+})
 @Comment("역할 매핑")
 @DynamicInsert
 @DynamicUpdate
 public class RoleMapping extends BaseEntity {
-
-    @Comment("역할 식별자")
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "role_id", referencedColumnName = "id")
-    private Role role;
 
     @Comment("계정 식별자")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -35,6 +33,11 @@ public class RoleMapping extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "site_id", referencedColumnName = "id")
     private Site site;
+
+    @Comment("역할 식별자")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "role_id", referencedColumnName = "id")
+    private Role role;
 
     public static RoleMapping create(Role role, User user, Site site) {
         RoleMapping roleMapping = new RoleMapping();

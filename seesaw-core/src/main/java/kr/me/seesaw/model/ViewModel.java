@@ -23,6 +23,6 @@ public final class ViewModel extends BaseModel {
 
     public ViewModel(View view) {
         setBaseModel(view);
-        this.articleId = view.getArticleId();
+        this.articleId = (view.getArticle() != null ? view.getArticle().getId() : null);
     }
 }

@@ -6,7 +6,6 @@ ALTER TABLE tb_role_mapping ADD CONSTRAINT fk_tb_mapping_site FOREIGN KEY (site_
 ALTER TABLE tb_role_mapping ADD CONSTRAINT fk_tb_mapping_role FOREIGN KEY (role_id) REFERENCES tb_role (id);
 ALTER TABLE tb_category ADD CONSTRAINT fk_tb_category_site FOREIGN KEY (site_id) REFERENCES tb_site (id);
 ALTER TABLE tb_article ADD CONSTRAINT fk_tb_article_category FOREIGN KEY (category_id) REFERENCES tb_category (id);
-ALTER TABLE tb_notification ADD CONSTRAINT fk_tb_notification_category FOREIGN KEY (category_id) REFERENCES tb_category (id);
 ALTER TABLE tb_reply ADD CONSTRAINT fk_tb_reply_article FOREIGN KEY (article_id) REFERENCES tb_article (id);
 ALTER TABLE tb_view ADD CONSTRAINT fk_tb_view_article FOREIGN KEY (article_id) REFERENCES tb_article (id);
 ALTER TABLE tb_site ADD CONSTRAINT fk_tb_site_parent FOREIGN KEY (parent_id) REFERENCES tb_site (id);

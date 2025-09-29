@@ -16,7 +16,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
+@ToString
 
 @Entity
 @Table(name = "tb_permission")

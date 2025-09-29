@@ -1,7 +1,6 @@
 package kr.me.seesaw.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import kr.me.seesaw.domain.vo.Email;
 import lombok.*;
@@ -21,8 +20,8 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @Setter(AccessLevel.PROTECTED)
 @NoArgsConstructor(access = PROTECTED)
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
+@EqualsAndHashCode(exclude = {"roleMappings"}, callSuper = true)
+@ToString(exclude = {"roleMappings"})
 
 @Entity
 @Table(name = "tb_user")
@@ -55,12 +54,6 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<RoleMapping> roleMappings = new ArrayList<>();
-
-    @Transient
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JsonManagedReference
-    private List<Role> roles = new ArrayList<>();
 
     @Comment("만료 일시")
     private LocalDateTime expiredDate;
@@ -137,12 +130,13 @@ public class User extends BaseEntity {
         return credentialsExpiredDate == null || credentialsExpiredDate.isAfter(LocalDateTime.now());
     }
 
-    public void addRole(Role role) {
-        roles.add(role);
-    }
-
     public Email getEmail() {
         return email == null ? Email.empty() : email;
+    }
+
+    public void addRole(RoleMapping roleMapping) {
+        roleMappings.add(roleMapping);
+        roleMapping.setUser(this);
     }
 
 }

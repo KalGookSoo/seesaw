@@ -3,6 +3,7 @@ package kr.me.seesaw.core.authentication;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.User;
 
 import java.util.UUID;
 
@@ -12,7 +13,7 @@ public class AnonymousPrincipalProvider implements PrincipalProvider {
     public Authentication getAuthentication() {
         return new AnonymousAuthenticationToken(
                 UUID.randomUUID().toString(),
-                "anonymous",
+                User.withUsername("ANONYMOUS").build(),
                 AuthorityUtils.createAuthorityList("ROLE_ANONYMOUS")
         );
     }

@@ -1,9 +1,9 @@
 package kr.me.seesaw.domain;
 
 import jakarta.persistence.*;
+import jakarta.persistence.Index;
 import kr.me.seesaw.command.CreateCategoryCommand;
 import kr.me.seesaw.command.UpdateCategoryCommand;
-import kr.me.seesaw.core.hierarchy.Hierarchical;
 import kr.me.seesaw.domain.vo.CategoryType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -20,15 +20,18 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-@EqualsAndHashCode(exclude = {"site", "articles", "notifications"}, callSuper = true)
-@ToString(exclude = {"site", "articles", "notifications"})
+@EqualsAndHashCode(exclude = {"site", "articles"}, callSuper = true)
+@ToString(exclude = {"site", "articles"})
 
 @Entity
-@Table(name = "tb_category")
+@Table(name = "tb_category", indexes = {
+        @Index(columnList = "site_id"),
+        @Index(columnList = "parent_id")
+})
 @DynamicInsert
 @DynamicUpdate
 @Comment("카테고리")
-public class Category extends AbstractHierarchical<Category> implements Hierarchical<Category, String> {
+public class Category extends AbstractHierarchical<Category> {
 
     @Comment("이름")
     private String name;
@@ -59,16 +62,6 @@ public class Category extends AbstractHierarchical<Category> implements Hierarch
 
     @OneToMany(mappedBy = "category", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Article> articles = new ArrayList<>();
-
-    @OneToMany(mappedBy = "category", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<Notification> notifications = new ArrayList<>();
-
-    @Override
-    public void addChild(Category child) {
-        children.add(child);
-        child.setParentId(getId());
-        child.setParent(this);
-    }
 
     public static Category create(CreateCategoryCommand command) {
         Category category = new Category();

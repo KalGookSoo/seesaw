@@ -1,6 +1,6 @@
 package kr.me.seesaw.service;
 
-import kr.me.seesaw.domain.Code;
+import kr.me.seesaw.model.CodeModel;
 
 import java.util.List;
 
@@ -9,8 +9,8 @@ import java.util.List;
  */
 public interface CodeService {
 
-    List<Code> get();
+    List<CodeModel> get();
 
-    List<Code> findByName(String name);
+    List<CodeModel> findByName(String name);
 
 }

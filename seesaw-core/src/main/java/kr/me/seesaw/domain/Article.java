@@ -1,6 +1,5 @@
 package kr.me.seesaw.domain;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import kr.me.seesaw.command.CreateArticleCommand;
 import kr.me.seesaw.command.UpdateArticleCommand;
@@ -9,9 +8,7 @@ import lombok.*;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import org.jsoup.Jsoup;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,11 +17,14 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @Setter(AccessLevel.PROTECTED)
 @NoArgsConstructor(access = PROTECTED)
-@EqualsAndHashCode(callSuper = true)
-@ToString()
+@EqualsAndHashCode(exclude = {"category", "replies", "views"}, callSuper = true)
+@ToString(exclude = {"category", "replies", "views"})
 
 @Entity
-@Table(name = "tb_article")
+@Table(name = "tb_article", indexes = {
+        @Index(columnList = "category_id"),
+        @Index(columnList = "parent_id")
+})
 @Comment("게시글")
 @DynamicInsert
 @DynamicUpdate
@@ -53,24 +53,14 @@ public class Article extends AbstractHierarchical<Article> {
 
     @Comment("카테고리 식별자")
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
-
-    @OneToMany(mappedBy = "article", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<Attachment> attachments = new ArrayList<>();
 
     @OneToMany(mappedBy = "article", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Reply> replies = new ArrayList<>();
 
     @OneToMany(mappedBy = "article", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<View> views = new ArrayList<>();
-
-    @OneToMany(mappedBy = "article", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<Vote> votes = new ArrayList<>();
-
-    public boolean isRecentlyGenerated() {
-        LocalDateTime now = LocalDateTime.now();
-        return !getCreatedDate().isBefore(now.minusDays(7));
-    }
 
     public static Article create(CreateArticleCommand command) {
         Article article = new Article();
@@ -85,11 +75,7 @@ public class Article extends AbstractHierarchical<Article> {
         return article;
     }
 
-    public void addAttachment(Attachment attachment) {
-        attachments.add(attachment);
-    }
-
-    public void update(UpdateArticleCommand command)  {
+    public void update(UpdateArticleCommand command) {
         getCategory().setId(command.getCategoryId());
         this.type = command.getType();
         this.fixed = command.isFixed();
@@ -97,9 +83,5 @@ public class Article extends AbstractHierarchical<Article> {
         this.title = command.getTitle();
         this.content = command.getContent();
     }
-
-
-
-
 
 }

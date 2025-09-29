@@ -4,6 +4,7 @@ import kr.me.seesaw.security.SeesawPermissionEvaluator;
 import kr.me.seesaw.service.PrincipalOauth2UserService;
 import kr.me.seesaw.service.RoleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -14,7 +15,6 @@ import org.springframework.security.access.expression.method.MethodSecurityExpre
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.config.annotation.web.configurers.CorsConfigurer;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
@@ -37,29 +37,21 @@ public class SecurityConfig {
 
     private final PrincipalOauth2UserService principalOauth2UserService;
 
-    private final RoleService roleService;
-
     @Bean
-    public PermissionEvaluator seesawPermissionEvaluator() {
+    public PermissionEvaluator seesawPermissionEvaluator(RoleService roleService) {
         return new SeesawPermissionEvaluator(roleService);
     }
 
     @Bean
-    public MethodSecurityExpressionHandler methodSecurityExpressionHandler() {
+    public MethodSecurityExpressionHandler methodSecurityExpressionHandler(@Qualifier("seesawPermissionEvaluator") PermissionEvaluator permissionEvaluator) {
         DefaultMethodSecurityExpressionHandler expressionHandler = new DefaultMethodSecurityExpressionHandler();
-        expressionHandler.setPermissionEvaluator(seesawPermissionEvaluator());
+        expressionHandler.setPermissionEvaluator(permissionEvaluator);
         return expressionHandler;
     }
 
     @Bean
     public SavedRequestAwareAuthenticationSuccessHandler authenticationSuccessHandler() {
         return new SavedRequestAwareAuthenticationSuccessHandler();
-    }
-
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring()
-                .requestMatchers("/styles/**", "/scripts/**", "/images/**", "/fonts/**", "/favicon.ico");
     }
 
     @Bean

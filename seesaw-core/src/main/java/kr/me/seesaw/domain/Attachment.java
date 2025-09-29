@@ -17,7 +17,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Setter(AccessLevel.PROTECTED)
 @NoArgsConstructor(access = PROTECTED)
 @EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
+@ToString()
 
 @Entity
 @Table(name = "tb_attachment")

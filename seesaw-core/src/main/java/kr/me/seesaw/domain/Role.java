@@ -1,9 +1,6 @@
 package kr.me.seesaw.domain;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.DynamicInsert;
@@ -17,11 +14,13 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @Setter(AccessLevel.PROTECTED)
 @NoArgsConstructor(access = PROTECTED)
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
+@EqualsAndHashCode(exclude = {"roleMappings", "menuRoles"}, callSuper = true)
+@ToString(exclude = {"roleMappings", "menuRoles"})
 
 @Entity
-@Table(name = "tb_role")
+@Table(name = "tb_role", uniqueConstraints = {
+        @UniqueConstraint(name = "uq_tb_role_name", columnNames = {"name"})
+})
 @Comment("역할")
 @DynamicInsert
 @DynamicUpdate
@@ -36,7 +35,9 @@ public class Role extends BaseEntity {
     @OneToMany(mappedBy = "role", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<RoleMapping> roleMappings = new ArrayList<>();
 
-    @Deprecated
+    @OneToMany(mappedBy = "role", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<MenuRole> menuRoles = new ArrayList<>();
+
     public static Role create(String name, String alias) {
         Role role = new Role();
         role.name = name;

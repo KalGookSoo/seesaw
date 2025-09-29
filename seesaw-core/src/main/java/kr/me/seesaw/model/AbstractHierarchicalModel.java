@@ -8,8 +8,8 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@ToString
-@EqualsAndHashCode(callSuper = true)
+@ToString(exclude = {"parent", "children"})
+@EqualsAndHashCode(exclude = {"parent", "children"}, callSuper = true)
 @Getter
 @Setter(AccessLevel.PROTECTED)
 @NoArgsConstructor

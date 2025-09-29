@@ -57,7 +57,7 @@ public final class CategoryModel extends AbstractHierarchicalModel<CategoryModel
 
     public CategoryModel(Category category) {
         setBaseModel(category);
-        setParentId(category.getParentId());
+        setParentId(category.getParent() != null ? category.getParent().getId() : null);
         name = category.getName();
         description = category.getDescription();
         type = category.getType();

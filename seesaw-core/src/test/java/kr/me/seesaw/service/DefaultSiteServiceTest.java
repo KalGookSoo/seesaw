@@ -44,9 +44,6 @@ class DefaultSiteServiceTest {
     private CategoryRepository categoryRepository;
 
     @MockitoBean
-    private RoleMappingRepository roleMappingRepository;
-
-    @MockitoBean
     private UserRepository userRepository;
 
     @BeforeEach
