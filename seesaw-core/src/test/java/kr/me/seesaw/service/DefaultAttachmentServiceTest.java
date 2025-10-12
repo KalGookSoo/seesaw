@@ -9,12 +9,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Path;
@@ -23,15 +23,19 @@ import java.util.UUID;
 
 @ActiveProfiles({"test"})
 @DataJpaTest
+@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 class DefaultAttachmentServiceTest {
 
     private AttachmentService attachmentService;
 
-    @Autowired
-    private AttachmentRepository attachmentRepository;
+    private final AttachmentRepository attachmentRepository;
 
-    @Autowired
-    private TestEntityManager entityManager;
+    private final TestEntityManager entityManager;
+
+    public DefaultAttachmentServiceTest(AttachmentRepository attachmentRepository, TestEntityManager entityManager) {
+        this.attachmentRepository = attachmentRepository;
+        this.entityManager = entityManager;
+    }
 
     @TempDir
     private Path tempDir;

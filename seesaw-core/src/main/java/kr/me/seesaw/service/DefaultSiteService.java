@@ -4,10 +4,7 @@ import kr.me.seesaw.command.CreateSiteCommand;
 import kr.me.seesaw.core.file.FileIOService;
 import kr.me.seesaw.domain.*;
 import kr.me.seesaw.model.*;
-import kr.me.seesaw.repository.ArticleSearchRepository;
-import kr.me.seesaw.repository.AttachmentRepository;
-import kr.me.seesaw.repository.SiteRepository;
-import kr.me.seesaw.repository.UserRepository;
+import kr.me.seesaw.repository.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,18 +30,22 @@ public class DefaultSiteService implements SiteService {
 
     private final UserRepository userRepository;
 
+    private final CategoryRepository categoryRepository;
+
     public DefaultSiteService(
             @Value("${kr.me.seesaw.filepath}") String filepath,
             SiteRepository siteRepository,
             AttachmentRepository attachmentRepository,
             ArticleSearchRepository articleSearchRepository,
-            UserRepository userRepository
+            UserRepository userRepository,
+            CategoryRepository categoryRepository
     ) {
         this.filepath = filepath;
         this.siteRepository = siteRepository;
         this.attachmentRepository = attachmentRepository;
         this.articleSearchRepository = articleSearchRepository;
         this.userRepository = userRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     @Transactional(readOnly = true)
@@ -245,9 +246,25 @@ public class DefaultSiteService implements SiteService {
     public void deleteSite(String id) {
         // 사이트에 종속된 모든 영속성 데이터를 먼저 제거하고 삭제 가능하도록 할 것
         Site site = siteRepository.getReferenceById(id);
-        List<Attachment> attachments = attachmentRepository.findAllByReferenceIdIn(Collections.singletonList(site.getId()));
+
+        // 첨부파일 삭제
+        List<Attachment> attachments = attachmentRepository.findAllByReferenceIdIn(Collections.singletonList(id));
         attachmentRepository.deleteAllInBatch(attachments);
         attachments.stream().map(attachment -> filepath + attachment.getPathName() + File.separator + attachment.getName()).forEach(FileIOService::delete);
+
+        // 카테고리 삭제
+//        categoryRepository
+
+        // 게시글 삭제
+
+        // 댓글 삭제
+
+        // 투표 삭제
+
+        // 뷰 삭제
+
+        // 사이트 삭제
+        siteRepository.deleteById(id);
     }
 
     private void writeFile(String pathname, byte[] bytes) {

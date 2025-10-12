@@ -18,4 +18,6 @@ public interface SiteRepository extends Repository<Site, String> {
 
     List<Site> findAllByIdIn(List<String> ids);
 
+    void deleteById(String id);
+
 }

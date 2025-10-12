@@ -43,7 +43,6 @@ public class JsoupTest {
         Assertions.assertFalse(sanitized.contains("script"));
         Assertions.assertFalse(sanitized.contains("data:"));
         System.out.println(sanitized);
-
     }
 
     @Test
@@ -75,7 +74,6 @@ public class JsoupTest {
         // Then
         Assertions.assertFalse(attachmentIds.isEmpty());
         System.out.println(attachmentIds);
-
     }
 
     @Test
@@ -98,7 +96,6 @@ public class JsoupTest {
                     </div>
                 </section>
                 """;
-
 
         Safelist safelist = Safelist.relaxed()
                 .addAttributes(":all", "*")
