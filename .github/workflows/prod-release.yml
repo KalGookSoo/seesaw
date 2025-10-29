@@ -55,7 +55,7 @@ jobs:
     if: needs.check_branch.outputs.on_prod_branch == 'true'
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
     outputs:
       version: ${{ steps.get_version.outputs.version }}
     steps:
@@ -113,6 +113,16 @@ jobs:
           name: app-release-${{ steps.get_version.outputs.version }}
           path: seesaw-web/build/libs/*.jar
           retention-days: 7
+
+      - name: Create GitHub Release (auto notes)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          name: ${{ github.ref_name }}
+          tag_name: ${{ github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   deploy:
     needs: build
