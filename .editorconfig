@@ -1,0 +1,22 @@
+# EditorConfig is awesome: https://editorconfig.org
+# This file aligns IDE HTML/CSS/JS formatting with the project Prettier config where applicable.
+# It is scoped to the www module so it affects HTML templates under src/main/resources/templates.
+
+[*]
+charset = utf-8
+insert_final_newline = true
+# Deliberately omit end_of_line here to mimic Prettier endOfLine=auto
+
+[*.{js,jsx,ts,tsx,css,scss,html,json,md,svg}]
+indent_style = space
+indent_size = 2
+# Match Prettier printWidth
+max_line_length = 140
+
+# Markdown and SVG should not hard-wrap by max line length
+[*.md]
+max_line_length = off
+
+# SVG files should not hard-wrap by max line length
+[*.svg]
+max_line_length = off
