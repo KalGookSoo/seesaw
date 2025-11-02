@@ -37,9 +37,12 @@ out/
 .vscode/
 
 .junie/
+.aiassistant/
 
 node_modules
 .DS_Store
 
 *-prod.properties
 *-prod.yml
+*-doyevskyi.properties
+*-doyevskyi.yml
