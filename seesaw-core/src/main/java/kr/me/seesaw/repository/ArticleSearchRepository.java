@@ -53,7 +53,7 @@ public class ArticleSearchRepository implements SearchRepository<Article, Articl
     }
 
     public List<Article> findAllByCategoryId(List<String> categoryIds, LocalDateTime createdDate) {
-        String jpql = "select article from Article article where categoryId in :categoryIds and createdDate >= :createdDate";
+        String jpql = "select article from Article article where category.id in :categoryIds and createdDate >= :createdDate";
         TypedQuery<Article> query = em.createQuery(jpql, Article.class);
         query.setParameter("categoryIds", categoryIds);
         query.setParameter("createdDate", createdDate);

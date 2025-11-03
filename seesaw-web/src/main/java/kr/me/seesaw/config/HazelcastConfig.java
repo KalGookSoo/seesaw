@@ -19,28 +19,12 @@ import java.util.*;
 
 @EnableCaching
 @Configuration
-@Profile({"local", "prod"})
+@Profile({"prod"})
 public class HazelcastConfig {
 
     private final String profiles;
 
     private final Map<String, List<String>> profilesMapper = new HashMap<>();
-
-    private final List<String> localMembers = Arrays.asList(
-            "127.0.0.1:5700",
-            "127.0.0.1:5701",
-            "127.0.0.1:5702",
-            "127.0.0.1:5703"
-    );
-
-/*
-    private final List<String> developmentMembers = Arrays.asList(
-            "127.0.0.1:5700",
-            "127.0.0.1:5701",
-            "127.0.0.1:5702",
-            "127.0.0.1:5703"
-    );
-*/
 
     // 클러스터링할 애플리케이션의 내부망 IP 엔트리를 넣어야함.
     // 현재는 동일한 서버에서 클러스터링하려고 127.0.0.1로 할당함
@@ -52,8 +36,6 @@ public class HazelcastConfig {
     );
 
     private void map() {
-        profilesMapper.put("local", localMembers);
-//        profilesMapper.put("dev", developmentMembers);
         profilesMapper.put("prod", productionMembers);
     }
 
@@ -61,7 +43,7 @@ public class HazelcastConfig {
         return profilesMapper.getOrDefault(profiles, Collections.emptyList());
     }
 
-    public HazelcastConfig(@Value("${spring.profiles.active:local}") String profiles) {
+    public HazelcastConfig(@Value("${spring.profiles.active:default}") String profiles) {
         this.profiles = profiles;
         map();
     }

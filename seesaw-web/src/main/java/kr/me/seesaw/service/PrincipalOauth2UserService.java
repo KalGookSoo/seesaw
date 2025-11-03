@@ -35,18 +35,18 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
 
     private final SiteRepository siteRepository;
 
-    private final String domainName;
+    private final String applicationName;
 
     public PrincipalOauth2UserService(
             UserRepository userRepository,
             RoleRepository roleRepository,
             SiteRepository siteRepository,
-            @Value("${site.domain.name}") String domainName
+            @Value("${spring.application.name}") String applicationName
     ) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.siteRepository = siteRepository;
-        this.domainName = domainName;
+        this.applicationName = applicationName;
     }
 
     @Override
@@ -58,6 +58,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         OAuth2UserDetail oAuth2UserDetail = new NaverUserDetail(oAuth2User.getAttributes());
         String email = oAuth2UserDetail.getEmail();
         String username = email.split("@")[0];
+        String domainName = applicationName + ".seesaw.me.kr";
         Site site = siteRepository.findByDomainName(domainName)
                 .orElseThrow(() -> new NoSuchElementException("사이트를 찾을 수 없습니다."));
 

@@ -59,7 +59,9 @@ public class NavigationInterceptor implements HandlerInterceptor {
 
             request.setAttribute(ContextEnvironment.ACTIVE_PROFILES, environment.getActiveProfiles());
 
-            SiteModel site = siteService.getSiteContext(environment.getProperty("site.domain.name"));
+            String applicationName = environment.getProperty("spring.application.name");
+            String domainName = applicationName + ".seesaw.me.kr";
+            SiteModel site = siteService.getSiteContext(domainName);
             request.setAttribute(ContextEnvironment.SITE_CONTEXT, site);
 
             // 요소 탐색 편의를 위한 속성 할당

@@ -8,18 +8,11 @@
 
 로컬 개발 환경에서 프로젝트를 실행할 때 다음 프로그램 인자를 설정해야 합니다:
 
-```
+```shell
 --spring.thymeleaf.prefix=file:///$PROJECT_DIR$/seesaw-web/src/main/resources/templates/
 --spring.web.resources.static-locations=file:///$PROJECT_DIR$/seesaw-web/src/main/resources/static/
 --spring.messages.basename=file:///$PROJECT_DIR$/seesaw-web/src/main/resources/messages/
 ```
-
-### IntelliJ에서 설정하는 방법
-
-1. Run/Debug Configurations 메뉴를 엽니다.
-2. 실행할 구성을 선택합니다.
-3. Program arguments 필드에 위의 인자들을 추가합니다.
-4. Apply 버튼을 클릭하여 설정을 저장합니다.
 
 ### 환경변수 설정
 
@@ -27,33 +20,12 @@
 
 #### 설정 파일
 
-- [application.properties](../src/main/resources/application-local.properties)
-- [datasource.properties](../src/main/resources/datasource.properties)
-- [datasource-local.properties](../src/main/resources/datasource-local.properties)
-- [datasource-prod.properties](../src/main/resources/datasource-prod.properties)
-- [datasource-test.properties](../src/main/resources/datasource-test.properties)
+- [application.properties](../src/main/resources/application.properties)
 
 #### 프로필 설정
 
-`spring.profiles.active` 의 값은 local, test, prod 등으로 나누어 놓았습니다.
-dev, stage 혹은 개인에 맞게 커스텀하려고한다면 application.properties, datasource.properties 파일을 쌍으로 추가하여 확장 가능합니다.
-
-#### 프로그램 인자 설정
-
-커맨드라인 인자로 다음의 값을 할당합니다. properties 파일을 수정하여도 좋습니다.
-```shell
---spring.thymeleaf.prefix=file:///$PROJECT_DIR$/seesaw-web/src/main/resources/templates/
---spring.web.resources.static-locations=file:///$PROJECT_DIR$/seesaw-web/src/main/resources/static/
---spring.messages.basename=file:///$PROJECT_DIR$/seesaw-web/src/main/resources/messages/
---site.domain.name=YOUR_SITE_DOMAIN
---spring.security.oauth2.client.registration.naver.client-id=YOUR_CLIENT_ID
---spring.security.oauth2.client.registration.naver.client-secret=YOUR_CLIENT_SECRET
---spring.security.oauth2.client.registration.naver.redirect-uri=YOUR_REDIRECT_URI
---kr.me.seesaw.filepath=YOUR_PATH
---spring.datasource.url=YOUR_URL
---spring.datasource.username=YOUR_USERNAME
---spring.datasource.password=YOUR_PASSWORD
-```
+`spring.profiles.active` 의 값은 test, prod 등으로 나누어 놓았습니다.
+dev, stage 혹은 개인에 맞게 커스텀하려고한다면 application-{profile}.properties 파일을 추가하여 확장 가능합니다.
 
 ## 데이터베이스 설정
 
@@ -66,7 +38,7 @@ dev, stage 혹은 개인에 맞게 커스텀하려고한다면 application.prope
 
 ### 데이터베이스 연결 설정
 
-데이터베이스 연결 설정은 `datasource.properties` 파일에서 관리됩니다. 자세한 내용은 위의 [환경변수 설정](#환경변수-설정) 섹션을 참조하세요.
+데이터베이스 연결 설정은 `application.properties` 파일에서 관리됩니다. 자세한 내용은 위의 [환경변수 설정](#환경변수-설정) 섹션을 참조하세요.
 
 ## 빌드 가이드
 
