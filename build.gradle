@@ -10,7 +10,6 @@ plugins {
 allprojects {
     group = 'kr.me.seesaw'
     version = project.hasProperty('appVersion') ? project.getProperty('appVersion') : '0.0.1-SNAPSHOT'
-    System.setProperty('app.version', version)
     repositories {
         mavenCentral()
     }
@@ -47,7 +46,7 @@ subprojects {
     }
 
     // 공통 테스트 설정
-    tasks.named('test') {
+    tasks.test {
         useJUnitPlatform()
     }
 }
