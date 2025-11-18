@@ -10,6 +10,20 @@
 - [ ] 배포 관련 (Deployment)
 - [ ] 기타 (Other)
 
+## 라벨 선택 (필수)
+<!-- 아래 중 하나 이상을 라벨로 지정하세요: enhancement, bug, documentation -->
+- [ ] enhancement (기능/개선)
+- [ ] bug (버그 수정)
+- [ ] documentation (문서)
+
+> 참고: 라벨은 자동 릴리스 노트 분류에 사용됩니다. PR에 적절한 라벨이 없으면 릴리스 노트에 누락되거나 "기타 변경"으로 분류될 수 있습니다.
+
+### PR 제목 규칙(권장)
+- 커밋/PR 제목에 접두어를 사용하면 라벨 자동화에 도움이 됩니다.
+  - `feat:` → enhancement
+  - `fix:` → bug
+  - `docs:` → documentation
+
 ## 변경 사항 설명
 <!-- 이 PR에서 변경된 내용을 간략하게 설명해주세요 -->
 

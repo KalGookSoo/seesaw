@@ -13,7 +13,7 @@
 
 ## 개발 환경 설정
 
-SEESAW 프로젝트의 개발 환경을 설정하려면 [개발 환경 설정 가이드](seesaw-web/docs/DEVELOPMENT_SETUP.md)를 참조하세요. 이 문서는 다음 내용을 포함합니다:
+SEESAW 프로젝트의 개발 환경을 설정하려면 [개발 환경 설정 가이드](../seesaw-web/docs/DEVELOPMENT_SETUP.md)를 참조하세요. 이 문서는 다음 내용을 포함합니다:
 
 - 로컬 개발 환경 설정
 - 프로그램 인자 설정 (IntelliJ 기준)
@@ -47,7 +47,7 @@ SEESAW 프로젝트의 개발 환경을 설정하려면 [개발 환경 설정 �
 
 ## 커밋 메시지 가이드라인
 
-SEESAW 프로젝트는 [Conventional Commits](seesaw-web/docs/CONVENTIONAL_COMMITS.md) 명세를 따릅니다. 이 명세는 커밋 메시지에 대한 가벼운 규칙을 제공하여 명시적인 커밋 히스토리를 만들고 자동화된 도구를 더 쉽게 작성할 수 있게 합니다.
+SEESAW 프로젝트는 [Conventional Commits](../seesaw-web/docs/CONVENTIONAL_COMMITS.md) 명세를 따릅니다. 이 명세는 커밋 메시지에 대한 가벼운 규칙을 제공하여 명시적인 커밋 히스토리를 만들고 자동화된 도구를 더 쉽게 작성할 수 있게 합니다.
 
 ### 커밋 메시지 구조
 
@@ -69,7 +69,7 @@ SEESAW 프로젝트는 [Conventional Commits](seesaw-web/docs/CONVENTIONAL_COMMI
 - **test**: 테스트 코드 추가 또는 수정
 - **chore**: 빌드 프로세스 또는 보조 도구 및 라이브러리 변경
 
-자세한 내용은 [Conventional Commits 가이드](seesaw-web/docs/CONVENTIONAL_COMMITS.md)를 참조하세요.
+자세한 내용은 [Conventional Commits 가이드](../seesaw-web/docs/CONVENTIONAL_COMMITS.md)를 참조하세요.
 
 ## 이슈 제출
 
@@ -87,15 +87,15 @@ SEESAW 프로젝트는 [Conventional Commits](seesaw-web/docs/CONVENTIONAL_COMMI
 
 1. 새로운 브랜치에서 작업하세요.
 2. 커밋 메시지는 [Conventional Commits](#커밋-메시지-가이드라인) 가이드라인을 따르세요.
-3. PR 설명은 [PR 템플릿](.github/PULL_REQUEST_TEMPLATE.md)을 따르세요.
+3. PR 설명은 [PR 템플릿](PULL_REQUEST_TEMPLATE.md)을 따르세요.
 4. 코드가 모든 테스트를 통과하는지 확인하세요.
 5. 코드 리뷰 피드백을 적용하세요.
 
 ## 릴리스 프로세스
 
-SEESAW 프로젝트는 [시맨틱 버전 관리](http://semver.org)를 따릅니다. 릴리스 프로세스에 대한 자세한 내용은 [소프트웨어 버전 관리 가이드](seesaw-web/docs/versioning.md)와 [프로덕션 릴리스 워크플로우](seesaw-web/docs/PROD_RELEASE_WORKFLOW.md)를 참조하세요.
+SEESAW 프로젝트는 [시맨틱 버전 관리](http://semver.org)를 따릅니다. 릴리스 프로세스에 대한 자세한 내용은 [소프트웨어 버전 관리 가이드](../seesaw-web/docs/versioning.md)와 [프로덕션 릴리스 워크플로우](../seesaw-web/docs/PROD_RELEASE_WORKFLOW.md)를 참조하세요.
 
-릴리스 노트는 [릴리스 템플릿](.github/RELEASE_TEMPLATE.md)을 따라 작성됩니다.
+릴리스 노트는 [릴리스 템플릿](RELEASE_TEMPLATE.md)을 따라 작성됩니다.
 
 ## 디자인 가이드라인
 
