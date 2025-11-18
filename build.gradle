@@ -10,7 +10,7 @@ plugins {
 allprojects {
     group = 'kr.me.seesaw'
     version = project.hasProperty('appVersion') ? project.getProperty('appVersion') : '0.0.1-SNAPSHOT'
-
+    System.setProperty('spring.application.version', version)
     repositories {
         mavenCentral()
     }
