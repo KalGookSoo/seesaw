@@ -90,6 +90,7 @@ public class SecurityConfig {
                 .requestMatchers(new AntPathRequestMatcher("/fonts/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/favicon.ico")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/actuator/health")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/actuator/info")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/actuator/**")).hasRole("ADMIN")
                 .anyRequest()
                 .permitAll();
