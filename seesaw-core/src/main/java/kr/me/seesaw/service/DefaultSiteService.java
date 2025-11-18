@@ -159,7 +159,6 @@ public class DefaultSiteService implements SiteService {
         );
         siteRepository.save(site);
 
-        // todo 사이트와 첨부파일은 논리적 연관관계를 맺고있기 때문에 Site Entity의 Association을 제거해야 함.
         SiteModel siteModel = new SiteModel(site);
 
         // 프로필 이미지

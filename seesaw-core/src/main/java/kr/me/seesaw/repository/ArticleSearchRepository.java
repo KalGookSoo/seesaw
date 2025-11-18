@@ -63,7 +63,7 @@ public class ArticleSearchRepository implements SearchRepository<Article, Articl
     private String generateJpql(@Nonnull ArticleSearch search) {
         StringBuilder jpql = new StringBuilder();
         if (StringUtils.hasText(search.getCategoryId())) {
-            jpql.append(" and article.categoryId = :categoryId");
+            jpql.append(" and article.category.id = :categoryId");
         }
         if ("title".equals(search.getKeyField()) && StringUtils.hasText(search.getKeyWord())) {
             jpql.append(" and article.title like :title");
