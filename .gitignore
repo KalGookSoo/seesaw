@@ -46,3 +46,4 @@ node_modules
 *-prod.yml
 *-doyevskyi.properties
 *-doyevskyi.yml
+/ftp/
