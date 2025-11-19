@@ -6,13 +6,9 @@ import kr.me.seesaw.domain.Code;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 
-/**
- * 코드 표현 모델
- * - 엔터티의 계층 책임을 모델로 이관합니다.
- */
 @Schema(name = "CodeModel", description = "코드 모델")
-@ToString(exclude = {"children", "parent"})
-@EqualsAndHashCode(exclude = {"children", "parent"}, callSuper = true)
+@ToString
+@EqualsAndHashCode(callSuper = true)
 @Getter
 @Setter(AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -44,4 +40,5 @@ public final class CodeModel extends AbstractHierarchicalModel<CodeModel> implem
         child.setParentId(getId());
         child.setParent(this);
     }
+
 }
