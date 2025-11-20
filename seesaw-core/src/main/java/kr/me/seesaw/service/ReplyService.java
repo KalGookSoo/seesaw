@@ -2,15 +2,15 @@ package kr.me.seesaw.service;
 
 import kr.me.seesaw.command.CreateReplyCommand;
 import kr.me.seesaw.command.UpdateReplyCommand;
-import kr.me.seesaw.domain.Reply;
+import kr.me.seesaw.model.ReplyModel;
 
 public interface ReplyService {
 
-    Reply find(String id);
+    ReplyModel find(String id);
 
-    void create(CreateReplyCommand command);
+    ReplyModel create(CreateReplyCommand command);
 
-    void update(String id, UpdateReplyCommand command);
+    ReplyModel update(String id, UpdateReplyCommand command);
 
     boolean isOwner(String id, String username);
 

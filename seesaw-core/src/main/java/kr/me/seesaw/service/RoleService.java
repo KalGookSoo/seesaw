@@ -1,16 +1,16 @@
 package kr.me.seesaw.service;
 
-import kr.me.seesaw.domain.Permission;
-import kr.me.seesaw.domain.Role;
+import kr.me.seesaw.model.PermissionModel;
+import kr.me.seesaw.model.RoleModel;
 
 import java.util.List;
 
 public interface RoleService {
 
-    Role getRole(String name);
+    RoleModel getRole(String name);
 
-    List<Permission> getPermissions(String roleId);
+    List<PermissionModel> getPermissions(String roleId);
 
-    Permission getPermission(String roleId, String targetId);
+    PermissionModel getPermission(String roleId, String targetId);
 
 }

@@ -3,6 +3,7 @@ package kr.me.seesaw.service;
 import kr.me.seesaw.command.CreateReplyCommand;
 import kr.me.seesaw.command.UpdateReplyCommand;
 import kr.me.seesaw.domain.Reply;
+import kr.me.seesaw.model.ReplyModel;
 import kr.me.seesaw.repository.ReplyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,27 +18,32 @@ public class DefaultReplyService implements ReplyService {
 
     private final ReplyRepository replyRepository;
 
+    @Transactional(readOnly = true)
     @Override
-    public Reply find(String id) {
-        return replyRepository.findById(id).orElseThrow(NoSuchElementException::new);
+    public ReplyModel find(String id) {
+        Reply reply = replyRepository.findById(id).orElseThrow(NoSuchElementException::new);
+        return new ReplyModel(reply);
     }
 
     @Override
-    public void create(CreateReplyCommand command) {
+    public ReplyModel create(CreateReplyCommand command) {
         Reply reply = Reply.create(command);
-        replyRepository.save(reply);
+        Reply savedReply = replyRepository.save(reply);
+        return new ReplyModel(savedReply);
     }
 
     @Override
-    public void update(String id, UpdateReplyCommand command) {
+    public ReplyModel update(String id, UpdateReplyCommand command) {
         Reply reply = replyRepository.getReferenceById(id);
         reply.update(command);
-        replyRepository.save(reply);
+        Reply updatedReply = replyRepository.save(reply);
+        return new ReplyModel(updatedReply);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public boolean isOwner(String id, String username) {
-        Reply reply = find(id);
+        ReplyModel reply = find(id);
         return reply.getCreatedBy().equals(username);
     }
 
