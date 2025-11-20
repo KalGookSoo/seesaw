@@ -1,8 +1,8 @@
 package kr.me.seesaw.security;
 
-import kr.me.seesaw.domain.Permission;
-import kr.me.seesaw.domain.Role;
 import kr.me.seesaw.domain.vo.BasePermission;
+import kr.me.seesaw.model.PermissionModel;
+import kr.me.seesaw.model.RoleModel;
 import kr.me.seesaw.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -46,10 +46,10 @@ public class SeesawPermissionEvaluator implements PermissionEvaluator {
 
             try {
                 // 역할 이름으로 역할 조회
-                Role role = roleService.getRole(roleName);
+                RoleModel role = roleService.getRole(roleName);
 
                 // 역할 ID로 권한 조회
-                List<Permission> permissions = roleService.getPermissions(role.getId());
+                List<PermissionModel> permissions = roleService.getPermissions(role.getId());
 
                 if (permissions.isEmpty()) {
                     logger.info("역할 {}에 대한 권한이 없습니다.", roleName);
@@ -57,7 +57,7 @@ public class SeesawPermissionEvaluator implements PermissionEvaluator {
                 }
 
                 // 각 권한에 대해 확인
-                for (Permission permissionByRoleId : permissions) {
+                for (PermissionModel permissionByRoleId : permissions) {
                     // 권한 마스크 비교
                     int permissionMask = permissionByRoleId.getMask();
                     int requiredMask = basePermission.getMask();
@@ -75,14 +75,17 @@ public class SeesawPermissionEvaluator implements PermissionEvaluator {
     }
 
     @Override
-    public boolean hasPermission(Authentication authentication, Serializable targetId, String targetType, Object permission) {
+    public boolean hasPermission(Authentication authentication, Serializable targetId, String targetType,
+                                 Object permission) {
         if (authentication == null || targetId == null || targetType == null || permission == null) {
-            logger.warn("인증 정보 또는 대상 정보가 없습니다. Authentication: {}, targetId: {}, targetType: {}", authentication, targetId, targetType);
+            logger.warn("인증 정보 또는 대상 정보가 없습니다. Authentication: {}, targetId: {}, targetType: {}", authentication,
+                    targetId, targetType);
             return false;
         }
 
         if (!(permission instanceof BasePermission basePermission)) {
-            logger.error("hasPermission을 사용할 때 BasePermission 하위타입을 사용하세요. 현재 Permission Type: {}", permission.getClass().getName());
+            logger.error("hasPermission을 사용할 때 BasePermission 하위타입을 사용하세요. 현재 Permission Type: {}",
+                    permission.getClass().getName());
             return false;
         }
 
@@ -98,10 +101,10 @@ public class SeesawPermissionEvaluator implements PermissionEvaluator {
 
             try {
                 // 역할 이름으로 역할 조회
-                Role role = roleService.getRole(roleName);
+                RoleModel role = roleService.getRole(roleName);
 
                 // 역할 ID와 대상 ID로 권한 조회
-                Permission permissionByRoleId = roleService.getPermission(role.getId(), targetId.toString());
+                PermissionModel permissionByRoleId = roleService.getPermission(role.getId(), targetId.toString());
 
                 // 권한 마스크 비교
                 int permissionMask = permissionByRoleId.getMask();
@@ -117,4 +120,5 @@ public class SeesawPermissionEvaluator implements PermissionEvaluator {
         }
         return false;
     }
+
 }
