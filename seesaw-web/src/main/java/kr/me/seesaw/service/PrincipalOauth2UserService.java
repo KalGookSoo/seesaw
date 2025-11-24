@@ -71,7 +71,8 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
                             .toList();
 
                     // 일반사용자 역할이 없다면 생성하여 부여
-                    boolean hasRoleUser = roles.stream().anyMatch(role -> role.getName().equals(RoleName.ROLE_USER.name()));
+                    boolean hasRoleUser = roles.stream()
+                            .anyMatch(role -> role.has(RoleName.ROLE_USER));
                     if (!hasRoleUser) {
                         Role roleUser = roleRepository.findByName(RoleName.ROLE_USER.name())
                                 .orElseThrow(() -> new NoSuchElementException("일반사용자 역할이 없습니다."));
@@ -83,7 +84,9 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
 
                     // 모델 변환 및 권한 주입
                     UserModel userModel = new UserModel(user);
-                    roles.stream().map(RoleModel::new).forEach(userModel::addRole);
+                    roles.stream()
+                            .map(RoleModel::new)
+                            .forEach(userModel::addRole);
                     return new UserPrincipal(userModel, oAuth2User.getAttributes());
                 })
                 .orElseGet(() -> {
@@ -91,7 +94,8 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
                     User user = User.create(username, new Email(email.split("@")[0], email.split("@")[1]));
 
                     // 현재 인증한 계정, 현재 접속한 사이트에 일반사용자 역할을 부여
-                    Role role = roleRepository.findByName(RoleName.ROLE_USER.name()).orElseThrow(NoSuchElementException::new);
+                    Role role = roleRepository.findByName(RoleName.ROLE_USER.name())
+                            .orElseThrow(NoSuchElementException::new);
                     RoleMapping roleMapping = RoleMapping.create(role, user, site);
                     user.addRole(roleMapping);
                     userRepository.save(user);

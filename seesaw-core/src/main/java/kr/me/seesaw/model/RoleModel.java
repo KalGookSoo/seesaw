@@ -30,4 +30,5 @@ public final class RoleModel extends BaseModel {
         this.name = role.getName();
         this.alias = role.getAlias();
     }
+
 }

@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class UserPrincipal implements UserDetails, OAuth2User {
+public final class UserPrincipal implements UserDetails, OAuth2User {
 
     private final UserModel user;
 
@@ -22,8 +22,8 @@ public class UserPrincipal implements UserDetails, OAuth2User {
         this.attributes = attributes;
     }
 
-    public String getId() {
-        return user.getId();
+    public UserModel getUser() {
+        return user;
     }
 
     @Override

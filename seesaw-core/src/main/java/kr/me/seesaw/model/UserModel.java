@@ -79,9 +79,7 @@ public final class UserModel extends BaseModel {
     }
 
     public void addRole(RoleModel role) {
-        if (role != null) {
-            this.roles.add(role);
-        }
+        roles.add(role);
     }
 
 }

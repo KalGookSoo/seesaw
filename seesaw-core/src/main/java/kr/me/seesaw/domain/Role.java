@@ -1,6 +1,7 @@
 package kr.me.seesaw.domain;
 
 import jakarta.persistence.*;
+import kr.me.seesaw.domain.vo.RoleName;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.DynamicInsert;
@@ -43,6 +44,10 @@ public class Role extends BaseEntity {
         role.name = name;
         role.alias = alias;
         return role;
+    }
+
+    public boolean has(RoleName roleName) {
+        return roleName.name().equals(name);
     }
 
 }
