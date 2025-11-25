@@ -1,0 +1,124 @@
+server:
+  address: localhost
+  port: 8080
+
+spring:
+  application:
+    name: seesaw-web
+    version: 0.0.1-SNAPSHOT
+  
+  # DataSource
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  
+  datasource:
+    url: jdbc:h2:file:./testdb;MODE=PostgreSQL;
+    driver-class-name: org.h2.Driver
+    username: tester
+    password: tester
+  
+  # JPA
+  jpa:
+    properties:
+      hibernate:
+        highlight_sql: true
+        format_sql: true
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+  
+  # Lazy initialization
+  main:
+    lazy-initialization: true
+  
+  # Cache
+  cache:
+    type: hazelcast
+  
+  # 정적 자원 경로
+  web:
+    resources:
+      static-locations: classpath:/static/, classpath:/node_modules/
+      cache:
+        period: 5
+  
+  # HTML 비표준 HTTP method(ex - PUT, DELETE ..)를 활성화 합니다.
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+  
+  # Thymeleaf template engine cache를 비활성화합니다. 템플릿 파일 변경 사항이 즉시 반영됩니다.
+  thymeleaf:
+    cache: false
+  
+  # 메시지 파일(i18n 지원 파일)의 캐시 만료 시간을 초 단위로 설정합니다. 메시지 변경 사항이 즉시 반영됩니다.
+  messages:
+    cache-duration: 5
+  
+  data:
+    rest:
+      base-path: /rest-api
+  
+  # 첨부파일
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 2KB
+      max-file-size: 200MB
+      max-request-size: 215MB
+  
+  # Logging
+  output:
+    ansi:
+      enabled: always
+
+# Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    name: ${spring.application.name}
+    version: ${spring.application.version}
+    profiles: ${spring.profiles.active:default}
+
+# Logging
+logging:
+  level:
+    root: info
+    org:
+      springframework:
+        web: debug
+        security: info
+        orm:
+          jpa: info
+      hibernate:
+        sql: debug
+        orm:
+          jdbc:
+            bind: trace
+            extract: off
+      springdoc:
+        core:
+          utils:
+            SpringDocAnnotationsUtils: error
+
+# 첨부파일
+kr:
+  me:
+    seesaw:
+      filepath: ${user.home}/attachments
