@@ -68,18 +68,18 @@
                 <a class="btn d-flex align-items-center"
                    th:classappend="${#strings.equals(search.viewType, 'TABLE')} ? 'main-color' : ''"
                    th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', page.pageable.pageNumber).replaceQueryParam('viewType', 'TABLE').build().toUriString()}}"
-                   title="목록보기"
+                   th:title="#{label.view.list}"
                 >
-                    <i class="bi bi-list"></i><span class="d-none d-sm-inline ms-1">목록보기</span>
+                    <i class="bi bi-list"></i><span class="d-none d-sm-inline ms-1" th:text="#{label.view.list}">목록보기</span>
                 </a>
             </div>
             <div>
                 <a class="btn d-flex align-items-center"
                    th:classappend="${#strings.equals(search.viewType, 'CARD')} ? 'main-color' : ''"
                    th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', page.pageable.pageNumber).replaceQueryParam('viewType', 'CARD').build().toUriString()}}"
-                   title="카드보기"
+                   th:title="#{label.view.card}"
                 >
-                    <i class="bi bi-grid"></i><span class="d-none d-sm-inline ms-1">카드보기</span>
+                    <i class="bi bi-grid"></i><span class="d-none d-sm-inline ms-1" th:text="#{label.view.card}">카드보기</span>
                 </a>
             </div>
         </div>
@@ -89,29 +89,29 @@
 <section class="container-sm my-3">
     <div class="d-flex justify-content-between">
         <div>
-            <button class="btn btn-outline-secondary d-flex align-items-center" name="delete" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')" type="button" title="선택삭제">
-                <i class="bi bi-trash"></i><span class="d-none d-sm-inline ms-1">선택삭제</span>
+            <button class="btn btn-outline-secondary d-flex align-items-center" name="delete" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')" type="button" th:title="#{label.delete.selected}">
+                <i class="bi bi-trash"></i><span class="d-none d-sm-inline ms-1" th:text="#{label.delete.selected}">선택삭제</span>
             </button>
         </div>
         <div class="d-flex gap-2">
             <a class="btn btn-outline-secondary d-flex align-items-center"
                sec:authorize="isAuthenticated()"
                th:href="@{|/articles${search.getUriComponentsBuilder().replaceQueryParam('page', 0).replaceQueryParam('keyField', 'createdBy').replaceQueryParam('keyWord', #authentication.principal.username).build().toUriString()}|}"
-               title="내가 쓴 글"
+               th:title="#{label.my.articles}"
             >
-                <i class="bi bi-person"></i><span class="d-none d-sm-inline ms-1">내가 쓴 글</span>
+                <i class="bi bi-person"></i><span class="d-none d-sm-inline ms-1" th:text="#{label.my.articles}">내가 쓴 글</span>
             </a>
-            <a class="btn btn-primary d-flex align-items-center" sec:authorize="isAuthenticated()" 
+            <a class="btn btn-primary d-flex align-items-center" sec:authorize="isAuthenticated()"
                th:href="@{|/articles/new${search.getUriComponentsBuilder().build().toUriString()}|}"
-               title="글쓰기"
+               th:title="#{label.write}"
             >
-                <i class="bi bi-pencil-square"></i><span class="d-none d-sm-inline ms-1">글쓰기</span>
+                <i class="bi bi-pencil-square"></i><span class="d-none d-sm-inline ms-1" th:text="#{label.write}">글쓰기</span>
             </a>
-            <a class="btn btn-primary d-flex align-items-center" sec:authorize="isAnonymous()" 
+            <a class="btn btn-primary d-flex align-items-center" sec:authorize="isAnonymous()"
                th:href="@{/oauth2/authorization/naver}"
-               title="글쓰기"
+               th:title="#{label.write}"
             >
-                <i class="bi bi-pencil-square"></i><span class="d-none d-sm-inline ms-1">글쓰기</span>
+                <i class="bi bi-pencil-square"></i><span class="d-none d-sm-inline ms-1" th:text="#{label.write}">글쓰기</span>
             </a>
         </div>
     </div>
@@ -124,7 +124,7 @@
         <input type="hidden" th:field="*{categoryType}">
         <input type="hidden" th:field="*{viewType}">
         <div class="col-12 col-sm-3 col-md-2">
-            <select class="form-select" th:field="*{keyField}" aria-label="검색 필드 선택">
+            <select class="form-select" th:field="*{keyField}" th:aria-label="#{label.search.field.select}">
                 <option value="title" th:text="#{entity.article.title}"></option>
                 <option value="content" th:text="#{entity.article.content}"></option>
                 <option value="createdBy" th:text="#{entity.article.createdBy}"></option>
@@ -132,9 +132,9 @@
         </div>
         <div class="col-12 col-sm-6 col-md-4">
             <div class="input-group">
-                <input class="form-control" type="search" th:field="*{keyWord}" placeholder="검색어를 입력하세요" aria-label="검색어">
-                <button class="btn btn-outline-secondary d-flex align-items-center" type="submit" title="검색">
-                    <i class="bi bi-search"></i><span class="d-none d-sm-inline ms-1">검색</span>
+                <input class="form-control" type="search" th:field="*{keyWord}" th:placeholder="#{placeholder.search.keyword}" th:aria-label="#{label.search.keyword}">
+                <button class="btn btn-outline-secondary d-flex align-items-center" type="submit" th:title="#{label.search}">
+                    <i class="bi bi-search"></i><span class="d-none d-sm-inline ms-1" th:text="#{label.search}">검색</span>
                 </button>
             </div>
         </div>
@@ -153,25 +153,25 @@
                      th:if="${!article.inlineImages.isEmpty()}"
                      th:src="@{|/api/attachments/${article.inlineImages.get(0).id}|}"
                 >
-                <svg class="bd-placeholder-img card-img-top img-thumbnail"
-                     width="100%"
-                     height="180"
-                     xmlns="http://www.w3.org/2000/svg"
-                     role="img"
-                     aria-label="Placeholder: Image cap"
-                     preserveAspectRatio="xMidYMid slice"
-                     focusable="false"
-                     th:if="${article.inlineImages.isEmpty()}"
-                >
-                    <title>Placeholder</title>
-                    <rect width="100%" height="100%" fill="#868e96"></rect>
-                    <text x="40%" y="50%" fill="#dee2e6" dy=".3em">No image</text>
-                </svg>
-                <div class="card-body">
-                    <div class="card-title d-flex justify-content-start align-items-center gap-2">
-                        <div sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
-                            <input aria-label="선택" name="selected" type="checkbox" th:data-id="${article.id}">
-                        </div>
+                     <svg class="bd-placeholder-img card-img-top img-thumbnail"
+                          width="100%"
+                          height="180"
+                          xmlns="http://www.w3.org/2000/svg"
+                          role="img"
+                          th:aria-label="#{label.placeholder.image.cap}"
+                          preserveAspectRatio="xMidYMid slice"
+                          focusable="false"
+                          th:if="${article.inlineImages.isEmpty()}"
+                     >
+                         <title th:text="#{label.placeholder}">Placeholder</title>
+                         <rect width="100%" height="100%" fill="#868e96"></rect>
+                         <text x="40%" y="50%" fill="#dee2e6" dy=".3em" th:text="#{label.no.image}">No image</text>
+                     </svg>
+                     <div class="card-body">
+                         <div class="card-title d-flex justify-content-start align-items-center gap-2">
+                             <div sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
+                                 <input th:aria-label="#{label.select}" name="selected" type="checkbox" th:data-id="${article.id}">
+                             </div>
                         <div th:text="${article.title}"></div>
                     </div>
                     <p class="card-text small text-muted" th:text="${article.plainContent}"></p>
@@ -196,7 +196,7 @@
                 <div class="card-body">
                     <i class="bi bi-inbox display-1 text-muted mb-3"></i>
                     <h5 class="card-title" th:text="#{label.result.empty}">게시물이 없습니다</h5>
-                    <p class="card-text text-muted">새로운 글을 작성해보세요!</p>
+                    <p class="card-text text-muted" th:text="#{message.article.write.new}">새로운 글을 작성해보세요!</p>
                 </div>
             </div>
         </div>
@@ -211,7 +211,7 @@
                     <a aria-label="Previous"
                        class="page-link"
                        th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', page.previousOrFirstPageable().pageNumber).build().toUriString()}}"
-                       title="이전 페이지"
+                       th:title="#{label.page.previous}"
                     >
                         <i class="bi bi-chevron-left"></i>
                     </a>
@@ -235,7 +235,7 @@
                     <a aria-label="Next"
                        class="page-link"
                        th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', page.nextOrLastPageable().pageNumber).build().toUriString()}}"
-                       title="다음 페이지"
+                       th:title="#{label.page.next}"
                     >
                         <i class="bi bi-chevron-right"></i>
                     </a>

@@ -25,7 +25,7 @@
     <meta property="twitter:image" content="페이지 썸네일 이미지 주소" th:if="${SITE_CONTEXT.profileImage != null}"
           th:content="@{|${REQUEST_HOST}/api/attachments/${SITE_CONTEXT.profileImage.id}|}">
 
-    <title>홈 | [[${SITE_CONTEXT.name}]]</title>
+    <title>[[#{label.home}]] | [[${SITE_CONTEXT.name}]]</title>
     <link rel="stylesheet" href="/static/styles/index.css" th:href="@{/styles/index.css}">
 
     <style>
@@ -51,7 +51,7 @@
 <div layout:fragment="content">
 <section class="profile-section d-flex flex-column justify-content-center align-items-center" th:style="|background-image: url('/api/attachments/${SITE_CONTEXT.backgroundImage.id}')|">
     <div class="profile d-flex flex-column justify-content-center align-items-center container-fluid px-3">
-        <p class="image mb-3"><img class="rounded-circle shadow" alt="프로필이미지" th:src="@{|/api/attachments/${SITE_CONTEXT.profileImage.id}|}"></p>
+        <p class="image mb-3"><img class="rounded-circle shadow" th:alt="#{label.profile.image}" th:title="#{label.profile.image}" th:src="@{|/api/attachments/${SITE_CONTEXT.profileImage.id}|}"></p>
         <h2 class="mb-3" th:text="${SITE_CONTEXT.name}"></h2>
         <p class="text-center px-2" th:text="${SITE_CONTEXT.description}"></p>
     </div>
@@ -63,13 +63,14 @@
 <section class="board-section container-fluid container-lg px-3" th:each="page : ${siteExposedPages}">
     <header class="d-flex justify-content-between align-items-center">
         <h5 class="h5 main-color" th:text="${ALL_CATEGORIES.get(page.getKey()).parent.name}"></h5>
-        <p><a class="none d-flex align-items-center" th:href="@{/articles(categoryId=${page.getKey()}, categoryType=${ALL_CATEGORIES.get(page.getKey()).type})}">더보기 <i class="bi bi-arrow-right ms-1"></i></a></p>
+        <p><a class="none d-flex align-items-center" th:href="@{/articles(categoryId=${page.getKey()}, categoryType=${ALL_CATEGORIES.get(page.getKey()).type})}" th:title="#{label.more}"><span th:text="#{label.more}">더보기</span> <i class="bi bi-arrow-right ms-1"></i></a></p>
     </header>
     <div class="container-fluid px-0">
         <div class="row row-cols-1 row-cols-lg-3 g-4">
             <article class="col" th:each="article : ${page.getValue().content}">
                 <a class="btn w-100 h-100 text-start shadow-sm rounded p-3"
                    th:href="@{|/articles/${article.id}?categoryType=${ALL_CATEGORIES.get(page.getKey()).type}&categoryId=${article.categoryId}&page=${articleStat.index}|}"
+                   th:title="${article.title}"
                 >
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <h5 class="title" th:text="${article.title}"></h5>

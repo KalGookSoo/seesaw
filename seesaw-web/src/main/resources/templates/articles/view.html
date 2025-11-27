@@ -220,7 +220,7 @@
                     form.classList.add('d-none');
                 },
                 '.content-footer button[name="delete"]': e => {
-                    if (!confirm('이 게시글을 삭제하시면 댓글과 첨부파일이 같이 삭제됩니다.')) {
+                    if (!confirm(/*[[#{message.confirm.delete.article}]]*/'')) {
                         return;
                     }
                     const button = e.target.closest('.content-footer button[name="delete"]');
@@ -332,7 +332,7 @@
                       th:method="post"
                 >
                     <div class="input-group">
-                        <textarea aria-label="댓글 입력" class="form-control" name="content" rows="3" th:utext="${reply.content}"></textarea>
+                        <textarea th:aria-label="#{label.input}" class="form-control" name="content" rows="3" th:utext="${reply.content}"></textarea>
                         <button class="btn btn-primary d-flex align-items-center" type="submit">
                             <i class="bi bi-check-lg"></i>
                             <span class="d-none d-sm-inline ms-1" th:text="#{label.save}"></span>
@@ -346,7 +346,7 @@
                 <form enctype="multipart/form-data" name="insertReplyForm" th:action="@{/api/replies}" th:method="post">
                     <input name="articleId" th:value="${article.id}" type="hidden">
                     <div class="input-group">
-                        <textarea aria-label="댓글 입력" class="form-control" name="content" rows="3" placeholder="댓글을 입력하세요..."></textarea>
+                        <textarea th:aria-label="#{label.input}" class="form-control" name="content" rows="3" th:placeholder="#{placeholder.reply.content}"></textarea>
                         <button class="btn btn-primary d-flex align-items-center" type="submit">
                             <i class="bi bi-send"></i>
                             <span class="d-none d-sm-inline ms-1" th:text="|#{entity.reply} #{label.input}|"></span>
@@ -358,7 +358,7 @@
             <!--/* Login prompt for anonymous users */-->
             <div class="p-3" sec:authorize="isAnonymous()">
                 <div class="input-group">
-                    <textarea aria-label="댓글 입력" class="form-control" name="content" rows="3" readonly placeholder="로그인 후 댓글을 작성할 수 있습니다."></textarea>
+                    <textarea th:aria-label="#{label.input}" class="form-control" name="content" rows="3" readonly th:placeholder="#{placeholder.reply.login}"></textarea>
                     <a class="btn btn-primary d-flex align-items-center" th:href="@{/oauth2/authorization/naver}">
                         <i class="bi bi-box-arrow-in-right"></i>
                         <span class="d-none d-sm-inline ms-1" th:text="#{label.sign.in}"></span>
@@ -376,20 +376,20 @@
                     <a class="btn btn-outline-secondary d-flex align-items-center"
                        th:href="@{|/articles/${previousArticle.id}${search.getUriComponentsBuilder().build().toUriString()}|}"
                        th:if="${previousArticle != null}"
-                       title="이전글">
+                       th:title="#{label.previous.article}">
                         <i class="bi bi-chevron-left"></i>
-                        <span class="d-none d-sm-inline ms-1" th:text="#{label.previous.article}">이전글</span>
+                        <span class="d-none d-sm-inline ms-1" th:text="#{label.previous.article}">[[#{label.previous.article}]]</span>
                     </a>
                     <a class="btn btn-outline-secondary d-flex align-items-center"
                        th:href="@{|/articles${search.getUriComponentsBuilder().queryParam('page', 0).build().toUriString()}|}"
-                       title="목록">
+                       th:title="#{label.list}">
                         <i class="bi bi-list"></i>
                         <span class="d-none d-sm-inline ms-1" th:text="#{label.list}"></span>
                     </a>
                     <a class="btn btn-outline-secondary d-flex align-items-center"
                        th:href="@{|/articles/${nextArticle.id}${search.getUriComponentsBuilder().build().toUriString()}|}"
                        th:if="${nextArticle != null}"
-                       title="다음글">
+                       th:title="#{label.next.article}">
                         <i class="bi bi-chevron-right"></i>
                         <span class="d-none d-sm-inline ms-1" th:text="#{label.next.article}">다음글</span>
                     </a>
@@ -398,7 +398,7 @@
                     <a class="btn btn-outline-primary d-flex align-items-center"
                        th:href="@{|/articles/${article.id}/edit${search.getUriComponentsBuilder().build().toUriString()}|}"
                        th:if="${#strings.equals(#authentication.principal.username, article.createdBy)}"
-                       title="수정">
+                       th:title="#{label.update}">
                         <i class="bi bi-pencil-square"></i>
                         <span class="d-none d-sm-inline ms-1" th:text="#{label.update}"></span>
                     </a>
@@ -406,7 +406,7 @@
                             name="delete"
                             type="button"
                             th:data-id="${article.id}"
-                            title="삭제">
+                            th:title="#{label.delete}">
                         <i class="bi bi-trash"></i>
                         <span class="d-none d-sm-inline ms-1" th:text="#{label.delete}"></span>
                     </button>
