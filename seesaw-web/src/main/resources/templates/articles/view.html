@@ -8,412 +8,416 @@
 >
 
 <head>
-    <meta name="description" th:content="${article.plainContent}">
-    <meta name="keywords" th:content="${CURRENT_CATEGORY.name}">
+  <meta name="description" th:content="${article.plainContent}">
+  <meta name="keywords" th:content="${CURRENT_CATEGORY.name}">
 
-    <meta property="og:type" content="article">
-    <meta property="og:title" content="페이지 제목" th:content="${article.title}">
-    <meta property="og:description" content="페이지 설명" th:content="${article.plainContent}">
-    <meta property="og:image" content="페이지 썸네일 이미지 주소" th:if="${!article.inlineImages.isEmpty()}"
-          th:content="@{|${REQUEST_HOST}/api/attachments/${article.inlineImages.get(0).id}|}">
-    <meta property="og:image" content="페이지 썸네일 이미지 주소" th:if="${article.inlineImages.isEmpty() and SITE_CONTEXT.profileImage != null}"
-          th:content="@{|${REQUEST_HOST}/api/attachments/${SITE_CONTEXT.profileImage.id}|}">
-    <meta property="og:url" content="페이지 주소" th:content="${REQUEST_URL}">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="페이지 제목" th:content="${article.title}">
+  <meta property="og:description" content="페이지 설명" th:content="${article.plainContent}">
+  <meta property="og:image" content="페이지 썸네일 이미지 주소" th:if="${!article.inlineImages.isEmpty()}"
+        th:content="@{|${REQUEST_HOST}/api/attachments/${article.inlineImages.get(0).id}|}">
+  <meta property="og:image" content="페이지 썸네일 이미지 주소" th:if="${article.inlineImages.isEmpty() and SITE_CONTEXT.profileImage != null}"
+        th:content="@{|${REQUEST_HOST}/api/attachments/${SITE_CONTEXT.profileImage.id}|}">
+  <meta property="og:url" content="페이지 주소" th:content="${REQUEST_URL}">
 
-    <meta property="twitter:card" content="summary">
-    <meta property="twitter:title" content="페이지 제목" th:content="${article.title}">
-    <meta property="twitter:description" content="페이지 설명" th:content="${article.plainContent}">
-    <meta property="twitter:image" content="페이지 썸네일 이미지 주소" th:if="${!article.inlineImages.isEmpty()}"
-          th:content="@{|${REQUEST_HOST}/api/attachments/${article.inlineImages.get(0).id}|}">
+  <meta property="twitter:card" content="summary">
+  <meta property="twitter:title" content="페이지 제목" th:content="${article.title}">
+  <meta property="twitter:description" content="페이지 설명" th:content="${article.plainContent}">
+  <meta property="twitter:image" content="페이지 썸네일 이미지 주소" th:if="${!article.inlineImages.isEmpty()}"
+        th:content="@{|${REQUEST_HOST}/api/attachments/${article.inlineImages.get(0).id}|}">
 
 
+  <title>[[${article.title}]]</title>
+  <link rel="stylesheet" href="/static/styles/content.css" th:href="@{/styles/content.css}">
 
-    <title>[[${article.title}]]</title>
-    <link rel="stylesheet" href="/static/styles/content.css" th:href="@{/styles/content.css}">
+  <!--/* Editor */-->
+  <link rel="stylesheet" th:href="@{/styles/toastui-editor.min.css}">
 
-    <!--/* Editor */-->
-    <link rel="stylesheet" th:href="@{/styles/toastui-editor.min.css}">
+  <!--/* Color picker */-->
+  <link rel="stylesheet" th:href="@{/styles/tui-color-picker.min.css}">
+  <link rel="stylesheet" th:href="@{/styles/toastui-editor-plugin-color-syntax.min.css}">
 
-    <!--/* Color picker */-->
-    <link rel="stylesheet" th:href="@{/styles/tui-color-picker.min.css}">
-    <link rel="stylesheet" th:href="@{/styles/toastui-editor-plugin-color-syntax.min.css}">
+  <!--/* Code syntax highlight */-->
+  <link rel="stylesheet" th:href="@{/styles/prism.min.css}">
+  <link rel="stylesheet" th:href="@{/styles/toastui-editor-plugin-code-syntax-highlight.min.css}">
 
-    <!--/* Code syntax highlight */-->
-    <link rel="stylesheet" th:href="@{/styles/prism.min.css}">
-    <link rel="stylesheet" th:href="@{/styles/toastui-editor-plugin-code-syntax-highlight.min.css}">
+  <!--/* Chart */-->
+  <link rel="stylesheet" th:href="@{/styles/toastui-chart.min.css}">
 
-    <!--/* Chart */-->
-    <link rel="stylesheet" th:href="@{/styles/toastui-chart.min.css}">
+  <!--/* Table merged cell */-->
+  <link rel="stylesheet" th:href="@{/styles/toastui-editor-plugin-table-merged-cell.min.css}">
 
-    <!--/* Table merged cell */-->
-    <link rel="stylesheet" th:href="@{/styles/toastui-editor-plugin-table-merged-cell.min.css}">
+  <!--/* Editor */-->
+  <script th:src="@{/scripts/toastui-editor-all.min.js}"></script>
 
-    <!--/* Editor */-->
-    <script th:src="@{/scripts/toastui-editor-all.min.js}"></script>
+  <!--/* Color picker */-->
+  <script th:src="@{/scripts/tui-color-picker.min.js}"></script>
+  <script th:src="@{/scripts/toastui-editor-plugin-color-syntax.min.js}"></script>
 
-    <!--/* Color picker */-->
-    <script th:src="@{/scripts/tui-color-picker.min.js}"></script>
-    <script th:src="@{/scripts/toastui-editor-plugin-color-syntax.min.js}"></script>
+  <!--/* Code syntax highlight */-->
+  <script th:src="@{/scripts/toastui-editor-plugin-code-syntax-highlight-all.min.js}"></script>
 
-    <!--/* Code syntax highlight */-->
-    <script th:src="@{/scripts/toastui-editor-plugin-code-syntax-highlight-all.min.js}"></script>
+  <!--/* Chart */-->
+  <script th:src="@{/scripts/toastui-chart.min.js}"></script>
+  <script th:src="@{/scripts/toastui-editor-plugin-chart.min.js}"></script>
 
-    <!--/* Chart */-->
-    <script th:src="@{/scripts/toastui-chart.min.js}"></script>
-    <script th:src="@{/scripts/toastui-editor-plugin-chart.min.js}"></script>
+  <!--/* Table merged cell */-->
+  <script th:src="@{/scripts/toastui-editor-plugin-table-merged-cell.min.js}"></script>
 
-    <!--/* Table merged cell */-->
-    <script th:src="@{/scripts/toastui-editor-plugin-table-merged-cell.min.js}"></script>
+  <!--/* UML */-->
+  <script th:src="@{/scripts/toastui-editor-plugin-uml.min.js}"></script>
 
-    <!--/* UML */-->
-    <script th:src="@{/scripts/toastui-editor-plugin-uml.min.js}"></script>
+  <script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', e => {
 
-    <script th:inline="javascript">
-        document.addEventListener('DOMContentLoaded', e => {
+      const { Editor } = toastui;
+      const { chart, codeSyntaxHighlight, colorSyntax, tableMergedCell, uml } = Editor.plugin;
+      const chartOptions = {
+        minWidth: 100,
+        maxWidth: 600,
+        minHeight: 100,
+        maxHeight: 300
+      };
+      const viewer = Editor.factory({
+        el: document.querySelector('.article-content-section'),
+        viewer: true,
+        height: '600px',
+        initialValue: /*[[${article.content}]]*/'',
+        plugins: [[chart, chartOptions], [codeSyntaxHighlight, { highlighter: Prism }], colorSyntax, tableMergedCell, uml]
+      });
 
-            const {Editor} = toastui;
-            const {chart, codeSyntaxHighlight, colorSyntax, tableMergedCell, uml} = Editor.plugin;
-            const chartOptions = {
-                minWidth: 100,
-                maxWidth: 600,
-                minHeight: 100,
-                maxHeight: 300
-            };
-            const viewer = Editor.factory({
-                el: document.querySelector('.article-content-section'),
-                viewer: true,
-                height: '600px',
-                initialValue: /*[[${article.content}]]*/'',
-                plugins: [[chart, chartOptions], [codeSyntaxHighlight, { highlighter: Prism }], colorSyntax, tableMergedCell, uml]
+      e.target.addEventListener('submit', e => {
+        const selector = Object.keys(submitHandlers).find(selector => e.target.closest(selector));
+        submitHandlers[selector]?.(e);
+      });
+
+      e.target.addEventListener('click', e => {
+        const selector = Object.keys(clickHandlers).find(selector => e.target.closest(selector));
+        clickHandlers[selector]?.(e);
+      });
+
+      const submitHandlers = {
+        '[name="insertReplyForm"]': e => {
+          e.preventDefault();
+          const form = new FormData(e.target);
+          form.append('exposed', 'true');
+          const httpEntity = {
+            method: 'post',
+            headers: {
+              [CSRF.headerName]: CSRF.token
+            },
+            body: form
+          };
+          fetch(e.target.action, httpEntity)
+            .then(async response => {
+              const responseBody = await response.text();
+              if (response.ok) {
+                alert(/*[[#{command.success.save}]]*/'');
+                location.reload();
+              } else if (response.status === 422) {
+                const errors = JSON.parse(responseBody).errors;
+                [...errors].forEach(error => {
+                  const field = e.target.elements[error.field];
+                  field.setCustomValidity(error.message);
+                  field.reportValidity();
+                });
+              } else {
+                alert(/*[[#{command.failure.save}]]*/'');
+              }
             });
-
-            e.target.addEventListener('submit', e => {
-                const selector = Object.keys(submitHandlers).find(selector => e.target.closest(selector));
-                submitHandlers[selector]?.(e);
+        },
+        '[name="updateReplyForm"]': e => {
+          e.preventDefault();
+          const form = new FormData(e.target);
+          form.append('exposed', 'true');
+          const httpEntity = {
+            method: 'post',
+            headers: {
+              [CSRF.headerName]: CSRF.token
+            },
+            body: form
+          };
+          fetch(e.target.action, httpEntity)
+            .then(async response => {
+              const responseBody = await response.text();
+              if (response.ok) {
+                alert(/*[[#{command.success.update}]]*/'');
+                location.reload();
+              } else if (response.status === 422) {
+                const errors = JSON.parse(responseBody).errors;
+                [...errors].forEach(error => {
+                  const field = e.target.elements[error.field];
+                  field.setCustomValidity(error.message);
+                  field.reportValidity();
+                });
+              } else {
+                alert(/*[[#{command.failure.update}]]*/'');
+              }
             });
+        }
 
-            e.target.addEventListener('click', e => {
-                const selector = Object.keys(clickHandlers).find(selector => e.target.closest(selector));
-                clickHandlers[selector]?.(e);
-            });
+      };
 
-            const submitHandlers = {
-                '[name="insertReplyForm"]': e => {
-                    e.preventDefault();
-                    const form = new FormData(e.target);
-                    form.append('exposed', 'true');
-                    const httpEntity = {
-                        method: 'post',
-                        headers: {
-                            [CSRF.headerName]: CSRF.token
-                        },
-                        body: form
-                    };
-                    fetch(e.target.action, httpEntity)
-                        .then(async response => {
-                            const responseBody = await response.text();
-                            if (response.ok) {
-                                alert(/*[[#{command.success.save}]]*/'');
-                                location.reload();
-                            } else if (response.status === 422) {
-                                const errors = JSON.parse(responseBody).errors;
-                                [...errors].forEach(error => {
-                                    const field = e.target.elements[error.field];
-                                    field.setCustomValidity(error.message);
-                                    field.reportValidity();
-                                });
-                            } else {
-                                alert(/*[[#{command.failure.save}]]*/'');
-                            }
-                        });
-                },
-                '[name="updateReplyForm"]': e => {
-                    e.preventDefault();
-                    const form = new FormData(e.target);
-                    form.append('exposed', 'true');
-                    const httpEntity = {
-                        method: 'post',
-                        headers: {
-                            [CSRF.headerName]: CSRF.token
-                        },
-                        body: form
-                    };
-                    fetch(e.target.action, httpEntity)
-                        .then(async response => {
-                            const responseBody = await response.text();
-                            if (response.ok) {
-                                alert(/*[[#{command.success.update}]]*/'');
-                                location.reload();
-                            } else if (response.status === 422) {
-                                const errors = JSON.parse(responseBody).errors;
-                                [...errors].forEach(error => {
-                                    const field = e.target.elements[error.field];
-                                    field.setCustomValidity(error.message);
-                                    field.reportValidity();
-                                });
-                            } else {
-                                alert(/*[[#{command.failure.update}]]*/'');
-                            }
-                        });
-                }
+      const clickHandlers = {
+        '.reply-item button[name="update"]': e => {
+          const updateButton = e.target.closest('.reply-item button[name="update"]');
+          const replyItem = updateButton.closest('.reply-item');
+          const cancelButton = replyItem.querySelector(`[name="cancel"]`);
+          const replyContent = replyItem.querySelector('.reply-content');
+          const form = replyItem.querySelector(`form[name="updateReplyForm"]`);
 
+          // 댓글 읽기 폼 숨김
+          replyContent.classList.add('d-none');
+
+          // 댓글 수정 버튼 숨김
+          updateButton.classList.add('d-none');
+
+          // 수정 취소 버튼 출력
+          cancelButton.classList.remove('d-none');
+
+          // 댓글 입력 폼 출력
+          form.classList.remove('d-none');
+          form.elements.content.focus();
+        },
+        '.reply-item button[name="delete"]': e => {
+          const button = e.target.closest('.reply-item button[name="delete"]');
+          const httpEntity = {
+            method: 'delete',
+            headers: {
+              'content-type': 'application/json',
+              [CSRF.headerName]: CSRF.token
             }
+          };
+          fetch(`/api/replies/${button.dataset.id}`, httpEntity)
+            .then(async response => {
+              const responseBody = await response.text();
+              if (response.ok) {
+                alert(/*[[#{command.success.delete}]]*/'');
+                location.reload();
+              } else {
+                alert(/*[[#{command.failure.delete}]]*/'');
+              }
+            });
+        },
+        '.reply-item button[name="cancel"]': e => {
+          const cancelButton = e.target.closest('.reply-item button[name="cancel"]');
+          const replyItem = cancelButton.closest('.reply-item');
+          const updateButton = replyItem.querySelector(`[name="update"]`);
+          const replyContent = replyItem.querySelector('.reply-content');
+          const form = replyItem.querySelector(`form[name="updateReplyForm"]`);
 
-            const clickHandlers = {
-                '.reply-item button[name="update"]': e => {
-                    const updateButton = e.target.closest('.reply-item button[name="update"]');
-                    const replyItem = updateButton.closest('.reply-item');
-                    const cancelButton = replyItem.querySelector(`[name="cancel"]`);
-                    const replyContent = replyItem.querySelector('.reply-content');
-                    const form = replyItem.querySelector(`form[name="updateReplyForm"]`);
+          // 댓글 읽기 폼 출력
+          replyContent.classList.remove('d-none');
 
-                    // 댓글 읽기 폼 숨김
-                    replyContent.classList.add('d-none');
+          // 댓글 수정 버튼 출력
+          updateButton.classList.remove('d-none');
 
-                    // 댓글 수정 버튼 숨김
-                    updateButton.classList.add('d-none');
+          // 수정 취소 버튼 숨김
+          cancelButton.classList.add('d-none');
 
-                    // 수정 취소 버튼 출력
-                    cancelButton.classList.remove('d-none');
-
-                    // 댓글 입력 폼 출력
-                    form.classList.remove('d-none');
-                    form.elements.content.focus();
-                },
-                '.reply-item button[name="delete"]': e => {
-                    const button = e.target.closest('.reply-item button[name="delete"]');
-                    const httpEntity = {
-                        method: 'delete',
-                        headers: {
-                            'content-type': 'application/json',
-                            [CSRF.headerName]: CSRF.token
-                        }
-                    };
-                    fetch(`/api/replies/${button.dataset.id}`, httpEntity)
-                        .then(async response => {
-                            const responseBody = await response.text();
-                            if (response.ok) {
-                                alert(/*[[#{command.success.delete}]]*/'');
-                                location.reload();
-                            } else {
-                                alert(/*[[#{command.failure.delete}]]*/'');
-                            }
-                        });
-                },
-                '.reply-item button[name="cancel"]': e => {
-                    const cancelButton = e.target.closest('.reply-item button[name="cancel"]');
-                    const replyItem = cancelButton.closest('.reply-item');
-                    const updateButton = replyItem.querySelector(`[name="update"]`);
-                    const replyContent = replyItem.querySelector('.reply-content');
-                    const form = replyItem.querySelector(`form[name="updateReplyForm"]`);
-
-                    // 댓글 읽기 폼 출력
-                    replyContent.classList.remove('d-none');
-
-                    // 댓글 수정 버튼 출력
-                    updateButton.classList.remove('d-none');
-
-                    // 수정 취소 버튼 숨김
-                    cancelButton.classList.add('d-none');
-
-                    // 댓글 입력 폼 숨김
-                    form.classList.add('d-none');
-                },
-                '.content-footer button[name="delete"]': e => {
-                    if (!confirm(/*[[#{message.confirm.delete.article}]]*/'')) {
-                        return;
-                    }
-                    const button = e.target.closest('.content-footer button[name="delete"]');
-                    const httpEntity = {
-                        method: 'delete',
-                        headers: {
-                            'content-type': 'application/json',
-                            [CSRF.headerName]: CSRF.token
-                        }
-                    };
-                    fetch(`/api/articles/${button.dataset.id}`, httpEntity)
-                        .then(async response => {
-                            const responseBody = await response.text();
-                            if (response.ok) {
-                                alert(/*[[#{command.success.delete}]]*/'');
-                                location.href = /*[[@{/articles(categoryType=${CURRENT_CATEGORY.type}, categoryId=${CURRENT_CATEGORY.id})}]]*/'';
-                            } else {
-                                alert(/*[[#{command.failure.delete}]]*/'');
-                            }
-                        });
-                }
-            };
-        });
-    </script>
+          // 댓글 입력 폼 숨김
+          form.classList.add('d-none');
+        },
+        '.content-footer button[name="delete"]': e => {
+          if (!confirm(/*[[#{message.confirm.delete.article}]]*/'')) {
+            return;
+          }
+          const button = e.target.closest('.content-footer button[name="delete"]');
+          const httpEntity = {
+            method: 'delete',
+            headers: {
+              'content-type': 'application/json',
+              [CSRF.headerName]: CSRF.token
+            }
+          };
+          fetch(`/api/articles/${button.dataset.id}`, httpEntity)
+            .then(async response => {
+              const responseBody = await response.text();
+              if (response.ok) {
+                alert(/*[[#{command.success.delete}]]*/'');
+                location.href = /*[[@{/articles(categoryType=${CURRENT_CATEGORY.type}, categoryId=${CURRENT_CATEGORY.id})}]]*/'';
+              } else {
+                alert(/*[[#{command.failure.delete}]]*/'');
+              }
+            });
+        }
+      };
+    });
+  </script>
 </head>
 <div layout:fragment="content">
-<section th:replace="~{components/breadcrumb :: breadcrumbs}"></section>
-<header class="container-sm title-section">
+  <section th:replace="~{components/breadcrumb :: breadcrumbs}"></section>
+  <header class="container-sm title-section">
     <div class="d-flex">
-        <h5 class="title pb-1" th:text="${CURRENT_CATEGORY.name}"></h5>
+      <h5 class="title pb-1" th:text="${CURRENT_CATEGORY.name}"></h5>
     </div>
-</header>
-<section class="container-sm mb-4">
+  </header>
+  <section class="container-sm mb-4">
     <div class="card shadow-sm border-0">
-        <div class="card-header bg-white py-3">
-            <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center">
-                <h5 class="card-title mb-2 mb-md-0" th:text="${article.title}"></h5>
-                <div class="d-flex justify-content-start align-items-center">
-                    <div class="d-flex align-items-center">
-                        <i class="bi bi-person-circle me-2 text-secondary"></i>
-                        <span class="text-muted" th:text="${article.maskedAuthor}"></span>
-                    </div>
-                    <span class="text-muted mx-2">|</span>
-                    <div class="d-flex align-items-center">
-                        <i class="bi bi-calendar3 text-secondary"></i>
-                        <span class="text-muted ms-1" th:text="${#temporals.format(article.createdDate, 'yyyy.MM.dd')}"></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="card-body p-4">
-            <div class="article-content-section"></div>
-        </div>
-    </div>
-</section>
-<section class="container-sm mb-4">
-    <div class="card shadow-sm border-0">
-        <div class="card-header bg-white py-3">
+      <div class="card-header bg-white py-3">
+        <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center">
+          <h5 class="card-title mb-2 mb-md-0" th:text="${article.title}"></h5>
+          <div class="d-flex justify-content-start align-items-center">
             <div class="d-flex align-items-center">
-                <i class="bi bi-chat-dots me-2 text-primary"></i>
-                <h6 class="mb-0" th:text="#{entity.reply}"></h6>
-                <span class="badge bg-primary rounded-pill ms-2" th:text="${article.replies.size()}"></span>
+              <i class="bi bi-person-circle me-2 text-secondary"></i>
+              <span class="text-muted" th:text="${article.maskedAuthor}"></span>
             </div>
+            <span class="text-muted mx-2">|</span>
+            <div class="d-flex align-items-center">
+              <i class="bi bi-calendar3 text-secondary"></i>
+              <span class="text-muted ms-1" th:text="${#temporals.format(article.createdDate, 'yyyy.MM.dd')}"></span>
+            </div>
+          </div>
         </div>
-        <div class="card-body p-0">
-            <!--/* Existing replies */-->
-            <div class="reply-item p-3" 
-                 th:classappend="${!replyStat.last ? 'border-bottom' : ''}"
-                 th:each="reply : ${article.replies}"
-                 th:if="${!article.replies.isEmpty()}"
-            >
-                <div class="d-flex justify-content-between mb-2">
-                    <div class="d-flex align-items-center">
-                        <i class="bi bi-person-circle me-2 text-secondary"></i>
-                        <span class="fw-medium" th:text="${reply.maskedAuthor}"></span>
-                        <span class="text-muted mx-2">|</span>
-                        <div class="d-flex align-items-center text-muted small">
-                            <i class="bi bi-calendar3"></i>
-                            <span class="ms-1" th:text="${#temporals.format(reply.createdDate, 'yyyy.MM.dd')}"></span>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-center" sec:authorize="isAuthenticated()">
-                        <div th:if="${#strings.equals(reply.createdBy, #authentication.principal.username)}">
-                            <button class="btn btn-sm btn-outline-secondary d-flex align-items-center" name="update" type="button" th:data-id="${reply.id}">
-                                <i class="bi bi-pencil"></i>
-                                <span class="d-none d-sm-inline ms-1" th:text="#{label.update}"></span>
-                            </button>
-                            <button class="btn btn-sm btn-outline-secondary d-flex align-items-center d-none" name="cancel" type="button">
-                                <i class="bi bi-x-lg"></i>
-                                <span class="d-none d-sm-inline ms-1" th:text="#{label.cancel}"></span>
-                            </button>
-                        </div>
-                        <div class="ms-2" th:if="${#authentication.principal.hasRole('ROLE_ADMIN') or #authentication.principal.hasRole('ROLE_MANAGER') or #strings.equals(reply.createdBy, #authentication.principal.username)}">
-                            <button class="btn btn-sm btn-outline-danger d-flex align-items-center" name="delete" type="button" th:data-id="${reply.id}">
-                                <i class="bi bi-trash"></i>
-                                <span class="d-none d-sm-inline ms-1" th:text="#{label.delete}"></span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="reply-content bg-light p-3 rounded">
-                    <pre class="mb-0" th:utext="${reply.content}"></pre>
-                </div>
-                <form class="d-none mt-3"
-                      enctype="multipart/form-data"
-                      name="updateReplyForm"
-                      th:action="@{|/api/replies/${reply.id}|}"
-                      th:if="${#authentication.isAuthenticated()}"
-                      th:method="post"
-                >
-                    <div class="input-group">
-                        <textarea th:aria-label="#{label.input}" class="form-control" name="content" rows="3" th:utext="${reply.content}"></textarea>
-                        <button class="btn btn-primary d-flex align-items-center" type="submit">
-                            <i class="bi bi-check-lg"></i>
-                            <span class="d-none d-sm-inline ms-1" th:text="#{label.save}"></span>
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-            <!--/* Reply form for authenticated users */-->
-            <div class="p-3" sec:authorize="isAuthenticated()">
-                <form enctype="multipart/form-data" name="insertReplyForm" th:action="@{/api/replies}" th:method="post">
-                    <input name="articleId" th:value="${article.id}" type="hidden">
-                    <div class="input-group">
-                        <textarea th:aria-label="#{label.input}" class="form-control" name="content" rows="3" th:placeholder="#{placeholder.reply.content}"></textarea>
-                        <button class="btn btn-primary d-flex align-items-center" type="submit">
-                            <i class="bi bi-send"></i>
-                            <span class="d-none d-sm-inline ms-1" th:text="|#{entity.reply} #{label.input}|"></span>
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-            <!--/* Login prompt for anonymous users */-->
-            <div class="p-3" sec:authorize="isAnonymous()">
-                <div class="input-group">
-                    <textarea th:aria-label="#{label.input}" class="form-control" name="content" rows="3" readonly th:placeholder="#{placeholder.reply.login}"></textarea>
-                    <a class="btn btn-primary d-flex align-items-center" th:href="@{/oauth2/authorization/naver}">
-                        <i class="bi bi-box-arrow-in-right"></i>
-                        <span class="d-none d-sm-inline ms-1" th:text="#{label.sign.in}"></span>
-                    </a>
-                </div>
-            </div>
-        </div>
+      </div>
+      <div class="card-body p-4">
+        <div class="article-content-section"></div>
+      </div>
     </div>
-</section>
-<footer class="container-sm my-4 content-footer">
+  </section>
+  <section class="container-sm mb-4">
     <div class="card shadow-sm border-0">
-        <div class="card-body p-3">
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="d-flex gap-2">
-                    <a class="btn btn-outline-secondary d-flex align-items-center"
-                       th:href="@{|/articles/${previousArticle.id}${search.getUriComponentsBuilder().build().toUriString()}|}"
-                       th:if="${previousArticle != null}"
-                       th:title="#{label.previous.article}">
-                        <i class="bi bi-chevron-left"></i>
-                        <span class="d-none d-sm-inline ms-1" th:text="#{label.previous.article}">[[#{label.previous.article}]]</span>
-                    </a>
-                    <a class="btn btn-outline-secondary d-flex align-items-center"
-                       th:href="@{|/articles${search.getUriComponentsBuilder().queryParam('page', 0).build().toUriString()}|}"
-                       th:title="#{label.list}">
-                        <i class="bi bi-list"></i>
-                        <span class="d-none d-sm-inline ms-1" th:text="#{label.list}"></span>
-                    </a>
-                    <a class="btn btn-outline-secondary d-flex align-items-center"
-                       th:href="@{|/articles/${nextArticle.id}${search.getUriComponentsBuilder().build().toUriString()}|}"
-                       th:if="${nextArticle != null}"
-                       th:title="#{label.next.article}">
-                        <i class="bi bi-chevron-right"></i>
-                        <span class="d-none d-sm-inline ms-1" th:text="#{label.next.article}">다음글</span>
-                    </a>
-                </div>
-                <div class="d-flex gap-2" sec:authorize="isAuthenticated()">
-                    <a class="btn btn-outline-primary d-flex align-items-center"
-                       th:href="@{|/articles/${article.id}/edit${search.getUriComponentsBuilder().build().toUriString()}|}"
-                       th:if="${#strings.equals(#authentication.principal.username, article.createdBy)}"
-                       th:title="#{label.update}">
-                        <i class="bi bi-pencil-square"></i>
-                        <span class="d-none d-sm-inline ms-1" th:text="#{label.update}"></span>
-                    </a>
-                    <button class="btn btn-outline-danger d-flex align-items-center"
-                            name="delete"
-                            type="button"
-                            th:data-id="${article.id}"
-                            th:title="#{label.delete}">
-                        <i class="bi bi-trash"></i>
-                        <span class="d-none d-sm-inline ms-1" th:text="#{label.delete}"></span>
-                    </button>
-                </div>
-            </div>
+      <div class="card-header bg-white py-3">
+        <div class="d-flex align-items-center">
+          <i class="bi bi-chat-dots me-2 text-primary"></i>
+          <h6 class="mb-0" th:text="#{entity.reply}"></h6>
+          <span class="badge bg-primary rounded-pill ms-2" th:text="${article.replies.size()}"></span>
         </div>
+      </div>
+      <div class="card-body p-0">
+        <!--/* Existing replies */-->
+        <div class="reply-item p-3"
+             th:classappend="${!replyStat.last ? 'border-bottom' : ''}"
+             th:each="reply : ${article.replies}"
+             th:if="${!article.replies.isEmpty()}"
+        >
+          <div class="d-flex justify-content-between mb-2">
+            <div class="d-flex align-items-center">
+              <i class="bi bi-person-circle me-2 text-secondary"></i>
+              <span class="fw-medium" th:text="${reply.maskedAuthor}"></span>
+              <span class="text-muted mx-2">|</span>
+              <div class="d-flex align-items-center text-muted small">
+                <i class="bi bi-calendar3"></i>
+                <span class="ms-1" th:text="${#temporals.format(reply.createdDate, 'yyyy.MM.dd')}"></span>
+              </div>
+            </div>
+            <div class="d-flex align-items-center" sec:authorize="isAuthenticated()">
+              <div th:if="${#strings.equals(reply.createdBy, #authentication.principal.username)}">
+                <button class="btn btn-sm btn-outline-secondary d-flex align-items-center" name="update" type="button"
+                        th:data-id="${reply.id}">
+                  <i class="bi bi-pencil"></i>
+                  <span class="d-none d-sm-inline ms-1" th:text="#{label.update}"></span>
+                </button>
+                <button class="btn btn-sm btn-outline-secondary d-flex align-items-center d-none" name="cancel" type="button">
+                  <i class="bi bi-x-lg"></i>
+                  <span class="d-none d-sm-inline ms-1" th:text="#{label.cancel}"></span>
+                </button>
+              </div>
+              <div class="ms-2"
+                   th:if="${#authentication.principal.hasRole('ROLE_ADMIN') or #authentication.principal.hasRole('ROLE_MANAGER') or #strings.equals(reply.createdBy, #authentication.principal.username)}">
+                <button class="btn btn-sm btn-outline-danger d-flex align-items-center" name="delete" type="button"
+                        th:data-id="${reply.id}">
+                  <i class="bi bi-trash"></i>
+                  <span class="d-none d-sm-inline ms-1" th:text="#{label.delete}"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="reply-content bg-light p-3 rounded">
+            <pre class="mb-0" th:utext="${reply.content}"></pre>
+          </div>
+          <form class="d-none mt-3"
+                enctype="multipart/form-data"
+                name="updateReplyForm"
+                th:action="@{|/api/replies/${reply.id}|}"
+                th:if="${#authentication.isAuthenticated()}"
+                th:method="post"
+          >
+            <div class="input-group">
+              <textarea th:aria-label="#{label.input}" class="form-control" name="content" rows="3" th:utext="${reply.content}"></textarea>
+              <button class="btn btn-primary d-flex align-items-center" type="submit">
+                <i class="bi bi-check-lg"></i>
+                <span class="d-none d-sm-inline ms-1" th:text="#{label.save}"></span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!--/* Reply form for authenticated users */-->
+        <div class="p-3" sec:authorize="isAuthenticated()">
+          <form enctype="multipart/form-data" name="insertReplyForm" th:action="@{/api/replies}" th:method="post">
+            <input name="articleId" th:value="${article.id}" type="hidden">
+            <div class="input-group">
+              <textarea th:aria-label="#{label.input}" class="form-control" name="content" rows="3"
+                        th:placeholder="#{placeholder.reply.content}"></textarea>
+              <button class="btn btn-primary d-flex align-items-center" type="submit">
+                <i class="bi bi-send"></i>
+                <span class="d-none d-sm-inline ms-1" th:text="|#{entity.reply} #{label.input}|"></span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!--/* Login prompt for anonymous users */-->
+        <div class="p-3" sec:authorize="isAnonymous()">
+          <div class="input-group">
+            <textarea th:aria-label="#{label.input}" class="form-control" name="content" rows="3" readonly
+                      th:placeholder="#{placeholder.reply.login}"></textarea>
+            <a class="btn btn-primary d-flex align-items-center" th:href="@{/oauth2/authorization/naver}">
+              <i class="bi bi-box-arrow-in-right"></i>
+              <span class="d-none d-sm-inline ms-1" th:text="#{label.sign.in}"></span>
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
-</footer>
+  </section>
+  <footer class="container-sm my-4 content-footer">
+    <div class="card shadow-sm border-0">
+      <div class="card-body p-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="d-flex gap-2">
+            <a class="btn btn-outline-secondary d-flex align-items-center"
+               th:href="@{|/articles/${previousArticle.id}${search.getUriComponentsBuilder().build().toUriString()}|}"
+               th:if="${previousArticle != null}"
+               th:title="#{label.previous.article}">
+              <i class="bi bi-chevron-left"></i>
+              <span class="d-none d-sm-inline ms-1" th:text="#{label.previous.article}">[[#{label.previous.article}]]</span>
+            </a>
+            <a class="btn btn-outline-secondary d-flex align-items-center"
+               th:href="@{|/articles${search.getUriComponentsBuilder().queryParam('page', 0).build().toUriString()}|}"
+               th:title="#{label.list}">
+              <i class="bi bi-list"></i>
+              <span class="d-none d-sm-inline ms-1" th:text="#{label.list}"></span>
+            </a>
+            <a class="btn btn-outline-secondary d-flex align-items-center"
+               th:href="@{|/articles/${nextArticle.id}${search.getUriComponentsBuilder().build().toUriString()}|}"
+               th:if="${nextArticle != null}"
+               th:title="#{label.next.article}">
+              <i class="bi bi-chevron-right"></i>
+              <span class="d-none d-sm-inline ms-1" th:text="#{label.next.article}">다음글</span>
+            </a>
+          </div>
+          <div class="d-flex gap-2" sec:authorize="isAuthenticated()">
+            <a class="btn btn-outline-primary d-flex align-items-center"
+               th:href="@{|/articles/${article.id}/edit${search.getUriComponentsBuilder().build().toUriString()}|}"
+               th:if="${#strings.equals(#authentication.principal.username, article.createdBy)}"
+               th:title="#{label.update}">
+              <i class="bi bi-pencil-square"></i>
+              <span class="d-none d-sm-inline ms-1" th:text="#{label.update}"></span>
+            </a>
+            <button class="btn btn-outline-danger d-flex align-items-center"
+                    name="delete"
+                    type="button"
+                    th:data-id="${article.id}"
+                    th:title="#{label.delete}">
+              <i class="bi bi-trash"></i>
+              <span class="d-none d-sm-inline ms-1" th:text="#{label.delete}"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
 </div>
 </html>
