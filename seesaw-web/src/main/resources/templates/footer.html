@@ -13,31 +13,31 @@
         <div class="left">
             <div>
                 <span>
-                    <button type="button" class="btn" title="정책" data-bs-toggle="modal" data-bs-target="#policyModal">
+                    <button type="button" class="btn" th:title="#{label.policy}" data-bs-toggle="modal" data-bs-target="#policyModal">
                         <i class="bi bi-file-text"></i>
-                        <span class="d-none d-sm-inline ms-1">정책</span>
+                        <span class="d-none d-sm-inline ms-1" th:text="#{label.policy}">정책</span>
                     </button>
                 </span>
                 <span>
-                    <button type="button" class="btn" title="신고" data-bs-toggle="modal" data-bs-target="#reportModal">
+                    <button type="button" class="btn" th:title="#{label.report}" data-bs-toggle="modal" data-bs-target="#reportModal">
                         <i class="bi bi-exclamation-triangle"></i>
-                        <span class="d-none d-sm-inline ms-1">신고</span>
+                        <span class="d-none d-sm-inline ms-1" th:text="#{label.report}">신고</span>
                     </button>
                 </span>
                 <span>
-                    <button type="button" class="btn" title="문의" data-bs-toggle="modal" data-bs-target="#inquiryModal">
+                    <button type="button" class="btn" th:title="#{label.inquiry}" data-bs-toggle="modal" data-bs-target="#inquiryModal">
                         <i class="bi bi-question-circle"></i>
-                        <span class="d-none d-sm-inline ms-1">문의</span>
+                        <span class="d-none d-sm-inline ms-1" th:text="#{label.inquiry}">문의</span>
                     </button>
                 </span>
             </div>
         </div>
         <div class="right">
             <div class="d-flex justify-content-start align-items-center">
-                <div><a class="btn" href="#" target="_blank"><i class="bi bi-cup-hot" title="카페"></i><span class="d-none d-sm-inline ms-1">카페</span></a></div>
-                <div><a class="btn" href="#" target="_blank"><i class="bi bi-journal-text" title="블로그"></i><span class="d-none d-sm-inline ms-1">블로그</span></a></div>
-                <div><a class="btn" href="#" target="_blank"><i class="bi bi-facebook" title="페이스북"></i><span class="d-none d-sm-inline ms-1">페이스북</span></a></div>
-                <div><a class="btn" href="#" target="_blank"><i class="bi bi-people" title="밴드"></i><span class="d-none d-sm-inline ms-1">밴드</span></a></div>
+                <div><a class="btn" href="#" target="_blank"><i class="bi bi-cup-hot" th:title="#{label.cafe}"></i><span class="d-none d-sm-inline ms-1" th:text="#{label.cafe}">카페</span></a></div>
+                <div><a class="btn" href="#" target="_blank"><i class="bi bi-journal-text" th:title="#{label.blog}"></i><span class="d-none d-sm-inline ms-1" th:text="#{label.blog}">블로그</span></a></div>
+                <div><a class="btn" href="#" target="_blank"><i class="bi bi-facebook" th:title="#{label.facebook}"></i><span class="d-none d-sm-inline ms-1" th:text="#{label.facebook}">페이스북</span></a></div>
+                <div><a class="btn" href="#" target="_blank"><i class="bi bi-people" th:title="#{label.band}"></i><span class="d-none d-sm-inline ms-1" th:text="#{label.band}">밴드</span></a></div>
             </div>
         </div>
     </div>
@@ -54,7 +54,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="policyModalLabel">운영정책</h5>
+                    <h5 class="modal-title" id="policyModalLabel" th:text="#{label.policy.operating}">운영정책</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -321,7 +321,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{label.close}">닫기</button>
                 </div>
             </div>
         </div>
@@ -332,54 +332,54 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="reportModalLabel">신고하기</h5>
+                    <h5 class="modal-title" id="reportModalLabel" th:text="#{label.report.title}">신고하기</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="reportForm" name="reportForm" th:action="@{/}" th:method="post">
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="reportSiteName" class="form-label">홈페이지명</label>
+                            <label for="reportSiteName" class="form-label" th:text="#{label.homepage.name}">홈페이지명</label>
                             <input type="text" class="form-control" id="reportSiteName" name="reportSiteName" th:value="${SITE_CONTEXT.name}" readonly>
                         </div>
                         <div class="mb-3">
-                            <label for="reportDomainName" class="form-label">도메인명</label>
+                            <label for="reportDomainName" class="form-label" th:text="#{label.domain.name}">도메인명</label>
                             <input type="text" class="form-control" id="reportDomainName" name="reportDomainName" th:value="${SITE_CONTEXT.domainName}" readonly>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">신고사유</label>
+                            <label class="form-label" th:text="#{label.report.reason}">신고사유</label>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="reportReason" id="reportReason1" value="음란성 또는 청소년에게 부적합한 내용" required>
-                                <label class="form-check-label" for="reportReason1">
+                                <label class="form-check-label" for="reportReason1" th:text="#{label.report.reason.obscenity}">
                                     음란성 또는 청소년에게 부적합한 내용
                                 </label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="reportReason" id="reportReason2" value="부적합한 스팸성 내용">
-                                <label class="form-check-label" for="reportReason2">
+                                <label class="form-check-label" for="reportReason2" th:text="#{label.report.reason.spam}">
                                     부적합한 스팸성 내용
                                 </label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="reportReason" id="reportReason3" value="기타">
-                                <label class="form-check-label" for="reportReason3">
+                                <label class="form-check-label" for="reportReason3" th:text="#{label.other}">
                                     기타
                                 </label>
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label for="reportContent" class="form-label">상세내용</label>
+                            <label for="reportContent" class="form-label" th:text="#{label.content.detail}">상세내용</label>
                             <textarea class="form-control" id="reportContent" rows="5" required></textarea>
                         </div>
                         <div class="alert alert-info" role="alert">
-                            <p class="mb-1">신고하기전에 잠깐!</p>
-                            <p class="mb-1">- 게시중단 및 홈페이지 도용 신고는 아래 도움말을 통해서만 신고 접수 가능합니다.</p>
-                            <p class="mb-1">- 특정 게시물로 인해 명예훼손의 피해를 입었다면? <a href="#" class="alert-link">권리보호센터 도움말 바로가기</a></p>
-                            <p class="mb-0">- 홈페이지 도용 등의 저작권침해로 피해를 입었다면? <a href="#" class="alert-link">seesaw 도움말 바로가기</a></p>
+                            <p class="mb-1" th:text="#{message.report.info.title}">신고하기전에 잠깐!</p>
+                            <p class="mb-1" th:text="#{message.report.info.1}">- 게시중단 및 홈페이지 도용 신고는 아래 도움말을 통해서만 신고 접수 가능합니다.</p>
+                            <p class="mb-1"><span th:text="#{message.report.info.2}">- 특정 게시물로 인해 명예훼손의 피해를 입었다면?</span> <a href="#" class="alert-link" th:text="#{label.help.center}">권리보호센터 도움말 바로가기</a></p>
+                            <p class="mb-0"><span th:text="#{message.report.info.3}">- 홈페이지 도용 등의 저작권침해로 피해를 입었다면?</span> <a href="#" class="alert-link" th:text="#{label.help.seesaw}">seesaw 도움말 바로가기</a></p>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                        <button type="submit" class="btn btn-primary" id="sendReportBtn">보내기</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{label.close}">닫기</button>
+                        <button type="submit" class="btn btn-primary" id="sendReportBtn" th:text="#{label.send}">보내기</button>
                     </div>
                 </form>
             </div>
@@ -391,28 +391,28 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="inquiryModalLabel">문의하기</h5>
+                    <h5 class="modal-title" id="inquiryModalLabel" th:text="#{label.inquiry.title}">문의하기</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="inquiryForm" name="inquiryForm" th:action="@{/}" th:method="post">
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="inquiryEmail" class="form-label">이메일</label>
-                            <input type="email" class="form-control" id="inquiryEmail" placeholder="회신받을 이메일 주소"
+                            <label for="inquiryEmail" class="form-label" th:text="#{label.email}">이메일</label>
+                            <input type="email" class="form-control" id="inquiryEmail" th:placeholder="#{placeholder.email}"
                                    required>
                         </div>
                         <div class="mb-3">
-                            <label for="inquiryTitle" class="form-label">제목</label>
+                            <label for="inquiryTitle" class="form-label" th:text="#{label.title}">제목</label>
                             <input type="text" class="form-control" id="inquiryTitle" required>
                         </div>
                         <div class="mb-3">
-                            <label for="inquiryContent" class="form-label">내용</label>
+                            <label for="inquiryContent" class="form-label" th:text="#{label.content}">내용</label>
                             <textarea class="form-control" id="inquiryContent" rows="5" required></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                        <button type="submit" class="btn btn-primary" id="sendInquiryBtn">보내기</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{label.close}">닫기</button>
+                        <button type="submit" class="btn btn-primary" id="sendInquiryBtn" th:text="#{label.send}">보내기</button>
                     </div>
                 </form>
             </div>

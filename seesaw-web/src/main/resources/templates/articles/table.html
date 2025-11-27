@@ -75,18 +75,18 @@
                 <a class="btn d-flex align-items-center"
                    th:classappend="${#strings.equals(search.viewType, 'TABLE')} ? 'main-color' : ''"
                    th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', page.pageable.pageNumber).replaceQueryParam('viewType', 'TABLE').build().toUriString()}}"
-                   title="목록보기"
+                   th:title="#{label.view.list}"
                 >
-                    <i class="bi bi-list"></i><span class="d-none d-sm-inline ms-1">목록보기</span>
+                    <i class="bi bi-list"></i><span class="d-none d-sm-inline ms-1" th:text="#{label.view.list}">목록보기</span>
                 </a>
             </div>
             <div>
                 <a class="btn d-flex align-items-center"
                    th:classappend="${#strings.equals(search.viewType, 'CARD')} ? 'main-color' : ''"
                    th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', page.pageable.pageNumber).replaceQueryParam('viewType', 'CARD').build().toUriString()}}"
-                   title="카드보기"
+                   th:title="#{label.view.card}"
                 >
-                    <i class="bi bi-grid"></i><span class="d-none d-sm-inline ms-1">카드보기</span>
+                    <i class="bi bi-grid"></i><span class="d-none d-sm-inline ms-1" th:text="#{label.view.card}">카드보기</span>
                 </a>
             </div>
         </div>
@@ -103,7 +103,7 @@
         <thead>
         <tr>
             <th class="py-3 text-center align-middle" scope="col" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
-                <input aria-label="선택" name="selectAll" type="checkbox">
+                <input th:aria-label="#{label.select}" name="selectAll" type="checkbox">
             </th>
             <th class="py-3 text-center align-middle" scope="col" th:text="#{label.no}"></th>
             <th class="py-3 text-center align-middle" scope="col" th:text="#{entity.article.title}"></th>
@@ -113,14 +113,14 @@
         <!--/* 공지 */-->
         <tr th:each="article : ${fixedArticles}" th:if="${!fixedArticles.isEmpty()}">
             <td class="py-3 text-center align-middle" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
-                <input aria-label="선택" name="selected" type="checkbox" th:data-id="${article.id}">
+                <input th:aria-label="#{label.select}" name="selected" type="checkbox" th:data-id="${article.id}">
             </td>
             <td class="py-3 text-center align-middle">📣</td>
             <td class="py-3 text-start">
                 <div>
                     <a class="none" th:href="@{|/articles/${article.id}${search.getUriComponentsBuilder().build().toUriString()}|}">
                         [[${article.title}]]
-                        <span class="badge bg-primary ms-1" th:if="${article.isRecentlyGenerated()}">New</span>
+                        <span class="badge bg-primary ms-1" th:if="${article.isRecentlyGenerated()}" th:text="#{label.new}">New</span>
                     </a>
                 </div>
                 <div class="small text-muted mt-1">
@@ -138,14 +138,14 @@
         <tr th:each="article : ${page.content}" th:if="${page.hasContent() and !article.isFixed}">
             <!--/*@thymesVar id="page" type="org.springframework.data.domain.Page<kr.me.seesaw.domain.Article>"*/-->
             <td class="py-3 text-center align-middle" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
-                <input aria-label="선택" name="selected" type="checkbox" th:data-id="${article.id}">
+                <input th:aria-label="#{label.select}" name="selected" type="checkbox" th:data-id="${article.id}">
             </td>
             <td class="py-3 text-center align-middle" th:text="${page.totalElements - page.pageable.offset - articleStat.index}"></td>
             <td class="py-3 text-start">
                 <div>
                     <a class="none" th:href="@{|/articles/${article.id}${search.getUriComponentsBuilder().build().toUriString()}|}">
                         [[${article.title}]]
-                        <span class="badge bg-primary ms-1" th:if="${article.isRecentlyGenerated()}">New</span>
+                        <span class="badge bg-primary ms-1" th:if="${article.isRecentlyGenerated()}" th:text="#{label.new}">New</span>
                     </a>
                 </div>
                 <div class="small text-muted mt-1">
@@ -173,29 +173,29 @@
 <section class="container-sm my-3">
     <div class="d-flex justify-content-between">
         <div>
-            <button class="btn btn-outline-secondary d-flex align-items-center" name="delete" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')" type="button" title="선택삭제">
-                <i class="bi bi-trash"></i><span class="d-none d-sm-inline ms-1">선택삭제</span>
+            <button class="btn btn-outline-secondary d-flex align-items-center" name="delete" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')" type="button" th:title="#{label.delete.selected}">
+                <i class="bi bi-trash"></i><span class="d-none d-sm-inline ms-1" th:text="#{label.delete.selected}">선택삭제</span>
             </button>
         </div>
         <div class="d-flex gap-2">
             <a class="btn btn-outline-secondary d-flex align-items-center"
                sec:authorize="isAuthenticated()"
                th:href="@{|/articles${search.getUriComponentsBuilder().replaceQueryParam('page', 0).replaceQueryParam('keyField', 'createdBy').replaceQueryParam('keyWord', #authentication.principal.username).build().toUriString()}|}"
-               title="내가 쓴 글"
+               th:title="#{label.my.articles}"
             >
-                <i class="bi bi-person"></i><span class="d-none d-sm-inline ms-1">내가 쓴 글</span>
+                <i class="bi bi-person"></i><span class="d-none d-sm-inline ms-1" th:text="#{label.my.articles}">내가 쓴 글</span>
             </a>
             <a class="btn btn-primary d-flex align-items-center" sec:authorize="isAuthenticated()" 
                th:href="@{|/articles/new${search.getUriComponentsBuilder().build().toUriString()}|}"
-               title="글쓰기"
+               th:title="#{label.write}"
             >
-                <i class="bi bi-pencil-square"></i><span class="d-none d-sm-inline ms-1">글쓰기</span>
+                <i class="bi bi-pencil-square"></i><span class="d-none d-sm-inline ms-1" th:text="#{label.write}">글쓰기</span>
             </a>
             <a class="btn btn-primary d-flex align-items-center" sec:authorize="isAnonymous()" 
                th:href="@{/oauth2/authorization/naver}"
-               title="글쓰기"
+               th:title="#{label.write}"
             >
-                <i class="bi bi-pencil-square"></i><span class="d-none d-sm-inline ms-1">글쓰기</span>
+                <i class="bi bi-pencil-square"></i><span class="d-none d-sm-inline ms-1" th:text="#{label.write}">글쓰기</span>
             </a>
         </div>
     </div>
@@ -204,13 +204,13 @@
 <!--/* Pagination row */-->
 <section class="container-sm my-3">
     <div class="d-flex justify-content-center">
-        <nav aria-label="Page navigation" class="pagination">
+        <nav th:aria-label="#{label.page.navigation}" class="pagination">
             <ul class="pagination mb-0">
                 <li class="page-item" th:classappend="${page.first} ? 'disabled' : ''">
-                    <a aria-label="Previous"
+                    <a th:aria-label="#{label.page.previous}"
                        class="page-link"
                        th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', page.previousOrFirstPageable().pageNumber).build().toUriString()}}"
-                       title="이전 페이지"
+                       th:title="#{label.page.previous}"
                     >
                         <i class="bi bi-chevron-left"></i>
                     </a>
@@ -231,10 +231,10 @@
                 </li>
 
                 <li class="page-item" th:classappend="${page.last} ? 'disabled' : ''">
-                    <a aria-label="Next"
+                    <a th:aria-label="#{label.page.next}"
                        class="page-link"
                        th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', page.nextOrLastPageable().pageNumber).build().toUriString()}}"
-                       title="다음 페이지"
+                       th:title="#{label.page.next}"
                     >
                         <i class="bi bi-chevron-right"></i>
                     </a>
@@ -249,7 +249,7 @@
         <input type="hidden" th:field="*{categoryType}">
         <input type="hidden" th:field="*{viewType}">
         <div class="col-12 col-sm-3 col-md-2">
-            <select class="form-select" th:field="*{keyField}" aria-label="검색 필드 선택">
+            <select class="form-select" th:field="*{keyField}" th:aria-label="#{label.search.field.select}">
                 <option value="title" th:text="#{entity.article.title}"></option>
                 <option value="content" th:text="#{entity.article.content}"></option>
                 <option value="createdBy" th:text="#{entity.article.createdBy}"></option>
@@ -257,9 +257,9 @@
         </div>
         <div class="col-12 col-sm-6 col-md-4">
             <div class="input-group">
-                <input class="form-control" type="search" th:field="*{keyWord}" placeholder="검색어를 입력하세요" aria-label="검색어">
-                <button class="btn btn-outline-secondary d-flex align-items-center" type="submit" title="검색">
-                    <i class="bi bi-search"></i><span class="d-none d-sm-inline ms-1">검색</span>
+                <input class="form-control" type="search" th:field="*{keyWord}" th:placeholder="#{placeholder.search.keyword}" th:aria-label="#{label.search.keyword}">
+                <button class="btn btn-outline-secondary d-flex align-items-center" type="submit" th:title="#{label.search}">
+                    <i class="bi bi-search"></i><span class="d-none d-sm-inline ms-1" th:text="#{label.search}">검색</span>
                 </button>
             </div>
         </div>
