@@ -1,3 +1,12 @@
 [submodule "seesaw-console"]
 	path = seesaw-console
 	url = https://github.com/KalGookSoo/seesaw-console.git
+[submodule "seesaw-core"]
+	path = seesaw-core
+	url = https://github.com/KalGookSoo/seesaw-core.git
+[submodule "seesaw-api"]
+	path = seesaw-api
+	url = https://github.com/KalGookSoo/seesaw-api.git
+[submodule "seesaw-web"]
+	path = seesaw-web
+	url = https://github.com/KalGookSoo/seesaw-web.git
