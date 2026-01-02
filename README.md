@@ -14,7 +14,7 @@ SEESAW 프로젝트는 핵심 도메인 로직을 공유하면서, 다양한 엔
 - **Build Tool**: Gradle
 - **ORM**: Spring Data JPA (Hibernate)
 - **Security**: Spring Security, JWT, OAuth2
-- **Database**: H2 (Development), MariaDB/MySQL (Production)
+- **Database**: H2 (Test), PostgreSQL (Development), PostgreSQL (Production)
 
 ### Frontend (Admin Console)
 - **Framework**: Next.js 15.1.0
