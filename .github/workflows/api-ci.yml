@@ -25,7 +25,7 @@ jobs:
         with:
           submodules: recursive
           token: ${{ secrets.SEESAW_PAT }}
-
+          
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
