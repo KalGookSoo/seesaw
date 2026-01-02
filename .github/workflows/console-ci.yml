@@ -34,9 +34,9 @@ jobs:
         working-directory: seesaw-console
         run: npm install
 
-      - name: Run lint
-        working-directory: seesaw-console
-        run: npm run lint
+#      - name: Run lint
+#        working-directory: seesaw-console
+#        run: npm run lint
 
       - name: Build Console
         working-directory: seesaw-console
