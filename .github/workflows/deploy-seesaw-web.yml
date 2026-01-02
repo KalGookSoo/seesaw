@@ -16,7 +16,7 @@ jobs:
         with:
           fetch-depth: 0
           submodules: recursive
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.SEESAW_PAT }}
 
       - name: Check if tag is on prod branch
         id: check_branch
@@ -45,7 +45,7 @@ jobs:
         with:
           fetch-depth: 0
           submodules: recursive
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.SEESAW_PAT }}
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
