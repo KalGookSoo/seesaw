@@ -1,0 +1,65 @@
+name: SEESAW-WEB CI
+on:
+  push:
+    branches:
+      - main
+      - dev
+    paths:
+      - 'seesaw-web/**'
+      - 'seesaw-core/**'
+      - '.github/workflows/web-ci.yml'
+  pull_request:
+    branches:
+      - main
+      - dev
+    paths:
+      - 'seesaw-web/**'
+      - 'seesaw-core/**'
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x ./gradlew
+
+      - name: Run Web tests
+        run: |
+          echo "Web 테스트 실행 중..."
+          ./gradlew :seesaw-web:test
+          echo "Web 테스트 완료"
+
+      - name: Build Web module
+        run: |
+          echo "Web 모듈 빌드 중..."
+          ./gradlew :seesaw-web:build -x test
+          echo "Web 모듈 빌드 완료"
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-test-results
+          path: seesaw-web/build/reports/tests/
+          retention-days: 7
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build-artifacts
+          path: seesaw-web/build/libs/*.jar
+          retention-days: 7

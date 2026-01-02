@@ -1,0 +1,43 @@
+name: SEESAW-CONSOLE CI
+on:
+  push:
+    branches:
+      - main
+      - dev
+    paths:
+      - 'seesaw-console/**'
+      - '.github/workflows/console-ci.yml'
+  pull_request:
+    branches:
+      - main
+      - dev
+    paths:
+      - 'seesaw-console/**'
+
+jobs:
+  lint-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: seesaw-console/package-lock.json
+
+      - name: Install dependencies
+        working-directory: seesaw-console
+        run: npm install
+
+      - name: Run lint
+        working-directory: seesaw-console
+        run: npm run lint
+
+      - name: Build Console
+        working-directory: seesaw-console
+        run: npm run build
