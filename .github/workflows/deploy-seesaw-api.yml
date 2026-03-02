@@ -136,7 +136,7 @@ jobs:
           APP_NAME: seesaw-api-${{ needs.build.outputs.version }}.jar
         run: |
           ssh $REMOTE_USER@$REMOTE_HOST "cd $REMOTE_DIR && \
-            ./shutdown.sh seesaw-api && \
+            ./shutdown.sh && \
             ./startup.sh $APP_NAME && \
             echo "Application restarted.""
 
@@ -146,7 +146,7 @@ jobs:
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           API_PORT: 9000
-          HEALTH_ENDPOINT: ${{ secrets.HEALTH_ENDPOINT || '/seesaw-api/actuator/health' }}
+          HEALTH_ENDPOINT: ${{ secrets.HEALTH_ENDPOINT || '/actuator/health' }}
         run: |
           sleep 10
-          ssh $REMOTE_USER@$REMOTE_HOST "curl -f http://localhost:$API_PORT$HEALTH_ENDPOINT"
+          ssh $REMOTE_USER@$REMOTE_HOST "curl -f http://localhost:$API_PORT/seesaw-api$HEALTH_ENDPOINT"

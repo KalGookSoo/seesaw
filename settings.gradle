@@ -19,6 +19,7 @@ gradle.beforeProject { project ->
 // 프로젝트에 포함될 모듈 정의
 include(':seesaw-api')
 include(':seesaw-core')
+include(':seesaw-core:calendar')
 include(':seesaw-web')
 
 // 각 모듈 설정 구성
