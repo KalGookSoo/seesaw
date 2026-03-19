@@ -148,5 +148,24 @@ jobs:
           API_PORT: 9000
           HEALTH_ENDPOINT: ${{ secrets.HEALTH_ENDPOINT || '/actuator/health' }}
         run: |
-          sleep 10
-          ssh $REMOTE_USER@$REMOTE_HOST "curl -f http://localhost:$API_PORT/seesaw-api$HEALTH_ENDPOINT"
+          echo "애플리케이션 상태 확인 중..."
+          ssh $REMOTE_USER@$REMOTE_HOST "
+            MAX_RETRIES=10
+            COUNT=0
+            SUCCESS=false
+            while [ \$COUNT -lt \$MAX_RETRIES ]; do
+              if curl -f http://localhost:$API_PORT/seesaw-api$HEALTH_ENDPOINT; then
+                echo -e '\n애플리케이션이 정상적으로 기동되었습니다!'
+                SUCCESS=true
+                break
+              fi
+              COUNT=\$((COUNT + 1))
+              echo \"애플리케이션 기동 대기 중... (\$COUNT/\$MAX_RETRIES)\"
+              sleep 10
+            done
+            if [ \"\$SUCCESS\" = false ]; then
+              echo \"정해진 시간 내에 애플리케이션이 기동되지 않았습니다.\"
+              echo \"서버에 접속하여 로그를 확인하거나 수동으로 실행해 보시기 바랍니다.\"
+              exit 1
+            fi
+          "
