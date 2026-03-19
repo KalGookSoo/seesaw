@@ -136,7 +136,7 @@ jobs:
           APP_NAME: seesaw-web-${{ needs.build.outputs.version }}.jar
         run: |
           ssh $REMOTE_USER@$REMOTE_HOST "cd $REMOTE_DIR && \
-            ./shutdown.sh seesaw-web && \
+            ./shutdown.sh && \
             ./startup.sh $APP_NAME && \
             echo "Application restarted.""
 
