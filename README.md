@@ -1,4 +1,4 @@
-# SEESAW (시소)
+# SEESAW
 
 SEESAW는 Java Spring Boot와 Next.js를 기반으로 구축된 현대적인 콘텐츠 관리 시스템(CMS) 및 웹 애플리케이션 프레임워크입니다. 이 프로젝트는 멀티 모듈 및 Git Submodules 구조를 채택하여 코드의 재사용성과 관리 효율성을 극대화했습니다.
 
