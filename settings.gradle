@@ -13,6 +13,7 @@ gradle.beforeProject { project ->
         projectGroup = 'kr.me.seesaw'
 
         defaultVersion = '0.0.1-SNAPSHOT'
+        springCloudVersion = '2024.0.0'
     }
 }
 
@@ -21,8 +22,10 @@ include(':seesaw-api')
 include(':seesaw-core')
 include(':seesaw-core:calendar')
 include(':seesaw-web')
+include(':seesaw-config')
 
 // 각 모듈 설정 구성
 project(':seesaw-api').projectDir = file('seesaw-api')
 project(':seesaw-core').projectDir = file('seesaw-core')
 project(':seesaw-web').projectDir = file('seesaw-web')
+project(':seesaw-config').projectDir = file('seesaw-config')

@@ -10,3 +10,6 @@
 [submodule "seesaw-web"]
 	path = seesaw-web
 	url = https://github.com/KalGookSoo/seesaw-web.git
+[submodule "seesaw-config"]
+	path = seesaw-config
+	url = https://github.com/KalGookSoo/seesaw-config.git
