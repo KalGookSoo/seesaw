@@ -1,0 +1,64 @@
+name: SEESAW-CONFIG CI
+on:
+  push:
+    branches:
+      - main
+      - dev
+    paths:
+      - 'seesaw-config/**'
+      - '.github/workflows/config-ci.yml'
+  pull_request:
+    branches:
+      - main
+      - dev
+    paths:
+      - 'seesaw-config/**'
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          token: ${{ secrets.SEESAW_PAT }}
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x ./gradlew
+
+      - name: Run Config tests
+        run: |
+          echo "Config 테스트 실행 중..."
+          ./gradlew :seesaw-config:test
+          echo "Config 테스트 완료"
+
+      - name: Build Config module
+        run: |
+          echo "Config 모듈 빌드 중..."
+          ./gradlew :seesaw-config:build -x test
+          echo "Config 모듈 빌드 완료"
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: config-test-results
+          path: seesaw-config/build/reports/tests/
+          retention-days: 7
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: config-build-artifacts
+          path: seesaw-config/build/libs/*.jar
+          retention-days: 7
