@@ -38,6 +38,9 @@ subprojects {
 
     // 공통 의존성 설정 블록
     dependencies {
+        // 메일
+        implementation 'org.springframework.boot:spring-boot-starter-mail'
+
         // 테스트 관련 공통 의존성
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
         testImplementation 'org.springframework.security:spring-security-test'
