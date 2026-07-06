@@ -94,7 +94,7 @@ git submodule update --init --recursive
 # API 서버 실행 (포트 8080)
 ./gradlew :seesaw-api:bootRun
 
-# Web 서버 실행 (포트 8081)
+# Web 서버 실행 (포트 9000)
 ./gradlew :seesaw-web:bootRun
 ```
 
