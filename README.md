@@ -72,8 +72,8 @@ React Native(Expo) 기반의 모바일 애플리케이션입니다.
 
 GitHub Actions를 통해 안정적인 개발 주기를 보장합니다.
 
-- **CI**: `api-ci.yml`, `web-ci.yml`, `console-ci.yml` (빌드 및 테스트 자동화)
-- **CD**: `deploy-seesaw-api.yml`, `deploy-seesaw-web.yml` (자동 배포 파이프라인)
+- **CI**: `api-ci.yml`, `console-ci.yml` (빌드 및 테스트 자동화)
+- **CD**: `deploy-seesaw-api.yml` (API 자동 배포 파이프라인)
 - **Quality**: `qodana_code_quality.yml` (정적 코드 분석을 통한 코드 품질 유지)
 
 ---
