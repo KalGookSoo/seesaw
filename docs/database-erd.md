@@ -218,7 +218,7 @@
 - 표시 정보: `summary`, `description`, `location`, `location_detail`
 - `location`: 기존 장소 문자열. 기존 데이터에는 기본 주소와 상세 장소가 함께 저장되어 있을 수 있습니다.
 - `location_detail`: 상세 장소(예: 층·호수), `VARCHAR(255)`, NULL 허용. 기존 데이터는 자동 분리하지 않습니다.
-- 지도 검색에는 기본 장소인 `location`을 사용하고, 화면 및 캘린더에는 필요에 따라 상세 장소를 함께 표시하도록 구현할 예정입니다. 엔티티와 API 및 프론트엔드에는 아직 `location_detail`이 반영되지 않았습니다. 관련 이슈: [#155](https://github.com/KalGookSoo/seesaw/issues/155)
+- 지도 검색에는 기본 장소인 `location`을 사용하고, 화면 및 캘린더에는 필요에 따라 상세 장소를 함께 표시합니다. 관련 변경은 [#155](https://github.com/KalGookSoo/seesaw/issues/155)에서 진행 중이며, 기본 주소 검색과 읽기 전용 입력은 네이버 Maps 검색 결과 저장 허용 여부 확인 후 연결합니다.
 - `sequence`
 - `status`: `TENTATIVE`, `CONFIRMED`, `CANCELLED`
 
