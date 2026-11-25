@@ -27,13 +27,13 @@ SEESAW는 "균형과 유연함"을 핵심 가치로 삼아, 핵심 도메인 로
 
 ### Frontend Ecosystem
 - **Admin Console**: Next.js 15, React 19, TypeScript, Tailwind CSS, Radix UI
-- **Web Portal**: Spring MVC, Thymeleaf, Bootstrap 5, Toast UI (Editor/Calendar)
+- **Web Portal**: Next.js, React, TypeScript, Tailwind CSS
 
 ---
 
 ## 📂 Project Structure & Modules
 
-각 모듈은 독립적인 리포지토리로 관리되며 Git Submodule로 연결되어 있습니다.
+각 모듈은 독립적인 리포지토리로 관리됩니다. 아래 명시된 웹 포털을 제외한 저장소는 Git Submodule로 연결되어 있습니다.
 
 ### 1. [📦 seesaw-core](https://github.com/KalGookSoo/seesaw-core)
 프로젝트의 기반이 되는 핵심 모듈입니다.
@@ -43,9 +43,9 @@ SEESAW는 "균형과 유연함"을 핵심 가치로 삼아, 핵심 도메인 로
 Headless 환경을 위한 RESTful API 서버입니다.
 - JWT 기반 인증 및 인가, OpenAPI/Swagger 문서화, 모바일/콘솔용 데이터 제공
 
-### 3. [🌐 seesaw-web](https://github.com/KalGookSoo/seesaw-web)
-Thymeleaf 기반의 사용자 포털 웹 애플리케이션입니다.
-- 소셜 로그인(OAuth2), 게시글/정적 콘텐츠 관리, 동적 첨부파일 미리보기 지원
+### 3. [🌐 seesaw-web-v2](https://github.com/KalGookSoo/seesaw-web-v2)
+Next.js 기반의 사용자 포털 웹 애플리케이션이며 별도 저장소에서 관리합니다.
+- 기존 [seesaw-web](https://github.com/KalGookSoo/seesaw-web)은 레거시 Java 웹 프로젝트로, 소스와 Git Submodule은 보존하지만 루트 Gradle 빌드에는 포함하지 않습니다.
 
 ### 4. [🖥️ seesaw-console](https://github.com/KalGookSoo/seesaw-console)
 Next.js 기반의 현대적인 관리자 대시보드입니다.
@@ -94,11 +94,17 @@ git submodule update --init --recursive
 # API 서버 실행 (포트 8080)
 ./gradlew :seesaw-api:bootRun
 
-# Web 서버 실행 (포트 9000)
-./gradlew :seesaw-web:bootRun
 ```
 
-### 3. Admin Console Execution
+### 3. Web Portal Execution
+```bash
+git clone https://github.com/KalGookSoo/seesaw-web-v2.git
+cd seesaw-web-v2
+npm install
+npm run dev
+```
+
+### 4. Admin Console Execution
 ```bash
 cd seesaw-console
 npm install

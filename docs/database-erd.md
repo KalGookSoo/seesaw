@@ -2,15 +2,16 @@
 
 ## 개요
 
-이 문서는 현재 저장소의 PostgreSQL DDL을 기준으로 정리한 데이터베이스 구조 문서입니다.
+이 문서는 저장소의 PostgreSQL DDL과 이후에 반영된 스키마 변경 사항을 기준으로 정리한 데이터베이스 구조 문서입니다.
 
 - 기준 DDL: `seesaw-web/docs/database/tables-1.8.0.sql`
-- 기준일: 2026-11-24
+- 추가 변경: `tb_event.location_detail` 컬럼 추가 (개발·운영 DB 반영은 사용자 확인)
+- 기준일: 2026-11-25
 - 테이블 수: **26개**
 - 공통 식별자: 대부분 `VARCHAR(36)` UUID
 - ORM: JPA/Hibernate
 
-실제 운영 데이터베이스와의 차이는 배포된 마이그레이션 이력과 함께 확인해야 합니다.
+기준 DDL은 1.8.0 시점의 스냅샷이며 이후 변경 사항을 모두 포함하지 않습니다. 실제 데이터베이스의 스키마와 변경 이력은 환경별로 확인해야 합니다.
 
 ## 테이블 목록
 
@@ -214,7 +215,10 @@
 
 - PK 및 FK: `id → tb_article`
 - 일정 정보: `dt_start`, `dt_end`, `dt_stamp`, `duration`, `tzid`
-- 표시 정보: `summary`, `description`, `location`
+- 표시 정보: `summary`, `description`, `location`, `location_detail`
+- `location`: 기존 장소 문자열. 기존 데이터에는 기본 주소와 상세 장소가 함께 저장되어 있을 수 있습니다.
+- `location_detail`: 상세 장소(예: 층·호수), `VARCHAR(255)`, NULL 허용. 기존 데이터는 자동 분리하지 않습니다.
+- 지도 검색에는 기본 장소인 `location`을 사용하고, 화면 및 캘린더에는 필요에 따라 상세 장소를 함께 표시합니다. 관련 변경은 [#155](https://github.com/KalGookSoo/seesaw/issues/155)에서 진행 중이며, 기본 주소 검색과 읽기 전용 입력은 네이버 Maps 검색 결과 저장 허용 여부 확인 후 연결합니다.
 - `sequence`
 - `status`: `TENTATIVE`, `CONFIRMED`, `CANCELLED`
 
@@ -330,5 +334,5 @@ version            integer not null
 
 ---
 
-**문서 기준**: `seesaw-web/docs/database/tables-1.8.0.sql`
-**현행화일**: 2026-11-24
+**문서 기준**: `seesaw-web/docs/database/tables-1.8.0.sql` 및 `tb_event.location_detail` 추가 변경
+**현행화일**: 2026-11-25
