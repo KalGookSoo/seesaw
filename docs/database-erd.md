@@ -2,500 +2,333 @@
 
 ## 개요
 
-이 문서는 Seesaw 프로젝트의 데이터베이스 스키마를 분석한 내용입니다. PostgreSQL 기반으로 설계되었으며, 총 **14개의 테이블**로 구성되어 있습니다.
+이 문서는 현재 저장소의 PostgreSQL DDL을 기준으로 정리한 데이터베이스 구조 문서입니다.
 
----
+- 기준 DDL: `seesaw-web/docs/database/tables-1.8.0.sql`
+- 기준일: 2026-11-24
+- 테이블 수: **26개**
+- 공통 식별자: 대부분 `VARCHAR(36)` UUID
+- ORM: JPA/Hibernate
+
+실제 운영 데이터베이스와의 차이는 배포된 마이그레이션 이력과 함께 확인해야 합니다.
 
 ## 테이블 목록
 
 | 테이블명 | 한글명 | 설명 |
-|---------|--------|------|
-| `tb_attachment` | 첨부파일 | 게시글 및 기타 엔티티의 첨부파일 관리 |
-| `tb_code` | 코드 | 공통 코드 관리 (계층 구조 지원) |
-| `tb_menu` | 메뉴 | 시스템 메뉴 관리 (계층 구조 지원) |
-| `tb_remember_me_token` | 자동 로그인 토큰 | Remember Me 기능을 위한 토큰 저장 |
-| `tb_role` | 역할 | 사용자 역할 정의 |
-| `tb_menu_role` | 메뉴 역할 매핑 | 메뉴와 역할의 다대다 관계 |
-| `tb_site` | 사이트 | 멀티 사이트 관리 (계층 구조 지원) |
-| `tb_category` | 카테고리 | 게시판 카테고리 관리 (계층 구조 지원) |
-| `tb_article` | 게시글 | 게시판 글 관리 |
-| `tb_notification` | 알림 | 사용자 알림 관리 |
-| `tb_reply` | 댓글 | 게시글 댓글 (계층 구조 지원) |
-| `tb_user` | 계정 | 사용자 계정 정보 |
-| `tb_role_mapping` | 역할 매핑 | 사용자-역할-사이트 매핑 |
-| `tb_vote` | 투표 | 게시글/댓글 추천/반대 |
-| `tb_permission` | 권한 | ACL 기반 권한 관리 |
-| `tb_view` | 뷰 | 게시글 조회수 관리 |
-
----
-
-## 도메인별 분류
-
-### 1. 사용자 및 인증 도메인
-
-#### `tb_user` (계정)
-사용자 계정 정보를 관리하는 핵심 테이블입니다.
-
-**주요 컬럼**:
-- `id` (VARCHAR(36), PK): 식별자 (UUID)
-- `username` (VARCHAR(255), UNIQUE, NOT NULL): 계정명
-- `password` (VARCHAR(255)): 암호화된 패스워드
-- `name` (VARCHAR(255)): 사용자 이름
-- `email_id`, `email_domain` (VARCHAR(255)): 이메일 (분리 저장)
-- `contact_number` (VARCHAR(255)): 연락처
-- `expired_date` (TIMESTAMP): 계정 만료 일시
-- `locked_date` (TIMESTAMP): 계정 잠금 일시
-- `credentials_expired_date` (TIMESTAMP): 패스워드 만료 일시
-
-**특징**:
-- Spring Security와 통합된 계정 상태 관리
-- 이메일을 ID와 도메인으로 분리 저장
-- 감사(Audit) 필드 포함 (created_by, created_date, etc.)
-
----
+|---|---|---|
+| `tb_attachment` | 첨부파일 | 게시글 등 여러 도메인에 연결되는 파일 |
+| `tb_code` | 코드 | 계층형 공통 코드 |
+| `tb_menu` | 메뉴 | 계층형 사이트 메뉴 |
+| `tb_remember_me_token` | 자동 로그인 토큰 | Remember Me 토큰 |
+| `tb_role` | 역할 | 사용자 역할 |
+| `tb_menu_role` | 메뉴 역할 매핑 | 메뉴와 역할의 다대다 매핑 |
+| `tb_site` | 사이트 | 멀티 사이트 정보 |
+| `tb_category` | 카테고리 | 사이트별 게시판·콘텐츠 분류 |
+| `tb_article` | 게시글 | 게시글과 콘텐츠 블록 |
+| `tb_notification` | 알림 | 사용자 인앱 알림 |
+| `tb_notification_preference` | 알림 수신 설정 | 채널별 알림 수신 설정 |
+| `tb_notification_subscription` | 게시판 알림 구독 | 카테고리별 새 글 구독 |
+| `tb_notification_delivery` | 알림 전달 기록 | 인앱·웹 푸시·이메일 전달 상태 |
+| `tb_reply` | 댓글 | 게시글 댓글과 대댓글 |
+| `tb_user` | 계정 | 사용자 계정 |
+| `tb_role_mapping` | 역할 매핑 | 사용자·역할·사이트 매핑 |
+| `tb_vote` | 투표 | 게시글·댓글에 대한 찬성/반대 상태 |
+| `tb_permission` | 권한 | ACL 권한 비트마스크 |
+| `tb_view` | 조회 기록 | 게시글 조회 이벤트 |
+| `tb_event` | 캘린더 이벤트 | 일정 게시글의 캘린더 정보 |
+| `tb_event_attendees` | 이벤트 참석자 | RFC 일정 참석자 정보 |
+| `tb_journal` | 저널 | RFC 저널 정보 |
+| `tb_journal_descriptions` | 저널 설명 | 저널 설명 컬렉션 |
+| `tb_todo` | 할 일 | RFC 할 일 정보 |
+| `tb_event_attendee` | 이벤트 참석자 | 별도 참석자 컬렉션 매핑 |
+| `tb_journal_description` | 저널 설명 | 별도 설명 컬렉션 매핑 |
+
+> `tb_event_attendees`와 `tb_event_attendee`, `tb_journal_descriptions`와 `tb_journal_description`은 현재 DDL에 모두 존재합니다. 중복 여부를 판단하지 않고 현행 스키마 그대로 기록합니다.
+
+## 도메인별 구조
+
+### 1. 사용자·인증·권한
+
+#### `tb_user` — 계정
+
+- PK: `id`
+- 계정 식별: `username` UNIQUE NOT NULL
+- 인증 정보: `password`, `email_id`, `email_domain`
+- 상태 정보: `expired_date`, `locked_date`, `credentials_expired_date`
+- 사용자 정보: `name`, `contact_number`
+
+#### `tb_role` — 역할
+
+- PK: `id`
+- `name` UNIQUE
+- `alias`
+
+#### `tb_role_mapping` — 역할 매핑
+
+- PK: `id`
+- FK: `user_id → tb_user`, `role_id → tb_role`, `site_id → tb_site`
+- 인덱스: `(role_id)`, `(user_id, site_id)`
+
+#### `tb_permission` — 권한
+
+- PK: `id`
+- `role_id`, `target_id`, `mask`
+- `mask`는 ACL 권한 비트마스크입니다.
+- 현재 DDL에는 `role_id`, `target_id`의 외래키가 정의되어 있지 않습니다.
+
+#### `tb_remember_me_token` — 자동 로그인 토큰
+
+- PK: `series`
+- `username`, `token`, `last_used`
+- 감사 필드는 없습니다.
+
+### 2. 사이트·메뉴·카테고리
+
+#### `tb_site` — 사이트
+
+- PK: `id`
+- 자기참조 FK: `parent_id → tb_site`
+- 사이트 정보: `domain_name` UNIQUE, `name`, `description`, `intro`, `content`
+- 운영 정보: `address`, `zipcode`, `contact_number`, `distribution_code`, `tags`
+- 노출 설정: `image_exposed`, `search_engine_exposed`
+- 인덱스: `(parent_id)`
+
+#### `tb_category` — 카테고리
+
+- PK: `id`
+- FK: `parent_id → tb_category`, `site_id → tb_site`
+- `name`, `description`, `sequence`
+- 노출 설정: `exposed`, `site_exposed`, `site_exposed_order`
+- `type`: `NONE`, `STATIC_CONTENT`, `BOARD`, `QNA`, `SCHEDULE`, `STORE`, `BUSINESS`
+- 인덱스: `(parent_id)`, `(site_id)`
+
+#### `tb_menu` — 메뉴
+
+- PK: `id`
+- 자기참조 FK: `parent_id → tb_menu`
+- `name`, `uri`, `sequence`
+- 인덱스: `(parent_id)`
+
+#### `tb_menu_role` — 메뉴 역할 매핑
+
+- PK: `id`
+- FK: `menu_id → tb_menu`, `role_id → tb_role`
+- 인덱스: `(menu_id)`, `(role_id)`
+
+#### `tb_code` — 공통 코드
+
+- PK: `id`
+- 자기참조 FK: `parent_id → tb_code`
+- `name`, `description`, `sequence`
+- 인덱스: `(parent_id)`
+
+### 3. 콘텐츠·상호작용
 
-#### `tb_role` (역할)
-사용자 역할을 정의합니다.
-
-**주요 컬럼**:
-- `id` (VARCHAR(36), PK): 식별자
-- `name` (VARCHAR(255), UNIQUE): 역할명 (예: ROLE_USER, ROLE_ADMIN)
-- `alias` (VARCHAR(255)): 역할 별칭
-
----
-
-#### `tb_role_mapping` (역할 매핑)
-사용자-역할-사이트 간의 다대다 관계를 관리합니다.
-
-**주요 컬럼**:
-- `id` (VARCHAR(36), PK): 식별자
-- `user_id` (VARCHAR(36), FK → tb_user): 사용자 식별자
-- `role_id` (VARCHAR(36), FK → tb_role): 역할 식별자
-- `site_id` (VARCHAR(36), FK → tb_site): 사이트 식별자
-
-**인덱스**:
-- `(user_id, site_id)`: 사용자별 사이트 역할 조회 최적화
-- `(role_id)`: 역할별 사용자 조회 최적화
-
-**특징**:
-- 멀티 사이트 환경에서 사이트별로 다른 역할 부여 가능
-- 예: 사용자 A는 사이트 1에서 ADMIN, 사이트 2에서 USER
-
----
-
-#### `tb_remember_me_token` (자동 로그인 토큰)
-Remember Me 기능을 위한 토큰을 저장합니다.
-
-**주요 컬럼**:
-- `series` (VARCHAR(255), PK): 토큰 시리즈
-- `username` (VARCHAR(64), NOT NULL): 사용자명
-- `token` (VARCHAR(64), NOT NULL): 토큰 값
-- `last_used` (TIMESTAMP, NOT NULL): 마지막 사용 시각
-
----
-
-### 2. 권한 및 메뉴 도메인
-
-#### `tb_permission` (권한)
-ACL(Access Control List) 기반 권한 관리를 지원합니다.
-
-**주요 컬럼**:
-- `id` (VARCHAR(36), PK): 식별자
-- `role_id` (VARCHAR(36)): 역할 식별자
-- `target_id` (VARCHAR(36)): 대상 객체 식별자
-- `mask` (INTEGER, NOT NULL): 비트마스크 (READ, WRITE, DELETE 등)
-
-**특징**:
-- Spring Security ACL 패턴 구현
-- 비트마스크를 사용한 세밀한 권한 제어
-- 객체 레벨 권한 관리 가능
-
----
-
-#### `tb_menu` (메뉴)
-시스템 메뉴를 계층 구조로 관리합니다.
-
-**주요 컬럼**:
-- `id` (VARCHAR(36), PK): 식별자
-- `parent_id` (VARCHAR(36), FK → tb_menu): 부모 메뉴 식별자
-- `name` (VARCHAR(255)): 메뉴명
-- `uri` (VARCHAR(255)): 메뉴 URI
-- `sequence` (INTEGER): 정렬 순서
-
-**인덱스**:
-- `(parent_id)`: 계층 구조 조회 최적화
-
-**특징**:
-- 자기 참조(Self-referencing) 구조로 무한 depth 지원
-- 메뉴 순서 관리 (sequence)
-
----
-
-#### `tb_menu_role` (메뉴 역할 매핑)
-메뉴와 역할의 다대다 관계를 관리합니다.
-
-**주요 컬럼**:
-- `id` (VARCHAR(36), PK): 식별자
-- `menu_id` (VARCHAR(36), FK → tb_menu): 메뉴 식별자
-- `role_id` (VARCHAR(36), FK → tb_role): 역할 식별자
-
-**인덱스**:
-- `(menu_id)`: 메뉴별 역할 조회
-- `(role_id)`: 역할별 메뉴 조회
-
-**특징**:
-- 역할 기반 메뉴 접근 제어
-
----
-
-### 3. 사이트 및 카테고리 도메인
-
-#### `tb_site` (사이트)
-멀티 사이트 환경을 지원하는 사이트 정보를 관리합니다.
-
-**주요 컬럼**:
-- `id` (VARCHAR(36), PK): 식별자
-- `parent_id` (VARCHAR(36), FK → tb_site): 부모 사이트 식별자
-- `domain_name` (VARCHAR(255), UNIQUE): 도메인명
-- `name` (VARCHAR(255)): 사이트명
-- `description` (VARCHAR(255)): 설명
-- `intro` (VARCHAR(255)): 소개글
-- `content` (TEXT): 본문
-- `address` (VARCHAR(255)): 주소
-- `zipcode` (VARCHAR(255)): 우편번호
-- `contact_number` (VARCHAR(255)): 연락처
-- `distribution_code` (VARCHAR(255)): 분류코드
-- `tags` (VARCHAR(255)): 태그
-- `image_exposed` (BOOLEAN, NOT NULL): 이미지 노출여부
-- `search_engine_exposed` (BOOLEAN, NOT NULL): 검색엔진 노출여부
-
-**인덱스**:
-- `(parent_id)`: 계층 구조 조회
-
-**특징**:
-- 계층 구조로 서브 사이트 관리 가능
-- SEO 설정 지원 (search_engine_exposed)
-- 도메인별 독립적인 사이트 운영
-
----
-
-#### `tb_category` (카테고리)
-게시판 카테고리를 계층 구조로 관리합니다.
-
-**주요 컬럼**:
-- `id` (VARCHAR(36), PK): 식별자
-- `parent_id` (VARCHAR(36), FK → tb_category): 부모 카테고리 식별자
-- `site_id` (VARCHAR(36), FK → tb_site): 사이트 식별자
-- `name` (VARCHAR(255)): 카테고리명
-- `description` (VARCHAR(255)): 설명
-- `type` (VARCHAR(255)): 카테고리 타입
-  - `NONE`: 일반
-  - `STATIC_CONTENT`: 정적 콘텐츠
-  - `BOARD`: 게시판
-  - `QNA`: Q&A
-  - `SCHEDULE`: 일정
-  - `STORE`: 스토어
-  - `BUSINESS`: 비즈니스
-- `sequence` (INTEGER): 정렬 순서
-- `exposed` (BOOLEAN, NOT NULL): 노출여부
-- `site_exposed` (BOOLEAN, NOT NULL): 사이트 노출여부
-- `site_exposed_order` (INTEGER, NOT NULL): 사이트 노출 순서
-
-**인덱스**:
-- `(parent_id)`: 계층 구조 조회
-- `(site_id)`: 사이트별 카테고리 조회
-
-**특징**:
-- 다양한 카테고리 타입 지원
-- 사이트별 독립적인 카테고리 관리
-- 노출 순서 관리
-
----
-
-### 4. 콘텐츠 도메인
-
-#### `tb_article` (게시글)
-게시판 글을 관리합니다.
-
-**주요 컬럼**:
-- `id` (VARCHAR(36), PK): 식별자
-- `category_id` (VARCHAR(36), FK → tb_category): 카테고리 식별자
-- `title` (VARCHAR(255)): 제목
-- `content` (TEXT): 본문
-- `exposed` (BOOLEAN, NOT NULL): 노출여부
-- `fixed_exposed` (BOOLEAN, NOT NULL): 고정 노출여부
-- `fixed_exposed_order` (INTEGER, NOT NULL): 고정 노출 순서
-- `tags` (VARCHAR(255)): 태그
-
-**인덱스**:
-- `(category_id)`: 카테고리별 게시글 조회
-
-**특징**:
-- 공지사항 고정 기능 (fixed_exposed)
-- 태그 기반 분류
-- 감사 필드로 작성자/수정자 추적
-
----
-
-#### `tb_reply` (댓글)
-게시글 댓글을 계층 구조로 관리합니다.
-
-**주요 컬럼**:
-- `id` (VARCHAR(36), PK): 식별자
-- `parent_id` (VARCHAR(36), FK → tb_reply): 부모 댓글 식별자
-- `article_id` (VARCHAR(36), FK → tb_article): 게시글 식별자
-- `content` (TEXT): 본문
-- `exposed` (BOOLEAN, NOT NULL): 노출여부
-
-**인덱스**:
-- `(article_id)`: 게시글별 댓글 조회
-- `(parent_id)`: 대댓글 조회
-
-**특징**:
-- 자기 참조 구조로 대댓글 지원
-- 삭제된 댓글도 노출 제어 가능 (exposed)
-
----
-
-#### `tb_attachment` (첨부파일)
-게시글 및 기타 엔티티의 첨부파일을 관리합니다.
-
-**주요 컬럼**:
-- `id` (VARCHAR(36), PK): 식별자
-- `reference_id` (VARCHAR(36)): 참조 객체 식별자
-- `file_name` (VARCHAR(255)): 파일명
-- `file_path` (VARCHAR(255)): 파일 경로
-- `file_size` (BIGINT): 파일 크기
-- `content_type` (VARCHAR(255)): MIME 타입
-- `download_count` (INTEGER): 다운로드 횟수
-
-**인덱스**:
-- `(reference_id)`: 참조 객체별 첨부파일 조회
-
-**특징**:
-- 범용적인 첨부파일 관리 (reference_id로 다양한 엔티티 연결)
-- 다운로드 통계 관리
-
----
-
-#### `tb_notification` (알림)
-사용자 알림을 관리합니다.
-
-**주요 컬럼**:
-- `id` (VARCHAR(36), PK): 식별자
-- `reference_id` (VARCHAR(36)): 참조 객체 식별자
-- `message` (TEXT): 알림 메시지
-- `read_date` (TIMESTAMP): 읽은 일시
-- `type` (VARCHAR(255)): 알림 타입
-
-**특징**:
-- 읽음/안읽음 상태 관리 (read_date)
-- 다양한 알림 타입 지원
-
----
-
-### 5. 상호작용 도메인
-
-#### `tb_vote` (투표)
-게시글 및 댓글의 추천/반대를 관리합니다.
-
-**주요 컬럼**:
-- `id` (VARCHAR(36), PK): 식별자
-- `reference_id` (VARCHAR(36)): 참조 객체 식별자 (게시글 또는 댓글)
-- `approved` (BOOLEAN, NOT NULL): 찬성여부 (true: 추천, false: 반대)
-
-**특징**:
-- 감사 필드의 `created_by`로 투표자 식별
-- 중복 투표 방지는 애플리케이션 레벨에서 처리
-
----
+#### `tb_article` — 게시글
 
-#### `tb_view` (뷰)
-게시글 조회수를 관리합니다.
-
-**주요 컬럼**:
-- `id` (VARCHAR(36), PK): 식별자
-- `article_id` (VARCHAR(36), FK → tb_article): 게시글 식별자
-
-**인덱스**:
-- `(article_id)`: 게시글별 조회수 집계
-
-**특징**:
-- 조회 이벤트마다 레코드 생성 (COUNT로 조회수 계산)
-- 감사 필드로 조회자 및 시각 추적
-
----
-
-### 6. 공통 코드 도메인
-
-#### `tb_code` (코드)
-시스템 공통 코드를 계층 구조로 관리합니다.
-
-**주요 컬럼**:
-- `id` (VARCHAR(36), PK): 식별자
-- `parent_id` (VARCHAR(36), FK → tb_code): 부모 코드 식별자
-- `code` (VARCHAR(255)): 코드값
-- `name` (VARCHAR(255)): 코드명
-- `description` (VARCHAR(255)): 설명
-- `sequence` (INTEGER): 정렬 순서
-
-**인덱스**:
-- `(parent_id)`: 계층 구조 조회
-
-**특징**:
-- 계층 구조로 코드 그룹 관리
-- 정렬 순서 지원
-
----
-
-## 공통 패턴 분석
-
-### 1. 감사(Audit) 필드
-모든 테이블(tb_remember_me_token 제외)에 공통적으로 포함된 필드:
-
-```sql
-created_by VARCHAR(255)           -- 생성자
-created_date TIMESTAMP(6)         -- 생성일시
-created_ip VARCHAR(45)            -- 생성 IP
-last_modified_by VARCHAR(255)    -- 수정자
-last_modified_date TIMESTAMP(6)  -- 수정일시
-last_modified_ip VARCHAR(45)     -- 수정 IP
-version INTEGER NOT NULL         -- 낙관적 잠금(Optimistic Locking)
-```
-
-**특징**:
-- JPA Auditing 패턴 적용
-- IP 주소 추적으로 보안 감사 지원
-- 버전 필드로 동시성 제어
-
----
-
-### 2. 계층 구조 패턴
-여러 테이블에서 자기 참조 구조 사용:
-
-- `tb_code` (parent_id → tb_code)
-- `tb_menu` (parent_id → tb_menu)
-- `tb_site` (parent_id → tb_site)
-- `tb_category` (parent_id → tb_category)
-- `tb_reply` (parent_id → tb_reply)
-
-**특징**:
-- 무한 depth 계층 구조 지원
-- 재귀 쿼리로 전체 트리 조회 가능
-
----
-
-### 3. 식별자 전략
-모든 테이블에서 `VARCHAR(36)` 타입의 UUID 사용:
-
-```sql
-id VARCHAR(36) NOT NULL PRIMARY KEY
-```
-
-**장점**:
-- 분산 환경에서 충돌 없는 ID 생성
-- 보안성 향상 (순차 ID 노출 방지)
-
-**단점**:
-- 인덱스 크기 증가
-- 정렬 성능 저하 가능성
-
----
-
-### 4. 소프트 삭제 패턴
-`exposed` 필드를 사용한 논리적 삭제:
-
-- `tb_article.exposed`
-- `tb_reply.exposed`
-- `tb_category.exposed`
-
-**특징**:
-- 물리적 삭제 대신 노출 여부로 제어
-- 데이터 복구 가능
-- 감사 추적 유지
-
----
+- PK: `id`
+- 자기참조 FK: `parent_id → tb_article`
+- FK: `category_id → tb_category`
+- `title`, `content`, `type`
+- `type`: `MAP`, `HTML`, `CAROUSEL`, `BUTTON_GROUP`, `IMAGE`, `TABLE`, `VIDEO`
+- 노출·고정: `exposed`, `fixed`, `fixed_order`
+- 인덱스: `(parent_id)`, `(category_id)`
+
+#### `tb_reply` — 댓글
+
+- PK: `id`
+- FK: `parent_id → tb_reply`, `article_id → tb_article`
+- `content`, `exposed`
+- 인덱스: `(parent_id)`, `(article_id)`
+
+#### `tb_attachment` — 첨부파일
+
+- PK: `id`
+- 범용 연결 키: `reference_id`
+- 파일 정보: `name`, `original_name`, `path_name`, `mime_type`, `size`
+- `reference_id`는 게시글 등 연결 대상의 식별자를 저장하며, 현재 DDL에는 대상 테이블 외래키가 없습니다.
+
+#### `tb_view` — 조회 기록
+
+- PK: `id`
+- FK: `article_id → tb_article`
+- 인덱스: `(article_id)`
+- 게시글 조회 이벤트를 누적해 조회수를 계산합니다.
+
+#### `tb_vote` — 투표
+
+- PK: `id`
+- 범용 연결 키: `reference_id`
+- `approved`: `true`는 찬성, `false`는 반대
+- 투표자: 공통 감사 필드의 `created_by`
+- 인덱스: `(reference_id, approved)`
+- UNIQUE: `(created_by, reference_id)`
+- `reference_id`는 게시글 또는 댓글을 가리키며, 현재 DDL에는 대상 테이블 외래키가 없습니다.
+
+### 4. Notification
+
+#### `tb_notification` — 인앱 알림
+
+- PK: `id`
+- FK: `site_id → tb_site`, `recipient_id → tb_user`
+- 발생자: `actor_username`
+- 알림 정보: `type`, `title`, `message`
+- 이동 대상: `target_type`, `target_id`, `target_url`
+- 이벤트 멱등성: `source_event_id`
+- 읽음·만료: `read_at`, `expires_at`
+- 인덱스: `(site_id, recipient_id, read_at, created_date)`, `(expires_at)`
+- UNIQUE: `(recipient_id, source_event_id, type)`
+- `in_app`은 이메일이나 웹 푸시가 아닌 서비스 화면 내부 알림함·알림 벨을 의미합니다.
+- 알림 타입: `ARTICLE_CREATED`, `REPLY_CREATED`, `REPORT_CREATED`, `INQUIRY_CREATED`, `ARTICLE_UPDATED`, `ARTICLE_DELETED`, `SCHEDULE_UPDATED`, `SCHEDULE_REMINDER`
+
+#### `tb_notification_preference` — 알림 수신 설정
+
+- PK: `id`
+- FK: `site_id → tb_site`, `user_id → tb_user`
+- `type`
+- 채널 설정: `in_app_enabled`(서비스 내부 알림), `web_push_enabled`(웹 푸시), `email_enabled`(이메일)
+- UNIQUE: `(site_id, user_id, type)`
+- 인덱스: `(site_id, user_id)`
+
+#### `tb_notification_subscription` — 게시판 알림 구독
+
+- PK: `id`
+- FK: `site_id → tb_site`, `user_id → tb_user`, `category_id → tb_category`
+- `enabled`
+- UNIQUE: `(site_id, user_id, category_id)`
+- 인덱스: `(site_id, category_id, enabled)`
+
+#### `tb_notification_delivery` — 알림 전달 기록
+
+- PK: `id`
+- FK: `notification_id → tb_notification`
+- 채널: `IN_APP`, `WEB_PUSH`, `EMAIL`
+- 상태: `PENDING`, `SENT`, `FAILED`, `SKIPPED`
+- 재시도·결과: `attempt_count`, `delivered_at`, `next_attempt_at`, `failure_reason`
+- UNIQUE: `(notification_id, channel)`
+- 인덱스: `(status, next_attempt_at)`
+
+### 5. 캘린더·RFC 컴포넌트
+
+#### `tb_event` — 캘린더 이벤트
+
+- PK 및 FK: `id → tb_article`
+- 일정 정보: `dt_start`, `dt_end`, `dt_stamp`, `duration`, `tzid`
+- 표시 정보: `summary`, `description`, `location`
+- `sequence`
+- `status`: `TENTATIVE`, `CONFIRMED`, `CANCELLED`
+
+#### `tb_event_attendees` — 이벤트 참석자
+
+- FK: `event_id → tb_event`
+- `attendee_cn`, `attendee_email`, `attendee_role`, `attendee_partstat`
+
+#### `tb_journal` — 저널
+
+- PK: `id`
+- `dt_start`, `dt_stamp`, `sequence`, `summary`
+- `status`: `DRAFT`, `FINAL`, `CANCELLED`
+
+#### `tb_journal_descriptions` — 저널 설명 컬렉션
+
+- FK: `journal_id → tb_journal`
+- `description`
+
+#### `tb_todo` — 할 일
+
+- PK: `id`
+- `dt_start`, `due`, `completed`, `dt_stamp`, `sequence`
+- 진행 정보: `percent_complete`, `priority`, `summary`
+- `status`: `NEEDS_ACTION`, `COMPLETED`, `IN_PROCESS`, `CANCELLED`
+
+#### `tb_event_attendee` — 이벤트 참석자 컬렉션
+
+- FK: `event_id → tb_event`
+- `attendee_cn`, `attendee_email`, `attendee_role`, `attendee_partstat`
+
+#### `tb_journal_description` — 저널 설명 컬렉션
+
+- FK: `journal_id → tb_journal`
+- `description`
 
 ## 관계도 요약
 
-### 핵심 관계
+```text
+tb_site
+├── tb_category ── tb_article ──┬── tb_reply
+│                               ├── tb_view
+│                               └── tb_event
+├── tb_role_mapping ── tb_user
+├── tb_notification ── tb_user (recipient)
+├── tb_notification_preference ── tb_user
+└── tb_notification_subscription ── tb_user / tb_category
 
-```
-tb_user ──┬─ tb_role_mapping ── tb_role
-          │                   └─ tb_site
-          │
-          └─ tb_notification
+tb_article ── tb_event ── tb_event_attendees / tb_event_attendee
+tb_journal ── tb_journal_descriptions / tb_journal_description
 
-tb_site ──┬─ tb_category ── tb_article ──┬─ tb_reply
-          │                              ├─ tb_attachment
-          │                              ├─ tb_vote
-          │                              └─ tb_view
-          │
-          └─ tb_role_mapping
-
-tb_menu ── tb_menu_role ── tb_role
-
-tb_role ──┬─ tb_permission
-          ├─ tb_menu_role
-          └─ tb_role_mapping
+tb_menu ── tb_menu_role ── tb_role ── tb_permission
+tb_code ── tb_code
+tb_vote ── reference_id ── tb_article 또는 tb_reply
+tb_attachment ── reference_id ── 게시글 등 연결 대상
+tb_notification ── tb_notification_delivery
 ```
 
+## 공통 설계 패턴
+
+### 감사 필드
+
+대부분의 도메인 테이블은 다음 감사 필드를 공유합니다.
+
+```sql
+created_by         varchar(255)
+created_date       timestamp(6)
+created_ip         varchar(45)
+last_modified_by   varchar(255)
+last_modified_date timestamp(6)
+last_modified_ip   varchar(45)
+version            integer not null
+```
+
+예외는 `tb_remember_me_token`과 이벤트·저널의 컬렉션 매핑 테이블입니다.
+
+### 계층 구조
+
+- `tb_code.parent_id → tb_code`
+- `tb_menu.parent_id → tb_menu`
+- `tb_site.parent_id → tb_site`
+- `tb_category.parent_id → tb_category`
+- `tb_article.parent_id → tb_article`
+- `tb_reply.parent_id → tb_reply`
+
+### 범용 참조
+
+`tb_attachment.reference_id`와 `tb_vote.reference_id`는 여러 도메인을 연결하기 위한 범용 식별자입니다. 데이터베이스 외래키 대신 애플리케이션에서 참조 대상의 유효성을 관리합니다.
+
+### 알림 이벤트와 전달
+
+알림은 `tb_notification`에 수신자별 인앱 메시지를 저장하고, `tb_notification_delivery`에서 채널별 전달 상태를 관리합니다.
+
+- 게시글 생성: 구독한 카테고리의 사용자에게 알림
+- 댓글 생성: 게시글 작성자에게 알림
+- 신고·문의 생성: 관리자·매니저에게 알림
+- 웹 푸시·이메일: 수신 설정과 전달 기록에 따라 처리
+- `source_event_id`와 UNIQUE 제약으로 중복 이벤트를 방지
+
+## 설계상 확인이 필요한 항목
+
+1. `tb_event_attendees`와 `tb_event_attendee`는 동일한 참석자 구조를 가진 테이블로 보입니다. 하나로 통합할지 결정이 필요합니다.
+2. `tb_journal_descriptions`와 `tb_journal_description`도 동일한 설명 구조를 가진 테이블로 보입니다. 사용 중인 테이블을 확인한 뒤 통합 여부를 결정해야 합니다.
+3. `tb_attachment.reference_id`, `tb_vote.reference_id`, `tb_permission.target_id`는 외래키가 없어 애플리케이션 레벨 검증이 필요합니다.
+4. `tb_vote`의 `created_by`는 공통 감사 필드이므로 사용자 테이블 외래키가 없습니다. 탈퇴 계정·익명 처리 정책을 함께 관리해야 합니다.
+
+## 기술 스택
+
+- 데이터베이스: PostgreSQL
+- ORM: JPA/Hibernate
+- 인증·인가: Spring Security
+- 아키텍처: 멀티 사이트 + 도메인 단위 모듈 구조
+
 ---
 
-## 데이터베이스 설계 특징
-
-### 장점
-
-1. **멀티 테넌시 지원**: 사이트별 독립적인 데이터 관리
-2. **유연한 권한 관리**: 역할 기반 + ACL 기반 하이브리드
-3. **확장성**: 계층 구조로 무한 확장 가능
-4. **감사 추적**: 모든 변경 이력 추적
-5. **타입 안전성**: ENUM 타입 사용 (category.type)
-
-### 개선 가능 영역
-
-1. **성능 최적화**:
-  - 조회수 테이블(tb_view)은 레코드 수가 급증할 수 있음
-  - 집계 테이블 또는 캐싱 고려 필요
-
-2. **정규화**:
-  - `tb_site.tags`, `tb_article.tags`는 정규화 고려
-  - 별도 태그 테이블 + 매핑 테이블 구조 검토
-
-3. **인덱스 최적화**:
-  - 복합 인덱스 추가 검토 (예: category_id + created_date)
-  - Full-text search 인덱스 고려 (article.content, reply.content)
-
-4. **파티셔닝**:
-  - 대용량 테이블(tb_view, tb_notification)은 파티셔닝 고려
-
----
-
-## 기술 스택 추론
-
-DDL 분석을 통해 추론되는 기술 스택:
-
-- **Database**: PostgreSQL
-- **ORM**: JPA/Hibernate (감사 필드, 버전 필드 패턴)
-- **Security**: Spring Security (역할, 권한, Remember Me)
-- **Architecture**: Multi-tenancy, Domain-Driven Design
-
----
-
-## 결론
-
-Seesaw 프로젝트의 데이터베이스는 **멀티 사이트 CMS/커뮤니티 플랫폼**을 위한 설계로, 다음과 같은 특징을 가집니다:
-
-- ✅ 엔터프라이즈급 감사 추적
-- ✅ 유연한 권한 관리 시스템
-- ✅ 확장 가능한 계층 구조
-- ✅ 멀티 테넌시 지원
-- ✅ 소프트 삭제 패턴
-
-향후 성능 최적화와 정규화 개선을 통해 더욱 견고한 시스템으로 발전할 수 있을 것으로 보입니다.
-
----
-
-**문서 작성일**: 2025-11-21  
-**DDL 파일**: `.agent/ddl.sql` (848 lines)  
-**총 테이블 수**: 14개
+**문서 기준**: `seesaw-web/docs/database/tables-1.8.0.sql`
+**현행화일**: 2026-11-24
