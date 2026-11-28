@@ -33,7 +33,7 @@ SEESAW는 "균형과 유연함"을 핵심 가치로 삼아, 핵심 도메인 로
 
 ## 📂 Project Structure & Modules
 
-각 모듈은 독립적인 리포지토리로 관리됩니다. 아래 명시된 웹 포털을 제외한 저장소는 Git Submodule로 연결되어 있습니다.
+각 모듈은 독립적인 리포지토리로 관리됩니다. `seesaw-core`, `seesaw-api`, `seesaw-config`는 Git Submodule로 연결되어 있습니다.
 
 ### 1. [📦 seesaw-core](https://github.com/KalGookSoo/seesaw-core)
 프로젝트의 기반이 되는 핵심 모듈입니다.
@@ -45,10 +45,10 @@ Headless 환경을 위한 RESTful API 서버입니다.
 
 ### 3. [🌐 seesaw-web-v2](https://github.com/KalGookSoo/seesaw-web-v2)
 Next.js 기반의 사용자 포털 웹 애플리케이션이며 별도 저장소에서 관리합니다.
-- 기존 [seesaw-web](https://github.com/KalGookSoo/seesaw-web)은 레거시 Java 웹 프로젝트로, 소스와 Git Submodule은 보존하지만 루트 Gradle 빌드에는 포함하지 않습니다.
+- 기존 [seesaw-web](https://github.com/KalGookSoo/seesaw-web)은 별도 저장소에서 관리하는 레거시 Java 웹 프로젝트이며 루트 Gradle 빌드에는 포함하지 않습니다.
 
 ### 4. [🖥️ seesaw-console](https://github.com/KalGookSoo/seesaw-console)
-Next.js 기반의 현대적인 관리자 대시보드입니다.
+별도 저장소에서 관리하는 관리자 대시보드입니다.
 - 콘텐츠 전반에 대한 시각적 관리, 반응형 디자인 시스템 적용
 
 ### 5. [🔐 seesaw-config](https://github.com/KalGookSoo/seesaw-config) (Private)
@@ -72,7 +72,7 @@ React Native(Expo) 기반의 모바일 애플리케이션입니다.
 
 GitHub Actions를 통해 안정적인 개발 주기를 보장합니다.
 
-- **CI**: `api-ci.yml`, `console-ci.yml` (빌드 및 테스트 자동화)
+- **CI**: `api-ci.yml` (API 빌드 및 테스트 자동화)
 - **CD**: `deploy-seesaw-api.yml` (API 자동 배포 파이프라인)
 - **Quality**: `qodana_code_quality.yml` (정적 코드 분석을 통한 코드 품질 유지)
 
@@ -106,6 +106,7 @@ npm run dev
 
 ### 4. Admin Console Execution
 ```bash
+git clone https://github.com/KalGookSoo/seesaw-console.git
 cd seesaw-console
 npm install
 npm run dev
